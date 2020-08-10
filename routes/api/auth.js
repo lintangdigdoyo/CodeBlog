@@ -44,14 +44,6 @@ router.get(
   }
 );
 
-//@route GET api/auth/signout
-//@desc Sign out user
-//@access Private
-
-router.get('/signout', auth, async (req, res) => {
-  res.clearCookie('access_token').json({ msg: 'user signed out' });
-});
-
 //@route POST api/auth/signup
 //@desc Register user
 //@access Public
@@ -172,5 +164,13 @@ router.post(
     }
   }
 );
+
+//@route GET api/auth/signout
+//@desc Sign out user
+//@access Private
+
+router.get('/signout', auth, (req, res) => {
+  res.clearCookie('access_token').json({ msg: 'user signed out' });
+});
 
 module.exports = router;

@@ -3,13 +3,7 @@ const multer = require('multer');
 const storage = multer.diskStorage({
   destination: (req, file, done) => done(null, './uploads/'),
   filename: (req, file, done) =>
-    done(
-      null,
-      file.fieldname +
-        Math.floor(Math.random() * 1000) +
-        Date.now() +
-        file.originalname
-    ),
+    done(null, file.fieldname + req.user.id + file.originalname),
 });
 
 const upload = multer({

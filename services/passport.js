@@ -9,6 +9,7 @@ const cookieExtractor = (req) => {
   if (req && req.cookies) {
     token = req.cookies['access_token'];
   }
+
   return token;
 };
 
@@ -29,6 +30,7 @@ passport.use(
         }
 
         req.user = user;
+
         done(null, user);
       } catch (err) {
         done(err, false, err.message);
