@@ -220,9 +220,9 @@ router.post(
 router.patch(
   '/:userId/educations/:educationId',
   auth,
-  [check('school', 'Please enter the school name').not().isEmpty()],
   checkObjectId('userId'),
   checkObjectId('educationId'),
+  [check('school', 'Please enter the school name').not().isEmpty()],
   async (req, res) => {
     const errors = validationResult(req);
 
@@ -233,7 +233,7 @@ router.patch(
     const { school, degree, start, current, end } = req.body;
 
     try {
-      let profile = await Profile.findOne({ user: req.params.userId });
+      const profile = await Profile.findOne({ user: req.params.userId });
 
       if (!profile) {
         return res
@@ -251,19 +251,220 @@ router.patch(
           .json({ errors: [{ msg: 'User has no education record' }] });
       }
 
-      let newEducation = profile.education.filter(
+      let updateEducation = profile.education.filter(
         (education) => education.id === req.params.educationId
       );
 
-      if (newEducation.length === 0) {
+      if (updateEducation.length === 0) {
         return res.status(400).json({ errors: [{ msg: 'Invalid id' }] });
       }
 
-      if (school) newEducation[0].school = school;
-      if (degree) newEducation[0].degree = degree;
-      if (start) newEducation[0].start = start;
-      if (current) newEducation[0].current = current;
-      if (end) newEducation[0].end = end;
+      if (school) updateEducation[0].school = school;
+      if (degree) updateEducation[0].degree = degree;
+      if (start) updateEducation[0].start = start;
+      if (current) updateEducation[0].current = current;
+      if (end) updateEducation[0].end = end;
+
+      await profile.save();
+      res.json(profile);
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server Error');
+    }
+  }
+);
+
+//@route DELETE api/profiles/:userId/educations/:educationId
+//@desc delete an education
+//@access Private
+
+router.delete(
+  '/:userId/educations/:educationId',
+  auth,
+  checkObjectId('userId'),
+  checkObjectId('educationId'),
+  async (req, res) => {
+    try {
+      const profile = await Profile.findOne({ user: req.params.userId });
+
+      if (!profile) {
+        return res
+          .status(400)
+          .json({ Errors: [{ msg: 'There is no profile for this user' }] });
+      }
+
+      if (req.params.userId !== req.user.id) {
+        return res.status(401).json({ errors: [{ msg: 'Unauthorized user' }] });
+      }
+
+      if (profile.education.length === 0) {
+        return res
+          .status(400)
+          .json({ errors: [{ msg: 'User has no education record' }] });
+      }
+
+      let deleteIndex = profile.education
+        .map((education) => education.id)
+        .indexOf(req.params.educationId);
+
+      if (deleteIndex < 0) {
+        return res.status(400).json({ errors: [{ msg: 'Invalid id' }] });
+      }
+
+      profile.education.splice(deleteIndex, 1);
+
+      await profile.save();
+      res.json(profile);
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server Error');
+    }
+  }
+);
+
+//@route POST api/profiles/:userId/experiences
+//@desc Add Experience
+//@access Private
+
+router.post(
+  '/:userId/experiences',
+  auth,
+  checkObjectId('userId'),
+  [
+    check('job', 'Please enter the job title').not().isEmpty(),
+    check('location', 'Please enter the location').not().isEmpty(),
+    check('company', 'Please enter the company name').not().isEmpty(),
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { job, company, location, start, current, end } = req.body;
+
+    try {
+      let profile = await Profile.findOne({ user: req.params.userId });
+
+      if (!profile) {
+        return res
+          .status(500)
+          .json({ errors: [{ msg: 'There is no profile for this user' }] });
+      }
+
+      if (req.params.userId !== req.user.id) {
+        return res.status(401).json({ errors: [{ msg: 'Unauthorized user' }] });
+      }
+
+      profile.experience.push({ job, company, location, start, current, end });
+
+      await profile.save();
+      res.json(profile);
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server Error');
+    }
+  }
+);
+
+//@route PATCH api/profiles/:userId/experiences/:experienceId
+//@desc Update Experience
+//@access Private
+
+router.patch(
+  '/:userId/experiences/:experienceId',
+  auth,
+  checkObjectId('userId'),
+  checkObjectId('experienceId'),
+  [
+    check('job', 'Please enter the job title').not().isEmpty(),
+    check('location', 'Please enter the location').not().isEmpty(),
+    check('company', 'Please enter the company name').not().isEmpty(),
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { job, company, location, start, current, end } = req.body;
+
+    try {
+      const profile = await Profile.findOne({ user: req.params.userId });
+
+      if (!profile) {
+        return res
+          .status(400)
+          .json({ errors: [{ msg: 'There is no profile for this user' }] });
+      }
+
+      if (profile.experience.length === 0) {
+        return res.status(400).json({
+          errors: [{ msg: 'There is no experience record for this user' }],
+        });
+      }
+
+      let updateExperience = profile.experience.filter(
+        (experience) => experience.id === req.params.experienceId
+      );
+
+      if (updateExperience.length === 0) {
+        return res.status(400).json({ errors: [{ msg: 'Invalid id' }] });
+      }
+
+      if (job) updateExperience[0].job = job;
+      if (company) updateExperience[0].company = company;
+      if (location) updateExperience[0].location = location;
+      if (start) updateExperience[0].start = start;
+      if (current) updateExperience[0].current = current;
+      if (end) updateExperience[0].end = end;
+
+      await profile.save();
+
+      res.json(profile);
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server Error');
+    }
+  }
+);
+
+//@route DELETE api/profiles/:userId/experiences/:experienceId
+//@desc Delete Experience
+//@access Private
+
+router.delete(
+  '/:userId/experiences/:experienceId',
+  auth,
+  checkObjectId('userId'),
+  checkObjectId('experienceId'),
+  async (req, res) => {
+    try {
+      const profile = await Profile.findOne({ user: req.params.userId });
+
+      if (!profile) {
+        return res
+          .status(400)
+          .json({ error: [{ msg: 'There is no profile for this user' }] });
+      }
+
+      if (profile.experience === 0) {
+        return res
+          .status(400)
+          .json({ errors: [{ msg: 'There is no experience record' }] });
+      }
+
+      let deleteIndex = profile.experience
+        .map((experience) => experience.id)
+        .indexOf(req.params.experienceId);
+
+      if (deleteIndex < 0) {
+        return res.status(400).json({ errors: [{ msg: 'Invalid id' }] });
+      }
+
+      profile.experience.splice(deleteIndex, 1);
 
       await profile.save();
       res.json(profile);

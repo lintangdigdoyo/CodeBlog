@@ -14,6 +14,8 @@ connectDB();
 //Init Middleware
 app.use(express.json());
 app.use(cookieParser());
+
+//Public static folder
 app.use('/uploads', express.static('uploads'));
 
 app.get('/', (req, res) => {
@@ -24,6 +26,7 @@ app.get('/', (req, res) => {
 app.use('/api/auth', require('./routes/api/auth'));
 app.use('/api/user', require('./routes/api/user'));
 app.use('/api/profiles', require('./routes/api/profiles'));
+app.use('/api/posts', require('./routes/api/posts'));
 
 const PORT = process.env.PORT || '5000';
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
