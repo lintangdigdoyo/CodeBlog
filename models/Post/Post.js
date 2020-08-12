@@ -37,6 +37,14 @@ const postSchema = new mongoose.Schema({
       },
     },
   ],
+  viewer: [
+    {
+      user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+      },
+    },
+  ],
   comment: [Comment],
   date: {
     type: Date,
