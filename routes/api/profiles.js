@@ -82,7 +82,7 @@ router.get('/:userId', checkObjectId('userId'), async (req, res) => {
     }).populate('user', ['name', 'avatar']);
 
     if (!profile) {
-      return res.status(400).json({ msg: 'There is no profile for this user' });
+      return res.status(404).json({ msg: 'Profile not found' });
     }
 
     res.json(profile);

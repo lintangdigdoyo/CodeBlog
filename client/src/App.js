@@ -1,26 +1,33 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Fragment } from 'react';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import styled from 'styled-components';
+import 'semantic-ui-css/semantic.min.css';
 
-function App() {
+import GlobalStyle from './components/globals/GlobalStyle';
+import Navbar from './components/globals/Navbar';
+import SidebarNav from './components/globals/SidebarNav';
+import Landing from './components/Landing/Landing';
+
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Fragment>
+      <GlobalStyle lightBlue />
+      <SidebarNav>
+        <Router>
+          <Navbar transparent />
+          <Container>
+            <Switch>
+              <Route exact path='/' component={Landing} />
+            </Switch>
+          </Container>
+        </Router>
+      </SidebarNav>
+    </Fragment>
   );
-}
+};
+
+const Container = styled.div`
+  margin: 5% 10%;
+`;
 
 export default App;

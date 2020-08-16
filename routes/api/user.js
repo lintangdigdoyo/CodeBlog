@@ -24,14 +24,13 @@ router.get('/', auth, async (req, res) => {
   }
 });
 
-//@route patch api/user/:userId
+//@route patch api/user
 //@desc edit signed in user
 //@access Private
 
 router.patch(
-  '/:userId',
+  '/',
   auth,
-  checkObjectId('userId'),
   [
     check('name', 'Please enter the name').not().isEmpty(),
     check('email', 'Please enter a valid email').isEmail(),
@@ -50,15 +49,7 @@ router.patch(
     const { name, email, password } = req.body;
 
     try {
-      let user = await User.findById(req.params.userId);
-
-      if (!user) {
-        return res.status(400).json({ errors: [{ msg: 'Invalid id' }] });
-      }
-
-      if (user.id !== req.user.id) {
-        return res.status(401).json({ errors: [{ msg: 'Unauthorized user' }] });
-      }
+      let user = await User.findById(req.user.id);
 
       if (user.googleId) {
         if (name) user.name = name;
@@ -89,27 +80,16 @@ router.patch(
   }
 );
 
-//@route DELETE api/user/:userId
+//@route DELETE api/user
 //@desc Delete user account
 //@access Private
 
-router.delete('/:userId', auth, checkObjectId('userId'), async (req, res) => {
+router.delete('/', auth, async (req, res) => {
   try {
-    const user = await User.findById(req.params.userId);
-    const post = await Post.findOne({ user: req.params.userId });
-    const profile = await Profile.findOne({ user: req.params.userId });
+    await Post.deleteMany({ user: req.user.id });
+    await Profile.findOneAndRemove({ user: req.user.id });
+    await User.findByIdAndRemove(req.user.id);
 
-    if (!user) {
-      return res.status(400).json({ errors: [{ msg: 'Invalid id' }] });
-    }
-
-    if (user.id !== req.user.id) {
-      return res.status(401).json({ errors: [{ msg: 'Unauthorized user' }] });
-    }
-
-    await post.remove();
-    await profile.remove();
-    await user.remove();
     res.json({ msg: 'User removed' });
   } catch (err) {
     console.error(err.message);
