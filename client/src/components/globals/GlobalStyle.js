@@ -2,8 +2,6 @@ import { createGlobalStyle } from 'styled-components';
 import { setFont, setColor } from '../../styles';
 
 const GlobalStyle = createGlobalStyle`
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&family=Russo+One&display=swap');
-
     * {
         padding: 0;
         margin: 0;

@@ -1,33 +1,53 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import styled from 'styled-components';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import 'semantic-ui-css/semantic.min.css';
 
+import { loadUser } from './components/actions/auth';
 import GlobalStyle from './components/globals/GlobalStyle';
 import Navbar from './components/globals/Navbar';
 import SidebarNav from './components/globals/SidebarNav';
-import Landing from './components/Landing/Landing';
+import Landing from './components/landing/Landing';
+import SignUp from './components/auth/SignUp';
+import SignIn from './components/auth/SignIn';
 
-const App = () => {
+const App = ({ loadUser, auth: { isAuthenticated } }) => {
+  useEffect(() => {
+    loadUser();
+  }, []);
+
   return (
     <Fragment>
       <GlobalStyle lightBlue />
-      <SidebarNav>
-        <Router>
-          <Navbar transparent />
+      <Router>
+        <SidebarNav>
+          <Navbar transparent={isAuthenticated ? false : true} />
           <Container>
             <Switch>
               <Route exact path='/' component={Landing} />
+              <Route exact path='/register' component={SignUp} />
+              <Route exact path='/login' component={SignIn} />
             </Switch>
           </Container>
-        </Router>
-      </SidebarNav>
+        </SidebarNav>
+      </Router>
     </Fragment>
   );
 };
 
 const Container = styled.div`
-  margin: 5% 10%;
+  margin: 0 10%;
 `;
 
-export default App;
+App.propTypes = {
+  auth: PropTypes.object.isRequired,
+  loadUser: PropTypes.func.isRequired,
+};
+
+const mapStateToProps = (state) => ({
+  auth: state.auth,
+});
+
+export default connect(mapStateToProps, { loadUser })(App);

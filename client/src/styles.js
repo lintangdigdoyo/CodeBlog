@@ -2,7 +2,9 @@ import { css } from 'styled-components';
 
 export const setColor = {
   primaryColor: '#0A97B0',
-  dangerColor: '#E83131',
+  dangerColor: '#b82727',
+  lightDanger: '#ffd4d4',
+  mainRed: '#E83131',
   mainBlue: '#1B6CA8',
   lightBlue: '#EAFCFF',
   darkBlue: '#0C5489',
@@ -22,8 +24,8 @@ export const setRem = (number = 16) => {
 };
 
 const sizes = {
-  desktop: 1156,
-  tablet: 835,
+  desktop: 1400,
+  tablet: 983,
   phone: 576,
 };
 
@@ -35,3 +37,7 @@ export const media = Object.keys(sizes).reduce((acc, label) => {
   `;
   return acc;
 }, {});
+
+export const setFlex = ({ x = 'center', y = 'center' } = {}) => {
+  return `display:flex;justify-content:${x};align-items:${y}`;
+};

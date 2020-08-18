@@ -9,6 +9,7 @@ export const Button = styled.button`
   border: none;
   font-weight: 600;
   cursor: pointer;
+  transition: 0.3s ease-in-out;
   &:hover {
     background-color: ${setColor.mainBlue};
   }

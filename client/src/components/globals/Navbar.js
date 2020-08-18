@@ -1,14 +1,24 @@
-import React, { useState, useLayoutEffect } from 'react';
+import React, { useState, useLayoutEffect, Fragment } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import { Dropdown } from 'semantic-ui-react';
 
 import { setColor, setRem, setFont, media } from '../../styles';
 import { ReactComponent as HamburgerMenu } from './hamburgerMenu.svg';
 import { setVisible } from '../actions/sidebar';
 import { SmallButton } from './Button';
+import { signOut } from '../actions/auth';
+import Avatar from './Avatar';
 
-const Navbar = ({ className, setVisible, sidebar }) => {
+const Navbar = ({
+  className,
+  setVisible,
+  sidebar,
+  auth: { isAuthenticated, loading, user },
+  signOut,
+}) => {
   const useWindowSize = () => {
     const [size, setSize] = useState(0);
 
@@ -28,36 +38,90 @@ const Navbar = ({ className, setVisible, sidebar }) => {
     setVisible(false);
   }
 
-  return (
-    <nav className={className}>
-      <Link to='/'>
-        <h4>CodeBlog</h4>
-      </Link>
-      <ul>
-        <li>
-          <Link to='/'>home</Link>
-        </li>
-        <li>
-          <Link to='/'>sign in</Link>
-        </li>
-        <li className='button'>
-          <SmallButton as={Link} to='/'>
-            sign up
-          </SmallButton>
-        </li>
-      </ul>
-      <button className='hamburger' onClick={() => setVisible(!sidebar)}>
-        <HamburgerMenu />
-      </button>
-    </nav>
+  //dropdown menu
+  const options = [
+    { key: 'user', text: 'Account', icon: 'user', as: Link, to: '/' },
+    { key: 'settings', text: 'Settings', icon: 'settings' },
+    {
+      key: 'sign-out',
+      text: 'Sign Out',
+      icon: 'sign out',
+      onClick: signOut,
+    },
+  ];
+  const DropdownAvatar = () => (
+    <Dropdown
+      trigger={<Avatar src={user.avatar} />}
+      options={options}
+      pointing='top left'
+      icon={null}
+    />
   );
+
+  return (
+    <Fragment>
+      {!loading && isAuthenticated ? (
+        <nav className={className}>
+          <Link to='/'>
+            <h4>CodeBlog</h4>
+          </Link>
+          <ul>
+            <li>
+              <Link to='/'>home</Link>
+            </li>
+            <li>
+              <DropdownAvatar />
+            </li>
+            <li className='button'>
+              <SmallButton as={Link} to='/'>
+                create post
+              </SmallButton>
+            </li>
+          </ul>
+          <button className='hamburger' onClick={() => setVisible(!sidebar)}>
+            <HamburgerMenu />
+          </button>
+        </nav>
+      ) : (
+        <nav className={className}>
+          <Link to='/'>
+            <h4>CodeBlog</h4>
+          </Link>
+          <ul>
+            <li>
+              <Link to='/'>home</Link>
+            </li>
+            <li>
+              <Link to='/login'>sign in</Link>
+            </li>
+            <li className='button'>
+              <SmallButton as={Link} to='/register'>
+                sign up
+              </SmallButton>
+            </li>
+          </ul>
+          <button className='hamburger' onClick={() => setVisible(!sidebar)}>
+            <HamburgerMenu />
+          </button>
+        </nav>
+      )}
+    </Fragment>
+  );
+};
+
+Navbar.propTypes = {
+  setVisible: PropTypes.func.isRequired,
+  sidebar: PropTypes.bool.isRequired,
+  auth: PropTypes.object.isRequired,
+  signOut: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
   sidebar: state.sidebar,
+  auth: state.auth,
 });
 
-export default connect(mapStateToProps, { setVisible })(styled(Navbar)`
+export default connect(mapStateToProps, { setVisible, signOut })(styled(Navbar)`
   background-color: ${(props) =>
     props.transparent ? 'rgba(0,0,0,0)' : setColor.primaryColor};
   padding: 35px 10%;
@@ -77,6 +141,7 @@ export default connect(mapStateToProps, { setVisible })(styled(Navbar)`
     color: ${(props) =>
       props.transparent ? setColor.darkBlue : setColor.mainWhite};
     text-decoration: none;
+    transition: 0.3s ease-in-out;
     &:hover {
       color: ${setColor.mainBlue};
     }
@@ -107,6 +172,7 @@ export default connect(mapStateToProps, { setVisible })(styled(Navbar)`
     width: 20%;
     text-transform: capitalize;
     font-weight: 600;
+    align-items: center;
 
     ${media.desktop`
         width: 25%;
