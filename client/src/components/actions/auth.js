@@ -9,7 +9,7 @@ import {
 } from './types';
 
 import { setAlert } from './alert';
-import { api } from '../apis/api';
+import api from '../apis/api';
 
 // Load User
 export const loadUser = () => async (dispatch) => {

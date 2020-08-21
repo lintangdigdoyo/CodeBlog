@@ -6,13 +6,17 @@ import { connect } from 'react-redux';
 import { setColor } from '../../styles';
 import imgAvatar from '../../images/avatar.jpg';
 
-const Avatar = ({ className, auth: { loading, isAuthenticated, user } }) => {
+const Avatar = ({
+  className,
+  auth: { loading, isAuthenticated, user },
+  src,
+}) => {
   return (
     !loading &&
     isAuthenticated && (
       <img
         className={className}
-        src={user.avatar ? user.avatar : imgAvatar}
+        src={src ? src : user.avatar ? user.avatar : imgAvatar}
         alt='avatar'
       />
     )
@@ -21,6 +25,7 @@ const Avatar = ({ className, auth: { loading, isAuthenticated, user } }) => {
 
 Avatar.propTypes = {
   auth: PropTypes.object.isRequired,
+  src: PropTypes.string,
 };
 
 const mapStateToProps = (state) => ({

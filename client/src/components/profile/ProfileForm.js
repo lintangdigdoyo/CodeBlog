@@ -20,11 +20,23 @@ const ProfileForm = ({ className, createProfile, removeAlert, alerts }) => {
     bio: '',
   });
   const [file, setFile] = useState();
+  const [imagePreviewUrl, setImagePreviewUrl] = useState();
 
   const { country, location, status, website, skills, bio } = formData;
 
-  const onChange = (e) => {
+  const onFormChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const onUploadChange = (e) => {
+    let reader = new FileReader();
+    let file = e.target.files[0];
+
+    reader.onloadend = () => {
+      setFile(file);
+      setImagePreviewUrl(reader.result);
+    };
+    reader.readAsDataURL(file);
   };
 
   const onSubmit = (e) => {
@@ -33,20 +45,19 @@ const ProfileForm = ({ className, createProfile, removeAlert, alerts }) => {
     createProfile(formData, file);
   };
 
+  const alertName = alerts.map((alert) => alert.name);
+
   return (
     <form onSubmit={onSubmit} className={className}>
       <div className='upload-avatar'>
         <label htmlFor='avatar'>Upload Photo</label>
-        <Avatar />
+        <Avatar src={imagePreviewUrl} />
         <input
           className='input-upload'
           type='file'
           id='avatar'
           name='avatar'
-          onChange={(e) => {
-            const file = e.target.files[0];
-            setFile(file);
-          }}
+          onChange={onUploadChange}
           accept='image/*'
         />
       </div>
@@ -59,9 +70,12 @@ const ProfileForm = ({ className, createProfile, removeAlert, alerts }) => {
           name='country'
           id='country'
           placeholder='Country or region you are living'
+          className={
+            alertName.filter((alert) => alert === 'country').toString() &&
+            'danger'
+          }
           value={country}
-          onChange={onChange}
-          required
+          onChange={onFormChange}
         />
       </div>
       <div className='item'>
@@ -72,7 +86,7 @@ const ProfileForm = ({ className, createProfile, removeAlert, alerts }) => {
           id='location'
           placeholder='Location in the country you are living'
           value={location}
-          onChange={onChange}
+          onChange={onFormChange}
         />
       </div>
       <div className='item'>
@@ -84,9 +98,12 @@ const ProfileForm = ({ className, createProfile, removeAlert, alerts }) => {
           placeholder='Give us an idea of where you are at in your career (eg. Senior Developer, Front-End Developer )'
           name='status'
           id='status'
+          className={
+            alertName.filter((alert) => alert === 'status').toString() &&
+            'danger'
+          }
           value={status}
-          onChange={onChange}
-          required
+          onChange={onFormChange}
         />
       </div>
       <div className='item'>
@@ -97,7 +114,7 @@ const ProfileForm = ({ className, createProfile, removeAlert, alerts }) => {
           name='website'
           id='website'
           value={website}
-          onChange={onChange}
+          onChange={onFormChange}
         />
       </div>
       <div className='item'>
@@ -109,9 +126,12 @@ const ProfileForm = ({ className, createProfile, removeAlert, alerts }) => {
           placeholder='Please use comma separated values (eg. HTML,CSS,JavaScript,PHP)'
           name='skills'
           id='skills'
+          className={
+            alertName.filter((alert) => alert === 'skills').toString() &&
+            'danger'
+          }
           value={skills}
-          onChange={onChange}
-          required
+          onChange={onFormChange}
         />
       </div>
       <div className='item'>
@@ -123,7 +143,7 @@ const ProfileForm = ({ className, createProfile, removeAlert, alerts }) => {
           name='bio'
           id='bio'
           value={bio}
-          onChange={onChange}
+          onChange={onFormChange}
         />
       </div>
       <SmallButton>Submit</SmallButton>
@@ -145,6 +165,12 @@ const mapStateToProps = (state) => ({
 export default connect(mapStateToProps, { createProfile, removeAlert })(styled(
   ProfileForm
 )`
+  input.danger {
+    border: 2px solid ${setColor.mainRed};
+    &::placeholder {
+      color: ${setColor.dangerColor};
+    }
+  }
   .input-upload {
     border: none;
     cursor: pointer;

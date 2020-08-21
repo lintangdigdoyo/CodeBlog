@@ -12,67 +12,60 @@ const User = require('../../models/User');
 //@desc Create user profile
 //@access Private
 
-router.post(
-  '/',
-  auth,
-  // [
-  //   check('country', 'Please enter your country name').not().isEmpty(),
-  //   check('status', 'Please enter your professional status').not().isEmpty(),
-  //   check('skills', 'Please enter skills').not().isEmpty(),
-  // ],
-  upload.single('avatar'),
-  async (req, res) => {
-    const errors = validationResult(req);
+router.post('/', auth, upload.single('avatar'), async (req, res) => {
+  const { country, location, status, skills, bio } = req.body;
 
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
+  const errors = [];
 
-    const { country, location, status, skills, bio } = JSON.parse(
-      req.body.data
-    );
-
-    console.log(JSON.parse(req.body.data));
-    try {
-      let profile = await Profile.findOne({ user: req.user.id });
-      let user = await User.findById(req.user.id);
-
-      if (profile) {
-        //await unlink(req.file.path)
-        return res
-          .status(400)
-          .json({ errors: [{ msg: 'Profile already exist' }] });
-      }
-
-      if (user.avatar) {
-        await fs.unlink(user.avatar);
-        console.log('file deleted successfully');
-      }
-
-      const newSkills = skills.split(',').map((skill) => skill.trim());
-
-      profile = new Profile({
-        user: req.user.id,
-        country,
-        location,
-        status,
-        skills: newSkills,
-        bio,
-      });
-
-      if (req.file) {
-        user.avatar = req.file.path;
-        await user.save();
-      }
-
-      await profile.save();
-      res.json(profile);
-    } catch (err) {
-      console.error(err.message);
-      res.status(500).send('Server Error');
-    }
+  if (country === '') {
+    errors.push({ msg: 'Please enter your country name', param: 'country' });
   }
-);
+  if (status === '') {
+    errors.push({
+      msg: 'Please enter your professional status',
+      param: 'status',
+    });
+  }
+  if (skills === '') {
+    errors.push({ msg: 'Please enter skills', param: 'skills' });
+  }
+  if (errors.length > 0) {
+    return res.status(400).json({ errors: errors });
+  }
+
+  try {
+    let profile = await Profile.findOne({ user: req.user.id });
+    let user = await User.findById(req.user.id);
+
+    if (profile) {
+      return res
+        .status(400)
+        .json({ errors: [{ msg: 'Profile already exist' }] });
+    }
+
+    const newSkills = skills.split(',').map((skill) => skill.trim());
+
+    profile = new Profile({
+      user: req.user.id,
+      country,
+      location,
+      status,
+      skills: newSkills,
+      bio,
+    });
+
+    if (req.file) {
+      user.avatar = req.file.path;
+      await user.save();
+    }
+
+    await profile.save();
+    res.json(profile);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+});
 
 //@route GET api/profiles/:userId
 //@desc Get user profile
