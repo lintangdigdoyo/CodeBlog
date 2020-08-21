@@ -15,11 +15,11 @@ const User = require('../../models/User');
 router.post(
   '/',
   auth,
-  [
-    check('country', 'Please enter your country').not().isEmpty(),
-    check('status', 'Please enter your professional status').not().isEmpty(),
-    check('skills', 'Please enter skills').not().isEmpty(),
-  ],
+  // [
+  //   check('country', 'Please enter your country name').not().isEmpty(),
+  //   check('status', 'Please enter your professional status').not().isEmpty(),
+  //   check('skills', 'Please enter skills').not().isEmpty(),
+  // ],
   upload.single('avatar'),
   async (req, res) => {
     const errors = validationResult(req);
@@ -28,7 +28,11 @@ router.post(
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { country, location, status, skills, bio, avatar } = req.body;
+    const { country, location, status, skills, bio } = JSON.parse(
+      req.body.data
+    );
+
+    console.log(JSON.parse(req.body.data));
     try {
       let profile = await Profile.findOne({ user: req.user.id });
       let user = await User.findById(req.user.id);
@@ -41,7 +45,8 @@ router.post(
       }
 
       if (user.avatar) {
-        //await fs.unlink(user.avatar)
+        await fs.unlink(user.avatar);
+        console.log('file deleted successfully');
       }
 
       const newSkills = skills.split(',').map((skill) => skill.trim());
@@ -56,9 +61,7 @@ router.post(
       });
 
       if (req.file) {
-        user = new User({
-          avatar: req.file.path,
-        });
+        user.avatar = req.file.path;
         await user.save();
       }
 

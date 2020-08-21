@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
-import { setAlert, removeAlert } from '../actions/alert';
+import { removeAlert } from '../actions/alert';
 import { signIn } from '../actions/auth';
 import { setColor, setRem, setFlex, media } from '../../styles';
 import { PrimaryButton } from '../globals/Button';
@@ -21,7 +21,7 @@ const SignIn = ({ className, alerts, removeAlert, signIn }) => {
     password: '',
   });
 
-  const { name, email, password, password2 } = formData;
+  const { email, password } = formData;
 
   const onChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -87,7 +87,6 @@ const SignIn = ({ className, alerts, removeAlert, signIn }) => {
 
 SignIn.propTypes = {
   signIn: PropTypes.func.isRequired,
-  setAlert: PropTypes.func.isRequired,
   removeAlert: PropTypes.func.isRequired,
   alerts: PropTypes.array.isRequired,
 };
@@ -98,7 +97,6 @@ const mapStateToProps = (state) => ({
 
 export default connect(mapStateToProps, {
   signIn,
-  setAlert,
   removeAlert,
 })(styled(SignIn)`
   display: grid;

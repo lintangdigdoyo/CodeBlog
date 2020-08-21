@@ -1,14 +1,20 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
+import { connect } from 'react-redux';
+
 import { ReactComponent as Coder } from './coder.svg';
 import { PrimaryButton } from '../globals/Button';
 import { setRem, setColor, media } from '../../styles';
 
-const Landing = ({ className }) => {
+const Landing = ({ className, auth: { isAuthenticated } }) => {
   useEffect(() => {
     document.title = 'Welcome to CodeBlog';
   }, []);
+
+  if (isAuthenticated) {
+    return <Redirect to='/create-profile' />;
+  }
 
   return (
     <div className={className}>
@@ -30,7 +36,11 @@ const Landing = ({ className }) => {
   );
 };
 
-export default styled(Landing)`
+const mapStateToProps = (state) => ({
+  auth: state.auth,
+});
+
+export default connect(mapStateToProps)(styled(Landing)`
   display: grid;
   grid-template-areas:
     '. . img'
@@ -117,4 +127,4 @@ export default styled(Landing)`
       margin: 0 10%;
     }
   `}
-`;
+`);

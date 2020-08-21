@@ -49,63 +49,67 @@ const Navbar = ({
       onClick: signOut,
     },
   ];
+
   const DropdownAvatar = () => (
     <Dropdown
-      trigger={<Avatar src={user.avatar} />}
+      trigger={<Avatar />}
       options={options}
       pointing='top left'
       icon={null}
     />
   );
 
-  return (
-    <Fragment>
-      {!loading && isAuthenticated ? (
-        <nav className={className}>
-          <Link to='/'>
-            <h4>CodeBlog</h4>
-          </Link>
-          <ul>
-            <li>
-              <Link to='/'>home</Link>
-            </li>
-            <li>
-              <DropdownAvatar />
-            </li>
-            <li className='button'>
-              <SmallButton as={Link} to='/'>
-                create post
-              </SmallButton>
-            </li>
-          </ul>
-          <button className='hamburger' onClick={() => setVisible(!sidebar)}>
-            <HamburgerMenu />
-          </button>
-        </nav>
-      ) : (
-        <nav className={className}>
-          <Link to='/'>
-            <h4>CodeBlog</h4>
-          </Link>
-          <ul>
-            <li>
-              <Link to='/'>home</Link>
-            </li>
-            <li>
-              <Link to='/login'>sign in</Link>
-            </li>
-            <li className='button'>
-              <SmallButton as={Link} to='/register'>
-                sign up
-              </SmallButton>
-            </li>
-          </ul>
-          <button className='hamburger' onClick={() => setVisible(!sidebar)}>
-            <HamburgerMenu />
-          </button>
-        </nav>
+  const privateLinks = (
+    <ul>
+      <li>
+        <Link to='/'>home</Link>
+      </li>
+
+      {user && (
+        <Fragment>
+          <li>
+            <DropdownAvatar />
+          </li>
+          <li className='button'>
+            <SmallButton as={Link} to='/'>
+              create post
+            </SmallButton>
+          </li>
+        </Fragment>
       )}
-    </Fragment>
+    </ul>
+  );
+
+  const guestLinks = (
+    <ul>
+      <li>
+        <Link to='/'>home</Link>
+      </li>
+      <li>
+        <Link to='/login'>sign in</Link>
+      </li>
+      <li className='button'>
+        <SmallButton as={Link} to='/register'>
+          sign up
+        </SmallButton>
+      </li>
+    </ul>
+  );
+
+  return (
+    <nav className={className}>
+      <Link to='/'>
+        <h4>CodeBlog</h4>
+      </Link>
+      {!loading && (
+        <Fragment>
+          {isAuthenticated ? privateLinks : guestLinks}
+          <button className='hamburger' onClick={() => setVisible(!sidebar)}>
+            <HamburgerMenu />
+          </button>
+        </Fragment>
+      )}
+    </nav>
   );
 };
 
@@ -132,6 +136,16 @@ export default connect(mapStateToProps, { setVisible, signOut })(styled(Navbar)`
   align-items: center;
   font-size: ${setRem(16)};
 
+  .item {
+    i {
+      color: ${setColor.darkBlue};
+    }
+  }
+  img {
+    &:hover {
+      border: 3px solid ${setColor.mainGray};
+    }
+  }
   svg {
     width: 25px;
     height: 17px;
@@ -139,11 +153,12 @@ export default connect(mapStateToProps, { setVisible, signOut })(styled(Navbar)`
 
   a {
     color: ${(props) =>
-      props.transparent ? setColor.darkBlue : setColor.mainWhite};
+      props.transparent ? setColor.darkBlue : setColor.mainGray};
     text-decoration: none;
     transition: 0.3s ease-in-out;
     &:hover {
-      color: ${setColor.mainBlue};
+      color: ${(props) =>
+        props.transparent ? setColor.mainBlue : setColor.mainWhite};
     }
   }
 

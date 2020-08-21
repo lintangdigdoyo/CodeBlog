@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { setColor, setRem } from '../../styles';
 
-export const Button = styled.button`
+const Button = styled.button`
   background-color: ${setColor.darkBlue};
   color: ${setColor.mainWhite};
   text-transform: capitalize;
@@ -22,7 +22,7 @@ export const PrimaryButton = styled(Button)`
   letter-spacing: 1.2px;
   background-color: ${(props) => props.outline && 'rgba(0,0,0,0)'};
   color: ${(props) => props.outline && setColor.darkBlue};
-  border: 1px solid ${setColor.darkBlue};
+  border: ${(props) => props.outline && `1px solid ${setColor.darkBlue}`};
   ${(props) =>
     props.outline &&
     `&:hover {
@@ -32,10 +32,10 @@ export const PrimaryButton = styled(Button)`
 `;
 
 export const SmallButton = styled(Button)`
-  padding: ${setRem(5)} ${setRem(15)};
+  padding: ${setRem(8)} ${setRem(25)};
   background-color: ${(props) => props.outline && 'rgba(0,0,0,0)'};
   color: ${(props) => props.outline && setColor.darkBlue};
-  border: 1px solid ${setColor.darkBlue};
+  border: ${(props) => props.outline && `1px solid ${setColor.darkBlue}`};
   ${(props) =>
     props.outline &&
     `&:hover {

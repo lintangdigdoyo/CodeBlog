@@ -23,7 +23,7 @@ Alert.propTypes = {
     PropTypes.shape({
       msg: PropTypes.string.isRequired,
       alertType: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
+      name: PropTypes.string,
     })
   ).isRequired,
 };

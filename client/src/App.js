@@ -12,15 +12,16 @@ import SidebarNav from './components/globals/SidebarNav';
 import Landing from './components/landing/Landing';
 import SignUp from './components/auth/SignUp';
 import SignIn from './components/auth/SignIn';
+import CreateProfile from './components/profile/CreateProfile';
 
 const App = ({ loadUser, auth: { isAuthenticated } }) => {
   useEffect(() => {
     loadUser();
-  }, []);
+  }, [loadUser]);
 
   return (
     <Fragment>
-      <GlobalStyle lightBlue />
+      <GlobalStyle lightBlue={isAuthenticated ? false : true} />
       <Router>
         <SidebarNav>
           <Navbar transparent={isAuthenticated ? false : true} />
@@ -29,6 +30,7 @@ const App = ({ loadUser, auth: { isAuthenticated } }) => {
               <Route exact path='/' component={Landing} />
               <Route exact path='/register' component={SignUp} />
               <Route exact path='/login' component={SignIn} />
+              <Route exact path='/create-profile' component={CreateProfile} />
             </Switch>
           </Container>
         </SidebarNav>

@@ -1,12 +1,17 @@
 import axios from 'axios';
 
-const api = axios.create({
+export const api = axios.create({
   baseURL: '/api',
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-// TODO LOGOUT WHEN EXPIRED
+export const apiMultipart = axios.create({
+  baseURL: '/api',
+  headers: {
+    'Content-Type': 'multipart/form-data',
+  },
+});
 
-export default api;
+// TODO LOGOUT WHEN EXPIRED

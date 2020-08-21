@@ -9,7 +9,7 @@ import {
 } from './types';
 
 import { setAlert } from './alert';
-import api from '../apis/api';
+import { api } from '../apis/api';
 
 // Load User
 export const loadUser = () => async (dispatch) => {
@@ -26,6 +26,7 @@ export const signUp = (formData) => async (dispatch) => {
   try {
     await api.post('/auth/signup', formData);
     dispatch({ type: REGISTER_SUCCESS });
+    dispatch(loadUser());
   } catch (err) {
     const errors = err.response.data.errors;
 
@@ -43,6 +44,7 @@ export const signIn = (formData) => async (dispatch) => {
   try {
     await api.post('/auth/signin', formData);
     dispatch({ type: LOGIN_SUCCESS });
+    dispatch(loadUser());
   } catch (err) {
     const errors = err.response.data.errors;
 
@@ -51,6 +53,7 @@ export const signIn = (formData) => async (dispatch) => {
         dispatch(setAlert(error.msg, 'danger', error.param))
       );
     }
+    dispatch({ type: LOGIN_FAIL });
   }
 };
 
