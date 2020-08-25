@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -8,37 +8,60 @@ import { setColor } from '../../styles';
 import Modal from '../globals/Modal';
 import AddEducation from './AddEducation';
 
-const Education = ({ className, education, profile, auth: { user } }) => (
-  <div className={className}>
-    {user && profile && profile.user._id === user._id && (
-      <Modal title='Add Education' body={<AddEducation />}>
-        <i className='fas fa-plus-circle'></i>
-      </Modal>
-    )}
-    <h3>Educations</h3>
-    {education &&
-      education.map((education) => (
-        <div className='education' key={education._id}>
-          {user && profile && profile.user._id === user._id && (
-            <Modal title='Edit Education' body='test'>
-              <i className='far fa-edit'></i>
-            </Modal>
-          )}
-          <h4>{education.school}</h4>
-          <h5>{education.degree && education.degree}</h5>
-          <div className='date'>
-            {education.start && (
-              <Moment format='YYYY'>{education.start}</Moment>
+const Education = ({ className, education, profile, auth: { user } }) => {
+  const [formData, setFormData] = useState({
+    school: '',
+    degree: '',
+    startYear: '',
+    endYear: '',
+    current: false,
+  });
+
+  const onChange = (e) =>
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+
+  return (
+    <div className={className}>
+      {user && profile && profile.user._id === user._id && (
+        <Modal
+          title='Add Education'
+          formData={formData}
+          body={
+            <AddEducation
+              formData={formData}
+              onChange={onChange}
+              setFormData={setFormData}
+            />
+          }
+        >
+          <i className='fas fa-plus-circle'></i>
+        </Modal>
+      )}
+      <h3>Educations</h3>
+      {education &&
+        education.map((education) => (
+          <div className='education' key={education._id}>
+            {user && profile && profile.user._id === user._id && (
+              <Modal title='Edit Education' body='test'>
+                <i className='far fa-edit'></i>
+              </Modal>
             )}
-            {education.start && (education.end || education.current) && ' - '}
-            {education.end && <Moment format='YYYY'>{education.end}</Moment>}
-            {education.current && 'Now'}
+            <h4>{education.school}</h4>
+            <h5>{education.degree && education.degree}</h5>
+            <div className='date'>
+              {education.start && (
+                <Moment format='YYYY'>{education.start}</Moment>
+              )}
+              {education.start && (education.end || education.current) && ' - '}
+              {education.end && <Moment format='YYYY'>{education.end}</Moment>}
+              {education.current && 'Now'}
+            </div>
+            <div className='line' />
           </div>
-          <div className='line' />
-        </div>
-      ))}
-  </div>
-);
+        ))}
+    </div>
+  );
+};
 
 Education.propTypes = {
   education: PropTypes.array.isRequired,
@@ -58,9 +81,11 @@ export default connect(mapStateToProps)(styled(Education)`
   text-align: center;
   box-shadow: 4px 5px 10px rgba(0, 0, 0, 0.2);
   padding: 5%;
+  padding-bottom: 10%;
   h3 {
     color: ${setColor.darkBlue};
-    margin-bottom: 40px;
+    margin-bottom: 20px;
+    margin-top: 0;
   }
   i {
     position: absolute;
@@ -75,10 +100,8 @@ export default connect(mapStateToProps)(styled(Education)`
     }
   }
   .education {
-    margin: 10px 0;
     text-align: left;
     position: relative;
-    margin-bottom: 10%;
     h4,
     h5 {
       font-weight: 400;

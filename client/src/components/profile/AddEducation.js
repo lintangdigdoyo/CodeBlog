@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
 import { setColor } from '../../styles';
 
-const AddEducation = ({ className }) => {
+const AddEducation = ({ className, formData, setFormData, onChange }) => {
   const firstYear = 1980;
   const yearNow = new Date().getFullYear();
   const yearCount = yearNow - firstYear + 1;
@@ -13,7 +13,7 @@ const AddEducation = ({ className }) => {
     (val, index) => yearNow - index
   );
 
-  console.log(years);
+  const { school, degree, startYear, endYear, current } = formData;
 
   return (
     <div className={className}>
@@ -25,6 +25,8 @@ const AddEducation = ({ className }) => {
         name='school'
         id='school'
         placeholder='Enter your school name'
+        value={school}
+        onChange={onChange}
       />
       <label htmlFor='degree'>Degree</label>
       <input
@@ -32,36 +34,65 @@ const AddEducation = ({ className }) => {
         name='degree'
         id='degree'
         placeholder='Enter your degree'
+        value={degree}
+        onChange={onChange}
       />
       <label htmlFor='start-year'>
         Start Year <span>*</span>
       </label>
-      <select name='start-year' id='start-year'>
-        {years.map((year, index) => (
-          <option key={index} value={year}>
-            {year}
-          </option>
-        ))}
-      </select>
-
-      <label htmlFor='country'>
-        School <span>*</span>
-      </label>
+      <div className='select'>
+        <select
+          className='start-year'
+          name='startYear'
+          id='start-year'
+          onMouseDown={(e) => {
+            e.target.size = 5;
+          }}
+          onChange={(e) => {
+            e.target.size = 0;
+            setFormData({ ...formData, startYear: e.target.value });
+          }}
+          onBlur={(e) => (e.target.size = 0)}
+          value={startYear}
+        >
+          {years.map((year, index) => (
+            <option key={index} value={year}>
+              {year}
+            </option>
+          ))}
+        </select>
+      </div>
+      <label htmlFor='end-year'>End Year</label>
       <input
-        type='text'
-        name='country'
-        id='country'
-        placeholder='Country or region you are living'
-      />
-      <label htmlFor='country'>
-        School <span>*</span>
-      </label>
-      <input
-        type='text'
-        name='country'
-        id='country'
-        placeholder='Country or region you are living'
-      />
+        type='checkbox'
+        name='current'
+        value={current}
+        checked={current}
+        onChange={() => setFormData({ ...formData, current: !current })}
+      />{' '}
+      Current
+      <div className='select'>
+        <select
+          className='end-year'
+          name='endYear'
+          id='end-year'
+          onMouseDown={(e) => {
+            e.target.size = 5;
+          }}
+          onChange={(e) => {
+            e.target.size = 0;
+            setFormData({ ...formData, endYear: e.target.value });
+          }}
+          onBlur={(e) => (e.target.size = 0)}
+          value={endYear}
+        >
+          {years.map((year, index) => (
+            <option key={index} value={year}>
+              {year}
+            </option>
+          ))}
+        </select>
+      </div>
     </div>
   );
 };
@@ -84,8 +115,28 @@ export default styled(AddEducation)`
   span {
     color: ${setColor.mainRed};
   }
+  .select {
+    position: relative;
+    height: 40px;
+    .start-year {
+      z-index: 5;
+    }
+    .end-year {
+      z-index: 4;
+    }
+  }
   select {
+    border: 1px solid ${setColor.mainBlue};
+    position: absolute;
+    display: block;
     width: 20%;
     padding: 5px;
+    margin-bottom: 10px;
+    cursor: pointer;
+  }
+
+  input[type='checkbox'] {
+    width: 0;
+    cursor: pointer;
   }
 `;
