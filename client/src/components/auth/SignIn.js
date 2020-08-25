@@ -2,24 +2,40 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { Redirect } from 'react-router-dom';
 
 import { removeAlert } from '../actions/alert';
 import { signIn } from '../actions/auth';
 import { setColor, setRem, setFlex, media } from '../../styles';
 import { PrimaryButton } from '../globals/Button';
 import Alert from '../globals/Alert';
+import { getProfile } from '../actions/profile';
 
-const SignIn = ({ className, alerts, removeAlert, signIn }) => {
+const SignIn = ({
+  className,
+  alerts,
+  removeAlert,
+  signIn,
+  auth: { isAuthenticated, loading, user },
+  getProfile,
+}) => {
   useEffect(() => {
     return () => {
       removeAlert();
     };
-  }, [removeAlert]);
+  }, [removeAlert, isAuthenticated]);
 
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   });
+
+  if (!loading && isAuthenticated) {
+    if (user !== null) {
+      getProfile(user._id);
+      return <Redirect to={`/profile/${user._id}`} />;
+    }
+  }
 
   const { email, password } = formData;
 
@@ -88,16 +104,20 @@ const SignIn = ({ className, alerts, removeAlert, signIn }) => {
 SignIn.propTypes = {
   signIn: PropTypes.func.isRequired,
   removeAlert: PropTypes.func.isRequired,
+  getProfile: PropTypes.func.isRequired,
   alerts: PropTypes.array.isRequired,
+  auth: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = (state) => ({
   alerts: state.alerts,
+  auth: state.auth,
 });
 
 export default connect(mapStateToProps, {
   signIn,
   removeAlert,
+  getProfile,
 })(styled(SignIn)`
   display: grid;
   height: 800px;

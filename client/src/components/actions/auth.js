@@ -6,6 +6,7 @@ import {
   REGISTER_SUCCESS,
   REGISTER_FAIL,
   LOGOUT,
+  CLEAR_PROFILE,
 } from './types';
 
 import { setAlert } from './alert';
@@ -62,6 +63,7 @@ export const signOut = () => async (dispatch) => {
   try {
     await api.get('/auth/signout');
     dispatch({ type: LOGOUT });
+    dispatch({ type: CLEAR_PROFILE });
   } catch (err) {
     dispatch({ type: AUTH_ERROR });
   }

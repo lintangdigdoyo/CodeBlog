@@ -25,6 +25,9 @@ const profileSchema = new mongoose.Schema({
   bio: {
     type: String,
   },
+  website: {
+    type: String,
+  },
   education: [Education],
   experience: [Experience],
   date: {

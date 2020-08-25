@@ -4,6 +4,7 @@ const { check, validationResult } = require('express-validator');
 const { auth } = require('../../middleware/auth');
 const checkObjectId = require('../../middleware/checkObjectId');
 const upload = require('../../middleware/upload');
+const fs = require('fs');
 
 const Profile = require('../../models/Profile/Profile');
 const User = require('../../models/User');
@@ -13,10 +14,9 @@ const User = require('../../models/User');
 //@access Private
 
 router.post('/', auth, upload.single('avatar'), async (req, res) => {
-  const { country, location, status, skills, bio } = req.body;
+  const { country, location, status, website, skills, bio } = req.body;
 
   const errors = [];
-
   if (country === '') {
     errors.push({ msg: 'Please enter your country name', param: 'country' });
   }
@@ -50,11 +50,21 @@ router.post('/', auth, upload.single('avatar'), async (req, res) => {
       country,
       location,
       status,
+      website,
       skills: newSkills,
       bio,
     });
 
     if (req.file) {
+      if (user.avatar) {
+        fs.unlink(user.avatar, (err) => {
+          if (err) {
+            console.error(err);
+            return;
+          }
+          //file removed
+        });
+      }
       user.avatar = req.file.path;
       await user.save();
     }

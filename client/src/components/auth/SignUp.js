@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { Redirect } from 'react-router-dom';
 
 import { setAlert, removeAlert } from '../actions/alert';
 import { signUp } from '../actions/auth';
@@ -9,7 +10,14 @@ import { setColor, setRem, setFlex, media } from '../../styles';
 import { PrimaryButton } from '../globals/Button';
 import Alert from '../globals/Alert';
 
-const SignUp = ({ className, setAlert, alerts, removeAlert, signUp }) => {
+const SignUp = ({
+  className,
+  setAlert,
+  alerts,
+  removeAlert,
+  signUp,
+  auth: { loading, isAuthenticated },
+}) => {
   useEffect(() => {
     return () => {
       removeAlert();
@@ -22,6 +30,10 @@ const SignUp = ({ className, setAlert, alerts, removeAlert, signUp }) => {
     password: '',
     password2: '',
   });
+
+  if (!loading && isAuthenticated) {
+    return <Redirect to='/create-profile' />;
+  }
 
   const { name, email, password, password2 } = formData;
 
@@ -126,10 +138,12 @@ SignUp.propTypes = {
   removeAlert: PropTypes.func.isRequired,
   signUp: PropTypes.func.isRequired,
   alerts: PropTypes.array.isRequired,
+  auth: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = (state) => ({
   alerts: state.alerts,
+  auth: state.auth,
 });
 
 export default connect(mapStateToProps, {
