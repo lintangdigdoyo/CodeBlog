@@ -106,6 +106,22 @@ export const deleteEducation = (userId, educationId) => async (dispatch) => {
   }
 };
 
+//Add Experience
+export const addExperience = (formData, userId) => async (dispatch) => {
+  try {
+    const res = await api.post(`/profiles/${userId}/experiences`, formData);
+    dispatch({ type: UPDATE_PROFILE, payload: res.data });
+    dispatch(setAlert('Experience Added', 'success'));
+  } catch (err) {
+    const errors = err.response.data.errors;
+    if (errors) {
+      errors.forEach((error) =>
+        dispatch(setAlert(error.msg, 'danger', error.param))
+      );
+    }
+  }
+};
+
 //Clear profile data
 export const clearProfile = () => {
   return { type: CLEAR_PROFILE };

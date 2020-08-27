@@ -69,6 +69,7 @@ const Education = ({
                 </Modal>
                 <Modal
                   title='Edit Education'
+                  submit='Save'
                   submitData={() =>
                     updateEducation(formData, profile.user._id, education._id)
                   }
@@ -78,7 +79,6 @@ const Education = ({
                       education={education}
                       onChange={onChange}
                       setFormData={setFormData}
-                      user={user}
                     />
                   }
                 >

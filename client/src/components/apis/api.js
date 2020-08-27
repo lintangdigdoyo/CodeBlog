@@ -8,5 +8,3 @@ const api = axios.create({
 });
 
 export default api;
-
-// TODO LOGOUT WHEN EXPIRED

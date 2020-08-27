@@ -89,7 +89,7 @@ const EducationForm = ({
       Current
       <div className='select'>
         <select
-          disabled={current ? true : false}
+          disabled={current}
           className='end-year'
           name='endYear'
           id='end-year'

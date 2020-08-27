@@ -364,7 +364,9 @@ router.post(
     const { job, company, location, start, current, end } = req.body;
 
     try {
-      let profile = await Profile.findOne({ user: req.params.userId });
+      let profile = await Profile.findOne({
+        user: req.params.userId,
+      }).populate('user', ['name', 'avatar']);
 
       if (!profile) {
         return res
@@ -411,7 +413,9 @@ router.patch(
     const { job, company, location, start, current, end } = req.body;
 
     try {
-      const profile = await Profile.findOne({ user: req.params.userId });
+      const profile = await Profile.findOne({
+        user: req.params.userId,
+      }).populate('user', ['name', 'avatar']);
 
       if (!profile) {
         return res
@@ -461,7 +465,9 @@ router.delete(
   checkObjectId('experienceId'),
   async (req, res) => {
     try {
-      const profile = await Profile.findOne({ user: req.params.userId });
+      const profile = await Profile.findOne({
+        user: req.params.userId,
+      }).populate('user', ['name', 'avatar']);
 
       if (!profile) {
         return res

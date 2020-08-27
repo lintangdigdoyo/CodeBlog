@@ -2,13 +2,13 @@ import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
+import ExperienceForm from './ExperienceForm';
 import { removeAlert } from '../actions/alert';
-import EducationForm from './EducationForm';
 
-const AddEducation = ({
+const AddExperience = ({
   formData,
-  setFormData,
   onChange,
+  setFormData,
   removeAlert,
   alerts,
 }) => {
@@ -17,29 +17,30 @@ const AddEducation = ({
       alerts.length !== 0 && removeAlert();
     }
     setFormData({
-      school: '',
-      degree: '',
-      startYear: '',
-      endYear: '',
+      job: '',
+      company: '',
+      location: '',
+      start: '',
+      end: '',
       current: false,
     });
-
     return () => {
       if (alerts.length !== 0 && alerts[0].alertType === 'danger') {
         removeAlert();
       }
       setFormData({
-        school: '',
-        degree: '',
-        startYear: '',
-        endYear: '',
+        job: '',
+        company: '',
+        location: '',
+        start: '',
+        end: '',
         current: false,
       });
     };
-  }, [removeAlert, setFormData, alerts]);
+  }, [setFormData, removeAlert, alerts]);
 
   return (
-    <EducationForm
+    <ExperienceForm
       formData={formData}
       onChange={onChange}
       setFormData={setFormData}
@@ -47,7 +48,7 @@ const AddEducation = ({
   );
 };
 
-AddEducation.propTypes = {
+AddExperience.propTypes = {
   removeAlert: PropTypes.func.isRequired,
   alerts: PropTypes.array.isRequired,
 };
@@ -56,4 +57,4 @@ const mapStateToProps = (state) => ({
   alerts: state.alerts,
 });
 
-export default connect(mapStateToProps, { removeAlert })(AddEducation);
+export default connect(mapStateToProps, { removeAlert })(AddExperience);
