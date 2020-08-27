@@ -5,35 +5,29 @@ import { connect } from 'react-redux';
 import { removeAlert } from '../actions/alert';
 import EducationForm from './EducationForm';
 
-const AddEducation = ({
+const UpdateEducation = ({
   formData,
   setFormData,
   onChange,
   removeAlert,
   alerts,
+  education,
 }) => {
   useEffect(() => {
     if (alerts.length !== 0 && alerts[0].alertType === 'success') {
       alerts.length !== 0 && removeAlert();
     }
     setFormData({
-      school: '',
-      degree: '',
-      startYear: '',
-      endYear: '',
-      current: false,
+      school: education.school,
+      degree: education.degree,
+      startYear: education.startYear,
+      endYear: education.endYear,
+      current: education.current,
     });
     return () => {
       if (alerts.length !== 0 && alerts[0].alertType === 'danger') {
         removeAlert();
       }
-      setFormData({
-        school: '',
-        degree: '',
-        startYear: '',
-        endYear: '',
-        current: false,
-      });
     };
   }, [removeAlert, alerts, setFormData]);
 
@@ -46,7 +40,7 @@ const AddEducation = ({
   );
 };
 
-AddEducation.propTypes = {
+UpdateEducation.propTypes = {
   removeAlert: PropTypes.func.isRequired,
   alerts: PropTypes.array.isRequired,
 };
@@ -55,4 +49,4 @@ const mapStateToProps = (state) => ({
   alerts: state.alerts,
 });
 
-export default connect(mapStateToProps, { removeAlert })(AddEducation);
+export default connect(mapStateToProps, { removeAlert })(UpdateEducation);

@@ -2,8 +2,10 @@ import { css } from 'styled-components';
 
 export const setColor = {
   primaryColor: '#0A97B0',
+  successColor: '#d4edda',
   dangerColor: '#b82727',
   lightDanger: '#ffd4d4',
+  mainGreen: '#155724',
   mainRed: '#E83131',
   mainBlue: '#1B6CA8',
   lightBlue: '#EAFCFF',

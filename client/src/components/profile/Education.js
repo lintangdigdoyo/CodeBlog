@@ -1,14 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, Fragment } from 'react';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import Moment from 'react-moment';
 
 import { setColor } from '../../styles';
 import Modal from '../globals/Modal';
+import {
+  addEducation,
+  deleteEducation,
+  updateEducation,
+} from '../actions/profile';
 import AddEducation from './AddEducation';
+import UpdateEducation from './UpdateEducation';
 
-const Education = ({ className, education, profile, auth: { user } }) => {
+const Education = ({
+  className,
+  education,
+  profile,
+  auth: { user },
+  addEducation,
+  deleteEducation,
+  updateEducation,
+}) => {
   const [formData, setFormData] = useState({
     school: '',
     degree: '',
@@ -25,8 +38,8 @@ const Education = ({ className, education, profile, auth: { user } }) => {
       {user && profile && profile.user._id === user._id && (
         <Modal
           title='Add Education'
-          formData={formData}
-          body={
+          submitData={() => addEducation(formData, user._id)}
+          content={
             <AddEducation
               formData={formData}
               onChange={onChange}
@@ -42,18 +55,45 @@ const Education = ({ className, education, profile, auth: { user } }) => {
         education.map((education) => (
           <div className='education' key={education._id}>
             {user && profile && profile.user._id === user._id && (
-              <Modal title='Edit Education' body='test'>
-                <i className='far fa-edit'></i>
-              </Modal>
+              <Fragment>
+                <Modal
+                  title={`Delete ${education.school}`}
+                  content={`Are you sure want to delete ${education.school}?`}
+                  submitData={() =>
+                    deleteEducation(profile.user._id, education._id)
+                  }
+                  danger
+                  submit='Delete'
+                >
+                  <i className='far fa-trash-alt'></i>
+                </Modal>
+                <Modal
+                  title='Edit Education'
+                  submitData={() =>
+                    updateEducation(formData, profile.user._id, education._id)
+                  }
+                  content={
+                    <UpdateEducation
+                      formData={formData}
+                      education={education}
+                      onChange={onChange}
+                      setFormData={setFormData}
+                      user={user}
+                    />
+                  }
+                >
+                  <i className='far fa-edit'></i>
+                </Modal>
+              </Fragment>
             )}
             <h4>{education.school}</h4>
             <h5>{education.degree && education.degree}</h5>
             <div className='date'>
-              {education.start && (
-                <Moment format='YYYY'>{education.start}</Moment>
-              )}
-              {education.start && (education.end || education.current) && ' - '}
-              {education.end && <Moment format='YYYY'>{education.end}</Moment>}
+              {education.startYear && education.startYear}
+              {education.startYear &&
+                (education.endYear || education.current) &&
+                ' - '}
+              {education.endYear && education.endYear}
               {education.current && 'Now'}
             </div>
             <div className='line' />
@@ -67,6 +107,9 @@ Education.propTypes = {
   education: PropTypes.array.isRequired,
   profile: PropTypes.object.isRequired,
   auth: PropTypes.object.isRequired,
+  addEducation: PropTypes.func.isRequired,
+  deleteEducation: PropTypes.func.isRequired,
+  updateEducation: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
@@ -75,7 +118,11 @@ const mapStateToProps = (state) => ({
   auth: state.auth,
 });
 
-export default connect(mapStateToProps)(styled(Education)`
+export default connect(mapStateToProps, {
+  addEducation,
+  deleteEducation,
+  updateEducation,
+})(styled(Education)`
   position: relative;
   background-color: ${setColor.mainWhite};
   text-align: center;
@@ -90,7 +137,6 @@ export default connect(mapStateToProps)(styled(Education)`
   i {
     position: absolute;
     right: 10%;
-    top: 10%;
     font-size: 20px;
     color: ${setColor.darkBlue};
     cursor: pointer;
@@ -116,6 +162,14 @@ export default connect(mapStateToProps)(styled(Education)`
       cursor: pointer;
       &:hover {
         color: ${setColor.mainBlue};
+        transition: 0.3s ease-in-out;
+      }
+    }
+    i.fa-trash-alt {
+      right: 17%;
+      color: ${setColor.dangerColor};
+      &:hover {
+        color: ${setColor.mainRed};
         transition: 0.3s ease-in-out;
       }
     }

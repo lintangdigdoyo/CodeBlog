@@ -5,6 +5,9 @@ export const setAlert = (msg, alertType, name) => (dispatch) => {
     type: SET_ALERT,
     payload: { msg, alertType, name },
   });
+  if (alertType === 'success') {
+    setTimeout(() => dispatch({ type: REMOVE_ALERT }), 5000);
+  }
 };
 
 export const removeAlert = () => {

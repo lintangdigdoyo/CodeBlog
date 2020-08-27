@@ -13,6 +13,7 @@ import Experience from './Experience';
 import Skill from './Skill';
 import Posts from './Posts';
 import Modal from '../globals/Modal';
+import Alert from '../globals/Alert';
 
 const Profile = ({
   className,
@@ -21,6 +22,7 @@ const Profile = ({
   profile,
   match,
   clearProfile,
+  alerts,
 }) => {
   useEffect(() => {
     getProfile(match.params.userId);
@@ -53,12 +55,13 @@ const Profile = ({
   ) : (
     profile.profile && (
       <div className={className}>
+        <Alert />
         <div className='user-profile'>
           <Avatar src={profileAvatar} />
           <h2>
             {profile.profile.user.name}
             {user && user._id === match.params.userId && (
-              <Modal title='Edit Profile' body='test'>
+              <Modal title='Edit Profile' content='aaa'>
                 <i className='far fa-edit'></i>
               </Modal>
             )}
@@ -105,11 +108,13 @@ Profile.propTypes = {
   auth: PropTypes.object.isRequired,
   clearProfile: PropTypes.func.isRequired,
   profile: PropTypes.object.isRequired,
+  alerts: PropTypes.array.isRequired,
 };
 
 const mapStateToProps = (state) => ({
   auth: state.auth,
   profile: state.profile,
+  alerts: state.alerts,
 });
 
 export default connect(mapStateToProps, { getProfile, clearProfile })(

@@ -1,8 +1,13 @@
-import { GET_PROFILE, PROFILE_ERROR, CLEAR_PROFILE } from './types';
+import {
+  GET_PROFILE,
+  PROFILE_ERROR,
+  CLEAR_PROFILE,
+  UPDATE_PROFILE,
+} from './types';
 import axios from 'axios';
 
-import { setAlert } from './alert';
 import api from '../apis/api';
+import { setAlert } from './alert';
 
 //get user profile
 export const getProfile = (id) => async (dispatch) => {
@@ -41,6 +46,59 @@ export const createProfile = (formData, file) => async (dispatch) => {
         dispatch(setAlert(error.msg, 'danger', error.param))
       );
     }
+    dispatch({
+      type: PROFILE_ERROR,
+      payload: { msg: err.response.statusText, status: err.response.status },
+    });
+  }
+};
+
+//Add Education
+export const addEducation = (formData, id) => async (dispatch) => {
+  try {
+    const res = await api.post(`/profiles/${id}/educations`, formData);
+    dispatch({ type: UPDATE_PROFILE, payload: res.data });
+    dispatch(setAlert('Education Added', 'success'));
+  } catch (err) {
+    const errors = err.response.data.errors;
+    if (errors) {
+      errors.forEach((error) => {
+        dispatch(setAlert(error.msg, 'danger', error.param));
+      });
+    }
+  }
+};
+
+//Update Education
+export const updateEducation = (formData, userId, educationId) => async (
+  dispatch
+) => {
+  try {
+    const res = await api.patch(
+      `/profiles/${userId}/educations/${educationId}`,
+      formData
+    );
+    dispatch({ type: UPDATE_PROFILE, payload: res.data });
+    dispatch(setAlert('Education Updated', 'success'));
+  } catch (err) {
+    const errors = err.response.data.errors;
+    if (errors) {
+      errors.forEach((error) => {
+        dispatch(setAlert(error.msg, 'danger', error.param));
+      });
+    }
+  }
+};
+
+//Delete Education
+export const deleteEducation = (userId, educationId) => async (dispatch) => {
+  try {
+    const res = await api.delete(
+      `/profiles/${userId}/educations/${educationId}`
+    );
+    dispatch({ type: GET_PROFILE, payload: res.data });
+    dispatch(setAlert('Education Deleted', 'success'));
+  } catch (err) {
     dispatch({
       type: PROFILE_ERROR,
       payload: { msg: err.response.statusText, status: err.response.status },

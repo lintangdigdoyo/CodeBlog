@@ -193,10 +193,12 @@ router.post(
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { school, degree, start, current, end } = req.body;
+    const { school, degree, startYear, current, endYear } = req.body;
 
     try {
-      let profile = await Profile.findOne({ user: req.params.userId });
+      let profile = await Profile.findOne({
+        user: req.params.userId,
+      }).populate('user', ['name', 'avatar']);
 
       if (!profile) {
         return res
@@ -208,9 +210,10 @@ router.post(
         return res.status(401).json({ errors: [{ msg: 'Unauthorized user' }] });
       }
 
-      profile.education.push({ school, degree, start, current, end });
+      profile.education.push({ school, degree, startYear, current, endYear });
 
       await profile.save();
+
       res.json(profile);
     } catch (err) {
       console.error(err.message);
@@ -236,10 +239,12 @@ router.patch(
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { school, degree, start, current, end } = req.body;
+    const { school, degree, startYear, current, endYear } = req.body;
 
     try {
-      const profile = await Profile.findOne({ user: req.params.userId });
+      const profile = await Profile.findOne({
+        user: req.params.userId,
+      }).populate('user', ['name', 'avatar']);
 
       if (!profile) {
         return res
@@ -267,9 +272,15 @@ router.patch(
 
       if (school) updateEducation[0].school = school;
       if (degree) updateEducation[0].degree = degree;
-      if (start) updateEducation[0].start = start;
-      if (current) updateEducation[0].current = current;
-      if (end) updateEducation[0].end = end;
+      if (startYear) updateEducation[0].startYear = startYear;
+      if (typeof current !== 'undefined') {
+        updateEducation[0].current = current;
+        updateEducation[0].endYear = '';
+      }
+      if (endYear) {
+        updateEducation[0].endYear = endYear;
+        updateEducation[0].current = false;
+      }
 
       await profile.save();
       res.json(profile);
@@ -291,7 +302,9 @@ router.delete(
   checkObjectId('educationId'),
   async (req, res) => {
     try {
-      const profile = await Profile.findOne({ user: req.params.userId });
+      const profile = await Profile.findOne({
+        user: req.params.userId,
+      }).populate('user', ['name', 'avatar']);
 
       if (!profile) {
         return res

@@ -1,7 +1,11 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button, Modal } from 'semantic-ui-react';
 import styled from 'styled-components';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+
 import { setColor } from '../../styles';
+import { removeAlert } from '../actions/alert';
 
 function reducer(state, action) {
   switch (action.type) {
@@ -18,11 +22,13 @@ const ModalComponent = ({
   children,
   className,
   title,
-  body,
+  content,
   submit,
   cancel,
   danger,
-  formData,
+  submitData,
+  alerts,
+  removeAlert,
 }) => {
   const [state, dispatch] = React.useReducer(reducer, {
     open: false,
@@ -31,9 +37,16 @@ const ModalComponent = ({
 
   const { open, size } = state;
 
-  const onSubmit = (e) => {
+  useEffect(() => {
+    if (alerts.length !== 0 && alerts[0].alertType === 'success') {
+      dispatch({ type: 'close' });
+    }
+  }, [alerts]);
+
+  const onSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
+    removeAlert();
+    submitData();
   };
 
   return (
@@ -49,13 +62,13 @@ const ModalComponent = ({
       >
         <Modal.Header
           style={{
-            backgroundColor: danger ? setColor.mainRed : setColor.mainBlue,
+            backgroundColor: danger ? setColor.dangerColor : setColor.mainBlue,
             color: setColor.mainWhite,
           }}
         >
           {title}
         </Modal.Header>
-        <Modal.Content>{body}</Modal.Content>
+        <Modal.Content>{content}</Modal.Content>
         <Modal.Actions>
           <Button onClick={() => dispatch({ type: 'close' })}>
             {cancel || 'Cancel'}
@@ -68,7 +81,6 @@ const ModalComponent = ({
             }}
             onClick={(e) => {
               onSubmit(e);
-              dispatch({ type: 'close' });
             }}
           >
             {submit || 'Submit'}
@@ -79,7 +91,16 @@ const ModalComponent = ({
   );
 };
 
-export default styled(ModalComponent)`
+ModalComponent.propTypes = {
+  alerts: PropTypes.array.isRequired,
+  removeAlert: PropTypes.func.isRequired,
+};
+
+const mapStateToProps = (state) => ({
+  alerts: state.alerts,
+});
+
+export default connect(mapStateToProps, { removeAlert })(styled(ModalComponent)`
   padding: 0;
   margin: 0;
   display: inline;
@@ -89,4 +110,4 @@ export default styled(ModalComponent)`
     margin-left: 10px;
     background: none;
   }
-`;
+`);

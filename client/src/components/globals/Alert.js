@@ -36,4 +36,14 @@ export default connect(mapStateToProps)(styled(Alert)`
     background-color: ${setColor.lightDanger};
     padding: 5px;
   }
+  .success {
+    color: ${setColor.mainGreen};
+    background-color: ${setColor.successColor};
+    padding: 5px;
+    position: absolute;
+    width: 100vw;
+    top: 70px;
+    left: 0;
+    text-align: center;
+  }
 `);

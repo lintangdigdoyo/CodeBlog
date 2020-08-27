@@ -162,42 +162,42 @@ const mapStateToProps = (state) => ({
   alerts: state.alerts,
 });
 
-export default connect(mapStateToProps, { createProfile, removeAlert })(styled(
-  ProfileForm
-)`
-  input.danger {
-    border: 2px solid ${setColor.mainRed};
-    &::placeholder {
-      color: ${setColor.dangerColor};
+export default connect(mapStateToProps, { createProfile, removeAlert })(
+  styled(ProfileForm)`
+    input.danger {
+      border: 2px solid ${setColor.mainRed};
+      &::placeholder {
+        color: ${setColor.dangerColor};
+      }
     }
-  }
-  .input-upload {
-    border: none;
-    cursor: pointer;
-  }
-  .upload-avatar {
-    display: grid;
-    align-items: center;
-  }
-  img {
-    height: 100px;
-    width: 100px;
-    margin: 10px;
-  }
-  button {
-    height: 40px;
-  }
-  label {
-    display: block;
-    color: ${setColor.darkBlue};
-    font-weight: 600;
-  }
-  input,
-  textarea {
-    border: 1px solid ${setColor.mainBlue};
-    width: 70%;
-    margin-bottom: 10px;
-    line-height: 25px;
-    padding: 5px;
-  }
-`);
+    .input-upload {
+      border: none;
+      cursor: pointer;
+    }
+    .upload-avatar {
+      display: grid;
+      align-items: center;
+    }
+    img {
+      height: 100px;
+      width: 100px;
+      margin: 10px;
+    }
+    button {
+      height: 40px;
+    }
+    label {
+      display: block;
+      color: ${setColor.darkBlue};
+      font-weight: 600;
+    }
+    input,
+    textarea {
+      border: 1px solid ${setColor.mainBlue};
+      width: 70%;
+      margin-bottom: 10px;
+      line-height: 25px;
+      padding: 5px;
+    }
+  `
+);
