@@ -157,7 +157,9 @@ router.post(
         expiresIn: 24 * 60 * 60,
       });
 
-      res.cookie('access_token', token).json(token);
+      res
+        .cookie('access_token', token, { maxAge: 24 * 60 * 60 * 1000 })
+        .json(token);
     } catch (err) {
       console.error(err.message);
       res.status(500).send('Server Error');

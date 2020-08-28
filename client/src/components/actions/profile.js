@@ -53,6 +53,26 @@ export const createProfile = (formData, file) => async (dispatch) => {
   }
 };
 
+//Update Profile
+export const updateProfile = (formData, userId) => async (dispatch) => {
+  try {
+    const res = await api.patch(`/profiles/${userId}`, formData);
+    dispatch({ type: UPDATE_PROFILE, payload: res.data });
+    dispatch(setAlert('Profile Updated', 'success'));
+  } catch (err) {
+    const errors = err.response.data.errors;
+    if (errors) {
+      errors.forEach((error) =>
+        dispatch(setAlert(error.msg, 'danger', error.param))
+      );
+    }
+    dispatch({
+      type: PROFILE_ERROR,
+      payload: { msg: err.response.statusText, status: err.response.status },
+    });
+  }
+};
+
 //Add Education
 export const addEducation = (formData, id) => async (dispatch) => {
   try {

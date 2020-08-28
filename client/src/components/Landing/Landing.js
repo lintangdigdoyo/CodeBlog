@@ -6,8 +6,9 @@ import { connect } from 'react-redux';
 import { ReactComponent as Coder } from './coder.svg';
 import { PrimaryButton } from '../globals/Button';
 import { setRem, setColor, media } from '../../styles';
+import Spinner from '../globals/Spinner';
 
-const Landing = ({ className, auth: { isAuthenticated } }) => {
+const Landing = ({ className, auth: { isAuthenticated, loading } }) => {
   useEffect(() => {
     document.title = 'Welcome to CodeBlog';
   }, []);
@@ -16,7 +17,9 @@ const Landing = ({ className, auth: { isAuthenticated } }) => {
     return <Redirect to='/create-profile' />;
   }
 
-  return (
+  return loading ? (
+    <Spinner />
+  ) : (
     <div className={className}>
       <h1>Welcome to CodeBlog</h1>
       <h4>Connect and Share Your knowledge with everyone </h4>

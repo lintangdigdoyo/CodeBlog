@@ -7,8 +7,15 @@ import { Redirect } from 'react-router-dom';
 import { getProfile } from '../actions/profile';
 import ProfileForm from './ProfileForm';
 import { setColor } from '../../styles';
+import Spinner from '../globals/Spinner';
 
-const CreateProfile = ({ className, getProfile, auth: { user }, profile }) => {
+const CreateProfile = ({
+  className,
+  getProfile,
+  auth: { user, loading },
+  profile,
+  hasProfile,
+}) => {
   useEffect(() => {
     document.title = 'Create Profile';
     if (user !== null) {
@@ -20,7 +27,9 @@ const CreateProfile = ({ className, getProfile, auth: { user }, profile }) => {
     return <Redirect to={`/profile/${user._id}`} />;
   }
 
-  return (
+  return loading || hasProfile === null || profile !== null ? (
+    <Spinner />
+  ) : (
     <div className={className}>
       <h1>Create Your Profile</h1>
       <h4>Let's fill your information so everyone will know you better.</h4>
@@ -35,11 +44,13 @@ const CreateProfile = ({ className, getProfile, auth: { user }, profile }) => {
 CreateProfile.propTypes = {
   auth: PropTypes.object.isRequired,
   getProfile: PropTypes.func.isRequired,
+  hasProfile: PropTypes.bool.isRequired,
 };
 
 const mapStateToProps = (state) => ({
   auth: state.auth,
   profile: state.profile.profile,
+  hasProfile: state.profile.hasProfile,
 });
 
 export default connect(mapStateToProps, { getProfile })(styled(CreateProfile)`

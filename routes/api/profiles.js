@@ -137,7 +137,9 @@ router.patch(
     const { country, location, status, skills, bio, avatar } = req.body;
 
     try {
-      let profile = await Profile.findOne({ user: req.params.userId });
+      let profile = await Profile.findOne({
+        user: req.params.userId,
+      }).populate('user', ['name', 'avatar']);
       let user = await User.findById(req.user.id);
 
       if (!profile) {
@@ -153,7 +155,6 @@ router.patch(
       }
 
       const newSkills = skills.split(',').map((skill) => skill.trim());
-      console.log(profile);
 
       if (country) profile.country = country;
       if (location) profile.location = location;

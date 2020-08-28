@@ -68,7 +68,7 @@ const ModalComponent = ({
         >
           {title}
         </Modal.Header>
-        <Modal.Content>{content}</Modal.Content>
+        <Modal.Content scrolling>{content}</Modal.Content>
         <Modal.Actions>
           <Button onClick={() => dispatch({ type: 'close' })}>
             {cancel || 'Cancel'}
