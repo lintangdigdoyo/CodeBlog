@@ -11,6 +11,7 @@ const AddEducation = ({
   onChange,
   removeAlert,
   alerts,
+  profile,
 }) => {
   useEffect(() => {
     if (alerts.length !== 0 && alerts[0].alertType === 'success') {
@@ -25,7 +26,11 @@ const AddEducation = ({
     });
 
     return () => {
-      if (alerts.length !== 0 && alerts[0].alertType === 'danger') {
+      if (
+        profile.error &&
+        alerts.length !== 0 &&
+        alerts[0].alertType === 'danger'
+      ) {
         removeAlert();
       }
       setFormData({
@@ -36,7 +41,7 @@ const AddEducation = ({
         current: false,
       });
     };
-  }, [removeAlert, setFormData, alerts]);
+  }, [removeAlert, setFormData, profile.error]);
 
   return (
     <EducationForm
@@ -50,10 +55,12 @@ const AddEducation = ({
 AddEducation.propTypes = {
   removeAlert: PropTypes.func.isRequired,
   alerts: PropTypes.array.isRequired,
+  profile: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = (state) => ({
   alerts: state.alerts,
+  profile: state.profile,
 });
 
 export default connect(mapStateToProps, { removeAlert })(AddEducation);

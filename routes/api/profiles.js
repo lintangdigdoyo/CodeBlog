@@ -184,7 +184,10 @@ router.patch(
 router.post(
   '/:userId/educations',
   auth,
-  [check('school', 'Please enter the school name').not().isEmpty()],
+  [
+    check('school', 'Please enter the school name').not().isEmpty(),
+    check('startYear', 'Please enter the start year').not().isEmpty(),
+  ],
   checkObjectId('userId'),
   async (req, res) => {
     const errors = validationResult(req);
@@ -353,6 +356,7 @@ router.post(
     check('job', 'Please enter the job title').not().isEmpty(),
     check('location', 'Please enter the location').not().isEmpty(),
     check('company', 'Please enter the company name').not().isEmpty(),
+    check('start', 'Please enter the start date').not().isEmpty(),
   ],
   async (req, res) => {
     const errors = validationResult(req);
@@ -441,8 +445,14 @@ router.patch(
       if (company) updateExperience[0].company = company;
       if (location) updateExperience[0].location = location;
       if (start) updateExperience[0].start = start;
-      if (current) updateExperience[0].current = current;
-      if (end) updateExperience[0].end = end;
+      if (typeof current !== 'undefined') {
+        updateExperience[0].current = current;
+        updateExperience[0].end = '';
+      }
+      if (end) {
+        updateExperience[0].end = end;
+        updateExperience[0].current = false;
+      }
 
       await profile.save();
 

@@ -11,6 +11,7 @@ const AddExperience = ({
   setFormData,
   removeAlert,
   alerts,
+  profile,
 }) => {
   useEffect(() => {
     if (alerts.length !== 0 && alerts[0].alertType === 'success') {
@@ -24,8 +25,13 @@ const AddExperience = ({
       end: '',
       current: false,
     });
+
     return () => {
-      if (alerts.length !== 0 && alerts[0].alertType === 'danger') {
+      if (
+        profile.error &&
+        alerts.length !== 0 &&
+        alerts[0].alertType === 'danger'
+      ) {
         removeAlert();
       }
       setFormData({
@@ -37,7 +43,7 @@ const AddExperience = ({
         current: false,
       });
     };
-  }, [setFormData, removeAlert, alerts]);
+  }, [setFormData, removeAlert, profile.error]);
 
   return (
     <ExperienceForm
@@ -51,10 +57,12 @@ const AddExperience = ({
 AddExperience.propTypes = {
   removeAlert: PropTypes.func.isRequired,
   alerts: PropTypes.array.isRequired,
+  profile: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = (state) => ({
   alerts: state.alerts,
+  profile: state.profile,
 });
 
 export default connect(mapStateToProps, { removeAlert })(AddExperience);

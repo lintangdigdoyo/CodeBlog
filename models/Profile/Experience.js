@@ -15,6 +15,7 @@ const experienceSchama = new mongoose.Schema({
   },
   start: {
     type: Date,
+    required: true,
   },
   current: {
     type: Boolean,

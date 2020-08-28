@@ -23,9 +23,9 @@ const EducationForm = ({
     (val, index) => yearNow - index
   );
 
-  let alertDanger = '';
+  let alertName = [];
   if (alerts.length > 0 && alerts[0].alertType === 'danger') {
-    alertDanger = 'danger';
+    alertName = alerts.map((alert) => alert.name);
   }
 
   return (
@@ -35,7 +35,9 @@ const EducationForm = ({
         School <span>*</span>
       </label>
       <input
-        className={alertDanger}
+        className={
+          alertName.filter((alert) => alert === 'school').toString() && 'danger'
+        }
         type='text'
         name='school'
         id='school'
@@ -52,10 +54,15 @@ const EducationForm = ({
         value={degree}
         onChange={onChange}
       />
-      <label htmlFor='start-year'>Start Year</label>
+      <label htmlFor='start-year'>
+        Start Year <span>*</span>
+      </label>
       <div className='select'>
         <select
-          className='start-year'
+          className={
+            alertName.filter((alert) => alert === 'startYear').toString() &&
+            'danger'
+          }
           name='startYear'
           id='start-year'
           onMouseDown={(e) => {
@@ -137,7 +144,8 @@ export default connect(mapStateToProps)(styled(EducationForm)`
     padding: 5px;
   }
 
-  input.danger {
+  input.danger,
+  select.danger {
     border-color: ${setColor.mainRed};
     &::placeholder {
       color: ${setColor.dangerColor};

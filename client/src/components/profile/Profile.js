@@ -14,6 +14,7 @@ import Skill from './Skill';
 import Posts from './Posts';
 import Modal from '../globals/Modal';
 import Alert from '../globals/Alert';
+import { removeAlert } from '../actions/alert';
 
 const Profile = ({
   className,
@@ -23,13 +24,15 @@ const Profile = ({
   match,
   clearProfile,
   alerts,
+  removeAlert,
 }) => {
   useEffect(() => {
     getProfile(match.params.userId);
     return () => {
+      removeAlert();
       clearProfile();
     };
-  }, [getProfile, clearProfile, isAuthenticated]);
+  }, [getProfile, clearProfile, isAuthenticated, removeAlert]);
 
   if (!loading && user && user._id === match.params.userId) {
     if (profile.profile === null && profile.hasProfile === false) {
@@ -109,6 +112,7 @@ Profile.propTypes = {
   clearProfile: PropTypes.func.isRequired,
   profile: PropTypes.object.isRequired,
   alerts: PropTypes.array.isRequired,
+  removeAlert: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
@@ -117,7 +121,11 @@ const mapStateToProps = (state) => ({
   alerts: state.alerts,
 });
 
-export default connect(mapStateToProps, { getProfile, clearProfile })(
+export default connect(mapStateToProps, {
+  getProfile,
+  clearProfile,
+  removeAlert,
+})(
   styled(Profile)`
     margin: 5% 0;
     display: grid;

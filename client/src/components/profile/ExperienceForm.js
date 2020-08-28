@@ -67,11 +67,17 @@ const ExperienceForm = ({
         value={location}
         onChange={onChange}
       />
-      <label htmlFor='start'>Start Date</label>
+      <label htmlFor='start'>
+        Start Date <span>*</span>
+      </label>
       <input
         type='date'
         name='start'
         id='start'
+        className={
+          alertName.filter((alert) => alert === 'location').toString() &&
+          'danger'
+        }
         value={start}
         onChange={onChange}
       />

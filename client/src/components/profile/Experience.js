@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, Fragment } from 'react';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -7,7 +7,12 @@ import Moment from 'react-moment';
 import { setColor } from '../../styles';
 import Modal from '../globals/Modal';
 import AddExperience from './AddExperience';
-import { addExperience } from '../actions/profile';
+import {
+  addExperience,
+  deleteExperience,
+  updateExperience,
+} from '../actions/profile';
+import UpdateExperience from './UpdateExperience';
 
 const Experience = ({
   className,
@@ -15,6 +20,8 @@ const Experience = ({
   auth: { user },
   profile,
   addExperience,
+  deleteExperience,
+  updateExperience,
 }) => {
   const [formData, setFormData] = useState({
     job: '',
@@ -51,7 +58,36 @@ const Experience = ({
         experience.map((experience) => (
           <div className='experience' key={experience._id}>
             {user && profile && profile.user._id === user._id && (
-              <i className='far fa-edit'></i>
+              <Fragment>
+                <Modal
+                  title={`Delete ${experience.job}`}
+                  content={`Are you sure want to delete ${experience.job}?`}
+                  submitData={() =>
+                    deleteExperience(profile.user._id, experience._id)
+                  }
+                  danger
+                  submit='Delete'
+                >
+                  <i className='far fa-trash-alt'></i>
+                </Modal>
+                <Modal
+                  title='Edit Experience'
+                  submit='Save'
+                  submitData={() =>
+                    updateExperience(formData, profile.user._id, experience._id)
+                  }
+                  content={
+                    <UpdateExperience
+                      formData={formData}
+                      experience={experience}
+                      onChange={onChange}
+                      setFormData={setFormData}
+                    />
+                  }
+                >
+                  <i className='far fa-edit'></i>
+                </Modal>
+              </Fragment>
             )}
 
             <h4>{experience.job}</h4>
@@ -61,13 +97,13 @@ const Experience = ({
             </h5>
             <div className='date'>
               {experience.start && (
-                <Moment format='YYYY'>{experience.start}</Moment>
+                <Moment format='MMMM Do YYYY'>{experience.start}</Moment>
               )}
               {experience.start &&
                 (experience.end || experience.current) &&
                 ' - '}
               {experience.end && (
-                <Moment format='YYYY/MM/DD'>{experience.end}</Moment>
+                <Moment format='MMMM Do YYYY'>{experience.end}</Moment>
               )}
               {experience.current && 'Now'}
             </div>
@@ -83,6 +119,8 @@ Experience.propTypes = {
   profile: PropTypes.object.isRequired,
   auth: PropTypes.object.isRequired,
   addExperience: PropTypes.func.isRequired,
+  deleteExperience: PropTypes.func.isRequired,
+  updateExperience: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
@@ -91,7 +129,11 @@ const mapStateToProps = (state) => ({
   auth: state.auth,
 });
 
-export default connect(mapStateToProps, { addExperience })(styled(Experience)`
+export default connect(mapStateToProps, {
+  addExperience,
+  deleteExperience,
+  updateExperience,
+})(styled(Experience)`
   position: relative;
   background-color: ${setColor.mainWhite};
   text-align: center;
@@ -105,7 +147,6 @@ export default connect(mapStateToProps, { addExperience })(styled(Experience)`
   i {
     position: absolute;
     right: 10%;
-    top: 15%;
     font-size: 20px;
     color: ${setColor.darkBlue};
     cursor: pointer;
@@ -128,12 +169,19 @@ export default connect(mapStateToProps, { addExperience })(styled(Experience)`
     i {
       position: absolute;
       right: 5%;
-      top: 0;
       font-size: 20px;
       color: ${setColor.darkBlue};
       cursor: pointer;
       &:hover {
         color: ${setColor.mainBlue};
+        transition: 0.3s ease-in-out;
+      }
+    }
+    i.fa-trash-alt {
+      right: 17%;
+      color: ${setColor.dangerColor};
+      &:hover {
+        color: ${setColor.mainRed};
         transition: 0.3s ease-in-out;
       }
     }

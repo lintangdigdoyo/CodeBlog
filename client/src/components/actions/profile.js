@@ -66,6 +66,10 @@ export const addEducation = (formData, id) => async (dispatch) => {
         dispatch(setAlert(error.msg, 'danger', error.param));
       });
     }
+    dispatch({
+      type: PROFILE_ERROR,
+      payload: { msg: err.response.statusText, status: err.response.status },
+    });
   }
 };
 
@@ -119,6 +123,47 @@ export const addExperience = (formData, userId) => async (dispatch) => {
         dispatch(setAlert(error.msg, 'danger', error.param))
       );
     }
+    dispatch({
+      type: PROFILE_ERROR,
+      payload: { msg: err.response.statusText, status: err.response.status },
+    });
+  }
+};
+
+//Update Experience
+export const updateExperience = (formData, userId, experienceId) => async (
+  dispatch
+) => {
+  try {
+    const res = await api.patch(
+      `/profiles/${userId}/experiences/${experienceId}`,
+      formData
+    );
+    dispatch({ type: UPDATE_PROFILE, payload: res.data });
+    dispatch(setAlert('Experience Updated', 'success'));
+  } catch (err) {
+    const errors = err.response.data.errors;
+    if (errors) {
+      errors.map((error) =>
+        dispatch(setAlert(error.msg, 'danger', error.param))
+      );
+    }
+  }
+};
+
+//Delete experience
+export const deleteExperience = (userId, experienceId) => async (dispatch) => {
+  try {
+    const res = await api.delete(
+      `/profiles/${userId}/experiences/${experienceId}`
+    );
+    dispatch({ type: UPDATE_PROFILE, payload: res.data });
+    dispatch(setAlert('Experience Deleted', 'success'));
+  } catch (err) {
+    dispatch({
+      type: PROFILE_ERROR,
+      payload: { msg: err.response.statusText, status: err.response.status },
+    });
   }
 };
 

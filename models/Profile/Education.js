@@ -10,6 +10,7 @@ const educationSchema = new mongoose.Schema({
   },
   startYear: {
     type: String,
+    required: true,
   },
   current: {
     type: Boolean,
