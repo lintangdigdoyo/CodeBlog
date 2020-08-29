@@ -40,7 +40,13 @@ const Navbar = ({
 
   //dropdown menu
   const options = [
-    { key: 'user', text: 'Account', icon: 'user', as: Link, to: '/' },
+    {
+      key: 'user',
+      text: 'Account',
+      icon: 'user',
+      as: Link,
+      to: user && `/profile/${user._id}`,
+    },
     { key: 'settings', text: 'Settings', icon: 'settings' },
     {
       key: 'sign-out',

@@ -1,66 +1,63 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import { removeAlert } from '../actions/alert';
-import { updateProfile } from '../actions/profile';
 import Avatar from '../globals/Avatar';
 import Alert from '../globals/Alert';
 import { setColor } from '../../styles';
 
-const UpdateProfile = ({ removeAlert, alerts, className }) => {
+const UpdateProfile = ({
+  removeAlert,
+  alerts,
+  className,
+  formData,
+  setFormData,
+  profile,
+  onUploadChange,
+  onFormChange,
+  imagePreviewUrl,
+}) => {
   useEffect(() => {
     if (alerts.length !== 0 && alerts[0].alertType === 'success') {
       alerts.length !== 0 && removeAlert();
     }
+    setFormData({
+      country: profile.country,
+      location: profile.location ? profile.location : '',
+      status: profile.status,
+      website: profile.website ? profile.website : '',
+      skills: profile.skills,
+      bio: profile.bio ? profile.bio : '',
+      name: profile.user.name,
+    });
+
     return () => {
       if (alerts.length !== 0 && alerts[0].alertType === 'danger') {
         removeAlert();
       }
+      setFormData({
+        country: profile.country,
+        location: profile.location ? profile.location : '',
+        status: profile.status,
+        website: profile.website ? profile.website : '',
+        skills: profile.skills,
+        bio: profile.bio ? profile.bio : '',
+        name: profile.user.name,
+      });
     };
-  }, [removeAlert, alerts]);
+  }, [removeAlert, setFormData, alerts]);
 
-  const [formData, setFormData] = useState({
-    country: '',
-    location: '',
-    status: '',
-    website: '',
-    skills: '',
-    bio: '',
-  });
-  const [file, setFile] = useState();
-  const [imagePreviewUrl, setImagePreviewUrl] = useState();
-
-  const { country, location, status, website, skills, bio } = formData;
-
-  const onFormChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const onUploadChange = (e) => {
-    let reader = new FileReader();
-    let file = e.target.files[0];
-
-    reader.onloadend = () => {
-      setFile(file);
-      setImagePreviewUrl(reader.result);
-    };
-    reader.readAsDataURL(file);
-  };
-
-  const onSubmit = (e) => {
-    e.preventDefault();
-    removeAlert();
-    updateProfile(formData, file);
-  };
+  const { country, location, status, website, bio, name } = formData;
 
   const alertName = alerts.map((alert) => alert.name);
 
   return (
     <div className={className}>
+      <Alert />
       <div className='upload-avatar'>
-        <label htmlFor='avatar'>Upload Photo</label>
+        <label htmlFor='avatar'>Upload Photo (max:500KB)</label>
         <Avatar src={imagePreviewUrl} />
         <input
           type='file'
@@ -68,6 +65,22 @@ const UpdateProfile = ({ removeAlert, alerts, className }) => {
           name='avatar'
           onChange={onUploadChange}
           accept='image/*'
+        />
+      </div>
+      <div className='item'>
+        <label htmlFor='name'>
+          Full Name <span>*</span>
+        </label>
+        <input
+          type='text'
+          name='name'
+          id='name'
+          placeholder='Your full name'
+          className={
+            alertName.filter((alert) => alert === 'name').toString() && 'danger'
+          }
+          value={name}
+          onChange={onFormChange}
         />
       </div>
       <div className='item'>
@@ -123,23 +136,6 @@ const UpdateProfile = ({ removeAlert, alerts, className }) => {
           name='website'
           id='website'
           value={website}
-          onChange={onFormChange}
-        />
-      </div>
-      <div className='item'>
-        <label htmlFor='skills'>
-          Skills <span>*</span>
-        </label>
-        <input
-          type='text'
-          placeholder='Please use comma separated values (eg. HTML,CSS,JavaScript,PHP)'
-          name='skills'
-          id='skills'
-          className={
-            alertName.filter((alert) => alert === 'skills').toString() &&
-            'danger'
-          }
-          value={skills}
           onChange={onFormChange}
         />
       </div>
@@ -200,14 +196,6 @@ export default connect(mapStateToProps, { removeAlert })(
     }
     span {
       color: ${setColor.mainRed};
-    }
-    input[type='date'] {
-      display: block;
-      cursor: pointer;
-    }
-    input[type='checkbox'] {
-      width: 0;
-      cursor: pointer;
     }
     input[type='file'] {
       border: 0;

@@ -45,6 +45,23 @@ router.post(
   }
 );
 
+//@route GET api/posts/profiles/:userId
+//@desc Get posts from user
+//@access Public
+
+router.get('/profiles/:userId', checkObjectId('userId'), async (req, res) => {
+  try {
+    const posts = await Post.find({ user: req.params.userId });
+    if (!posts) {
+      res.status(404).json({ errors: [{ msg: 'User post not found' }] });
+    }
+    res.json(posts);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+});
+
 //@route GET api/posts/:postId
 //@desc Get a post
 //@access Public

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
@@ -16,6 +16,7 @@ import Modal from '../globals/Modal';
 import Alert from '../globals/Alert';
 import { removeAlert } from '../actions/alert';
 import UpdateProfile from './UpdateProfile';
+import { updateProfile } from '../actions/profile';
 
 const Profile = ({
   className,
@@ -25,6 +26,7 @@ const Profile = ({
   match,
   clearProfile,
   removeAlert,
+  updateProfile,
 }) => {
   useEffect(() => {
     getProfile(match.params.userId);
@@ -32,14 +34,34 @@ const Profile = ({
       removeAlert();
       clearProfile();
     };
-  }, [getProfile, clearProfile, isAuthenticated, removeAlert]);
+  }, [
+    getProfile,
+    clearProfile,
+    isAuthenticated,
+    removeAlert,
+    match.params.userId,
+  ]);
 
+  const [formData, setFormData] = useState({
+    country: '',
+    location: '',
+    status: '',
+    website: '',
+    skills: '',
+    bio: '',
+    name: '',
+  });
+  const [file, setFile] = useState();
+  const [imagePreviewUrl, setImagePreviewUrl] = useState();
+
+  //Check user has profile or not
   if (!loading && user && user._id === match.params.userId) {
     if (profile.profile === null && profile.hasProfile === false) {
       return <Redirect to='/create-profile' />;
     }
   }
 
+  //Check if the avatar from googleApi or not
   let profileAvatar = '';
   if (profile.profile !== null) {
     document.title = `${profile.profile.user.name} Profile`;
@@ -53,7 +75,22 @@ const Profile = ({
     }
   }
 
-  return loading || profile.profile === null ? (
+  const onFormChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const onUploadChange = (e) => {
+    let reader = new FileReader();
+    let file = e.target.files[0];
+
+    reader.onloadend = () => {
+      setFile(file);
+      setImagePreviewUrl(reader.result);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  return loading || profile.hasProfile === null ? (
     <Spinner />
   ) : (
     profile.profile && (
@@ -64,7 +101,21 @@ const Profile = ({
           <h2>
             {profile.profile.user.name}
             {user && user._id === match.params.userId && (
-              <Modal title='Edit Profile' content={<UpdateProfile />}>
+              <Modal
+                title='Edit Profile'
+                submitData={() => updateProfile(formData, file, user._id)}
+                submit='Save'
+                content={
+                  <UpdateProfile
+                    formData={formData}
+                    setFormData={setFormData}
+                    profile={profile.profile}
+                    onFormChange={onFormChange}
+                    onUploadChange={onUploadChange}
+                    imagePreviewUrl={imagePreviewUrl}
+                  />
+                }
+              >
                 <i className='far fa-edit'></i>
               </Modal>
             )}
@@ -76,7 +127,11 @@ const Profile = ({
             {profile.profile.country}
           </h4>
           <p>{profile.profile.bio && profile.profile.bio}</p>
-          <a href={profile.profile.website && profile.profile.website}>
+          <a
+            href={profile.profile.website && profile.profile.website}
+            target='_blank'
+            rel='noopener noreferrer'
+          >
             {profile.profile.website && profile.profile.website}
           </a>
           <div className='totalof'>
@@ -98,7 +153,7 @@ const Profile = ({
             <Skill />
           </aside>
           <section>
-            <Posts />
+            <Posts match={match} />
           </section>
         </div>
       </div>
@@ -112,6 +167,7 @@ Profile.propTypes = {
   clearProfile: PropTypes.func.isRequired,
   profile: PropTypes.object.isRequired,
   removeAlert: PropTypes.func.isRequired,
+  updateProfile: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
@@ -123,6 +179,7 @@ export default connect(mapStateToProps, {
   getProfile,
   clearProfile,
   removeAlert,
+  updateProfile,
 })(
   styled(Profile)`
     margin: 5% 0;
@@ -134,7 +191,7 @@ export default connect(mapStateToProps, {
     .user-profile {
       display: grid;
       gap: 5%;
-      grid-template-columns: 50% 70%;
+      grid-template-columns: 210px 310px;
       grid-template-areas:
         'avatar name'
         'avatar status'

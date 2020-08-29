@@ -3,11 +3,13 @@ import {
   PROFILE_ERROR,
   CLEAR_PROFILE,
   UPDATE_PROFILE,
+  GET_PROFILE_FAIL,
 } from './types';
 import axios from 'axios';
 
 import api from '../apis/api';
 import { setAlert } from './alert';
+import { set } from 'mongoose';
 
 //get user profile
 export const getProfile = (id) => async (dispatch) => {
@@ -16,7 +18,7 @@ export const getProfile = (id) => async (dispatch) => {
     dispatch({ type: GET_PROFILE, payload: res.data });
   } catch (err) {
     dispatch({
-      type: PROFILE_ERROR,
+      type: GET_PROFILE_FAIL,
       payload: { msg: err.response.statusText, status: err.response.status },
     });
   }
@@ -53,12 +55,45 @@ export const createProfile = (formData, file) => async (dispatch) => {
   }
 };
 
-//Update Profile
-export const updateProfile = (formData, userId) => async (dispatch) => {
+//update user profile
+export const updateProfile = (formData, file, userId) => async (dispatch) => {
+  try {
+    const { country, location, status, website, skills, bio, name } = formData;
+
+    const fd = new FormData();
+
+    fd.append('country', country);
+    fd.append('location', location);
+    fd.append('status', status);
+    fd.append('website', website);
+    fd.append('skills', skills);
+    fd.append('bio', bio);
+    fd.append('name', name);
+    fd.append('avatar', file);
+
+    const res = await axios.patch(`/api/profiles/${userId}`, fd);
+    dispatch({ type: UPDATE_PROFILE, payload: res.data });
+    dispatch(setAlert('Profile Updated', 'success'));
+  } catch (err) {
+    const errors = err.response.data.errors;
+    if (errors) {
+      errors.forEach((error) =>
+        dispatch(setAlert(error.msg, 'danger', error.param))
+      );
+    }
+    dispatch({
+      type: PROFILE_ERROR,
+      payload: { msg: err.response.statusText, status: err.response.status },
+    });
+  }
+};
+
+//Update Skill
+export const updateSkill = (formData, userId) => async (dispatch) => {
   try {
     const res = await api.patch(`/profiles/${userId}`, formData);
     dispatch({ type: UPDATE_PROFILE, payload: res.data });
-    dispatch(setAlert('Profile Updated', 'success'));
+    dispatch(setAlert('Skill Updated', 'success'));
   } catch (err) {
     const errors = err.response.data.errors;
     if (errors) {

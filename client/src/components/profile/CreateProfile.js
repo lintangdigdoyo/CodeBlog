@@ -27,7 +27,7 @@ const CreateProfile = ({
     return <Redirect to={`/profile/${user._id}`} />;
   }
 
-  return loading || hasProfile === null || profile !== null ? (
+  return loading || hasProfile === null ? (
     <Spinner />
   ) : (
     <div className={className}>

@@ -129,6 +129,7 @@ export default connect(mapStateToProps, {
   box-shadow: 4px 5px 10px rgba(0, 0, 0, 0.2);
   padding: 5%;
   padding-bottom: 10%;
+  width: 360px;
   h3 {
     color: ${setColor.darkBlue};
     margin-bottom: 20px;

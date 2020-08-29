@@ -50,7 +50,7 @@ const ProfileForm = ({ className, createProfile, removeAlert, alerts }) => {
   return (
     <form onSubmit={onSubmit} className={className}>
       <div className='upload-avatar'>
-        <label htmlFor='avatar'>Upload Photo</label>
+        <label htmlFor='avatar'>Upload Photo (max:500KB)</label>
         <Avatar src={imagePreviewUrl} />
         <input
           className='input-upload'

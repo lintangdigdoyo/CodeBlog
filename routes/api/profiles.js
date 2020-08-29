@@ -126,6 +126,7 @@ router.patch(
     check('country', 'Please enter your country').not().isEmpty(),
     check('status', 'Please enter your professional status').not().isEmpty(),
     check('skills', 'Please enter skills').not().isEmpty(),
+    check('name', 'Please enter your name').not().isEmpty(),
   ],
   async (req, res) => {
     const errors = validationResult(req);
@@ -134,7 +135,7 @@ router.patch(
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { country, location, status, skills, bio, avatar } = req.body;
+    const { country, location, status, website, skills, bio, name } = req.body;
 
     try {
       let profile = await Profile.findOne({
@@ -143,31 +144,43 @@ router.patch(
       let user = await User.findById(req.user.id);
 
       if (!profile) {
-        //await unlinkAsync(req.file.path)
         return res
           .status(400)
           .json({ msg: 'There is no profile for this user' });
       }
 
       if (req.params.userId !== req.user.id) {
-        //await unlinkAsync(req.file.path)
         return res.status(401).json({ errors: [{ msg: 'Unauthorized user' }] });
       }
 
       const newSkills = skills.split(',').map((skill) => skill.trim());
 
       if (country) profile.country = country;
-      if (location) profile.location = location;
+      if (location || location === '') profile.location = location;
       if (status) profile.status = status;
+      if (website || website === '') profile.website = website;
       if (skills) profile.skills = newSkills;
-      if (bio) profile.bio = bio;
+      if (bio || bio === '') profile.bio = bio;
+      if (name) {
+        profile.user.name = name;
+        user.name = name;
+        await user.save();
+      }
 
-      // if (req.file) {
-      //   user = new User({
-      //     avatar: req.file.path,
-      //   });
-      //   await user.save();
-      // }
+      if (req.file) {
+        if (user.avatar) {
+          fs.unlink(user.avatar, (err) => {
+            if (err) {
+              console.error(err);
+              return;
+            }
+            //file removed
+          });
+        }
+        profile.user.avatar = req.file.path;
+        user.avatar = req.file.path;
+        await user.save();
+      }
 
       await profile.save();
       res.json(profile);
@@ -275,7 +288,7 @@ router.patch(
       }
 
       if (school) updateEducation[0].school = school;
-      if (degree) updateEducation[0].degree = degree;
+      if (degree || degree === '') updateEducation[0].degree = degree;
       if (startYear) updateEducation[0].startYear = startYear;
       if (typeof current !== 'undefined') {
         updateEducation[0].current = current;

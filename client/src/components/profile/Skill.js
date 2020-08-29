@@ -6,22 +6,13 @@ import PropTypes from 'prop-types';
 import { setColor } from '../../styles';
 import Modal from '../globals/Modal';
 import UpdateSkill from './UpdateSkill';
-import { updateProfile } from '../actions/profile';
+import { updateSkill } from '../actions/profile';
 
-const Skill = ({
-  className,
-  skills,
-  auth: { user },
-  profile,
-  updateProfile,
-}) => {
+const Skill = ({ className, skills, auth: { user }, profile, updateSkill }) => {
   const [formData, setFormData] = useState({
     country: profile.country,
-    location: profile.location,
     status: profile.status,
-    website: profile.website,
     skills: profile.skills,
-    bio: profile.bio,
   });
 
   const onChange = (e) =>
@@ -33,7 +24,7 @@ const Skill = ({
         <Modal
           title='Edit Skill'
           submit='Save'
-          submitData={() => updateProfile(formData, user._id)}
+          submitData={() => updateSkill(formData, user._id)}
           content={
             <UpdateSkill
               formData={formData}
@@ -66,7 +57,7 @@ Skill.propTypes = {
   skills: PropTypes.array.isRequired,
   auth: PropTypes.object.isRequired,
   profile: PropTypes.object.isRequired,
-  updateProfile: PropTypes.func.isRequired,
+  updateSkill: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
@@ -75,13 +66,14 @@ const mapStateToProps = (state) => ({
   profile: state.profile.profile,
 });
 
-export default connect(mapStateToProps, { updateProfile })(styled(Skill)`
+export default connect(mapStateToProps, { updateSkill })(styled(Skill)`
   position: relative;
   background-color: ${setColor.mainWhite};
   text-align: center;
   box-shadow: 4px 5px 10px rgba(0, 0, 0, 0.2);
   padding: 5%;
   padding-bottom: 10%;
+  width: 360px;
   h3 {
     color: ${setColor.darkBlue};
     margin-bottom: 40px;
