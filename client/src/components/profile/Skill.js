@@ -29,7 +29,6 @@ const Skill = ({ className, skills, auth: { user }, profile, updateSkill }) => {
             <UpdateSkill
               formData={formData}
               onChange={onChange}
-              formData={formData}
               skill={profile.skills}
               setFormData={setFormData}
             />

@@ -77,7 +77,7 @@ const Navbar = ({
             <DropdownAvatar />
           </li>
           <li className='button'>
-            <SmallButton as={Link} to='/'>
+            <SmallButton as={Link} to='/create-post'>
               create post
             </SmallButton>
           </li>

@@ -61,7 +61,7 @@ const Profile = ({
     }
   }
 
-  //Check if the avatar from googleApi or not
+  //Check if the avatar from the googleApi or not
   let profileAvatar = '';
   if (profile.profile !== null) {
     document.title = `${profile.profile.user.name} Profile`;

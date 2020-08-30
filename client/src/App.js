@@ -15,6 +15,7 @@ import SignUp from './components/auth/SignUp';
 import SignIn from './components/auth/SignIn';
 import CreateProfile from './components/profile/CreateProfile';
 import Profile from './components/profile/Profile';
+import CreatePost from './components/post/CreatePost';
 
 const App = ({ loadUser, auth: { isAuthenticated }, profile }) => {
   useEffect(() => {
@@ -42,6 +43,7 @@ const App = ({ loadUser, auth: { isAuthenticated }, profile }) => {
                 path='/create-profile'
                 component={CreateProfile}
               />
+              <PrivateRoute exact path='/create-post' component={CreatePost} />
             </Switch>
           </Container>
         </SidebarNav>

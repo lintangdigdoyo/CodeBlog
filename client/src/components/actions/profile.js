@@ -9,7 +9,6 @@ import axios from 'axios';
 
 import api from '../apis/api';
 import { setAlert } from './alert';
-import { set } from 'mongoose';
 
 //get user profile
 export const getProfile = (id) => async (dispatch) => {

@@ -3,6 +3,7 @@ const router = express.Router();
 const { check, validationResult } = require('express-validator');
 const { auth } = require('../../middleware/auth');
 const checkObjectId = require('../../middleware/checkObjectId');
+const upload = require('../../middleware/upload');
 
 const Post = require('../../models/Post/Post');
 
@@ -13,26 +14,40 @@ const Post = require('../../models/Post/Post');
 router.post(
   '/',
   auth,
+  upload.fields([
+    {
+      name: 'header',
+      maxCount: 1,
+    },
+    {
+      name: 'thumbnail',
+      maxCount: 1,
+    },
+  ]),
   [
     check('title', 'Please enter a title').not().isEmpty(),
-    check('thumbnail', 'Please enter a thumbnail').not().isEmpty(),
     check('text', 'Text is required').not().isEmpty(),
   ],
   async (req, res) => {
     const errors = validationResult(req);
+    const { header, thumbnail } = req.files;
+
+    if (!thumbnail) {
+      errors.errors.push({ msg: 'Please enter thumbnail', param: 'thumbnail' });
+    }
 
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { title, header, thumbnail, text } = req.body;
+    const { title, text } = req.body;
 
     try {
       const post = new Post({
         user: req.user.id,
+        thumbnail: thumbnail[0].path,
+        header: header[0].path,
         title,
-        header,
-        thumbnail,
         text,
       });
 
