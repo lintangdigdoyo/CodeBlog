@@ -1,10 +1,14 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 
+import { ReactComponent as Cardboard } from './cardboard.svg';
 import { getUserPosts } from '../actions/post';
-import Post from './Post';
+import { setColor, setRem } from '../../styles';
+import Post from '../post/Post';
+import { SmallButton } from '../globals/Button';
 
 const Posts = ({
   className,
@@ -18,7 +22,17 @@ const Posts = ({
 
   return (
     <div className={className}>
-      {!loading && posts && posts.map((post) => <Post post={post} />)}
+      {!loading && (posts !== null) & (posts.length > 0)
+        ? posts.map((post) => <Post key={post._id} post={post} />)
+        : posts !== null && (
+            <div className='no-post'>
+              <Cardboard />
+              <p>You haven't posted anything yet. </p>
+              <SmallButton as={Link} to='/create-post'>
+                Create Post
+              </SmallButton>
+            </div>
+          )}
     </div>
   );
 };
@@ -32,4 +46,23 @@ const mapStateToProps = (state) => ({
   post: state.post,
 });
 
-export default connect(mapStateToProps, { getUserPosts })(styled(Posts)``);
+export default connect(mapStateToProps, { getUserPosts })(styled(Posts)`
+  .no-post {
+    color: ${setColor.darkGray};
+    text-align: center;
+    font-size: ${setRem(20)};
+    height: 100vh;
+    svg {
+      width: 150px;
+      height: 150px;
+    }
+    P {
+      margin-bottom: 5%;
+    }
+    a {
+      &:hover {
+        color: white;
+      }
+    }
+  }
+`);

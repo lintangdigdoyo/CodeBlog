@@ -4,6 +4,7 @@ const { check, validationResult } = require('express-validator');
 const { auth } = require('../../middleware/auth');
 const checkObjectId = require('../../middleware/checkObjectId');
 const upload = require('../../middleware/upload');
+const fs = require('fs');
 
 const Post = require('../../models/Post/Post');
 
@@ -26,14 +27,14 @@ router.post(
   ]),
   [
     check('title', 'Please enter a title').not().isEmpty(),
-    check('text', 'Text is required').not().isEmpty(),
+    check('text', 'Please enter the content').not().isEmpty(),
   ],
   async (req, res) => {
     const errors = validationResult(req);
     const { header, thumbnail } = req.files;
 
     if (!thumbnail) {
-      errors.errors.push({ msg: 'Please enter thumbnail', param: 'thumbnail' });
+      errors.errors.push({ msg: 'Thumbnail is required', param: 'thumbnail' });
     }
 
     if (!errors.isEmpty()) {
@@ -46,13 +47,15 @@ router.post(
       const post = new Post({
         user: req.user.id,
         thumbnail: thumbnail[0].path,
-        header: header[0].path,
+        header: header && header[0].path,
         title,
         text,
       });
 
       await post.save();
-      res.json(post);
+      const posts = await Post.find({ user: req.user.id });
+
+      res.json(posts);
     } catch (err) {
       console.log(err.message);
       res.status(500).send('Server Error');
@@ -173,8 +176,26 @@ router.delete('/:postId', auth, checkObjectId('postId'), async (req, res) => {
       return res.status(401).json({ errors: [{ msg: 'Unauthorized user' }] });
     }
 
+    fs.unlink(post.thumbnail, (err) => {
+      if (err) {
+        console.error(err);
+        return;
+      }
+      //file removed
+    });
+    if (post.header) {
+      fs.unlink(post.header, (err) => {
+        if (err) {
+          console.error(err);
+          return;
+        }
+        //file removed
+      });
+    }
+
     await post.remove();
-    res.json({ msg: 'Post Deleted' });
+    const posts = await Post.find({ user: req.user.id });
+    res.json(posts);
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server Error');

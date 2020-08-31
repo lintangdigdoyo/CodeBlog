@@ -10,13 +10,30 @@ import { createPost } from '../actions/post';
 import { removeAlert } from '../actions/alert';
 import Alert from '../globals/Alert';
 
-const PostForm = ({ className, auth: { user }, createPost, removeAlert }) => {
+const PostForm = ({
+  className,
+  auth: { user },
+  createPost,
+  removeAlert,
+  history,
+  post,
+}) => {
   useEffect(() => {
-    document.title = 'Create Post';
+    document.title = 'Post';
+    if (post) {
+      setFormData({
+        title: post.title,
+        text: post.text,
+      });
+      setFileData({
+        header: post.header,
+        thumbnail: post.thumbnail,
+      });
+    }
     return () => {
       removeAlert();
     };
-  }, [removeAlert]);
+  }, [removeAlert, post]);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -38,7 +55,9 @@ const PostForm = ({ className, auth: { user }, createPost, removeAlert }) => {
   const onSubmit = (e) => {
     e.preventDefault();
     removeAlert();
-    createPost(formData, fileData);
+
+    if (!post) createPost(formData, fileData, history, user._id);
+    else if (post) createPost(formData, fileData, history, user._id);
   };
 
   return (
@@ -47,6 +66,7 @@ const PostForm = ({ className, auth: { user }, createPost, removeAlert }) => {
         <div className='upload'>
           <label htmlFor='header'>
             <i className='fas fa-cloud-upload-alt'></i> Upload Header Image
+            (max:500KB)
           </label>
           <input
             type='file'
@@ -57,8 +77,8 @@ const PostForm = ({ className, auth: { user }, createPost, removeAlert }) => {
         </div>
         <div className='upload'>
           <label htmlFor='thumbnail'>
-            <i className='fas fa-cloud-upload-alt'></i> Upload Thumbnail{' '}
-            <span>*</span>
+            <i className='fas fa-cloud-upload-alt'></i> Upload Thumbnail
+            (max:500KB) <span>*</span>
           </label>
           <input
             type='file'
@@ -114,6 +134,9 @@ export default connect(mapStateToProps, { createPost, removeAlert })(
       box-shadow: 4px 5px 10px rgba(0, 0, 0, 0.2);
       margin-bottom: 2%;
       padding: 2%;
+    }
+    .upload {
+      margin-right: 5%;
     }
     input,
     textarea {

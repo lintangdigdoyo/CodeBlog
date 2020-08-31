@@ -1,19 +1,24 @@
 import React from 'react';
 import styled from 'styled-components';
+import { Redirect } from 'react-router-dom';
 
 import { setColor } from '../../styles';
 import PostForm from './PostForm';
 
-const CreatePost = ({ className, history }) => {
+const EditPost = ({ className, history, location: { post } }) => {
+  if (!post) {
+    return <Redirect to='/' />;
+  }
+
   return (
     <div className={className}>
-      <h1>Create a new post</h1>
-      <PostForm history={history} />
+      <h1>Edit Post</h1>
+      <PostForm history={history} post={post} />
     </div>
   );
 };
 
-export default styled(CreatePost)`
+export default styled(EditPost)`
   margin: 5% 0;
   color: ${setColor.darkBlue};
   h1 {

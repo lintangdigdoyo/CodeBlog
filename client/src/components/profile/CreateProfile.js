@@ -44,7 +44,7 @@ const CreateProfile = ({
 CreateProfile.propTypes = {
   auth: PropTypes.object.isRequired,
   getProfile: PropTypes.func.isRequired,
-  hasProfile: PropTypes.bool.isRequired,
+  hasProfile: PropTypes.bool,
 };
 
 const mapStateToProps = (state) => ({
