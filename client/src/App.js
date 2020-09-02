@@ -17,8 +17,15 @@ import CreateProfile from './components/profile/CreateProfile';
 import Profile from './components/profile/Profile';
 import CreatePost from './components/post/CreatePost';
 import EditPost from './components/post/EditPost';
+import Home from './components/home/Home';
+import PostDetail from './components/post/PostDetail';
 
-const App = ({ loadUser, auth: { isAuthenticated }, profile }) => {
+const App = ({
+  loadUser,
+  auth: { isAuthenticated },
+  profile,
+  post: { posts },
+}) => {
   useEffect(() => {
     loadUser();
   }, [loadUser]);
@@ -26,12 +33,14 @@ const App = ({ loadUser, auth: { isAuthenticated }, profile }) => {
   return (
     <Fragment>
       <GlobalStyle
-        lightBlue={isAuthenticated || profile !== null ? false : true}
+        lightBlue={isAuthenticated || profile !== null || posts ? false : true}
       />
       <Router>
         <SidebarNav>
           <Navbar
-            transparent={isAuthenticated || profile !== null ? false : true}
+            transparent={
+              isAuthenticated || profile !== null || posts ? false : true
+            }
           />
           <Container>
             <Switch>
@@ -39,6 +48,8 @@ const App = ({ loadUser, auth: { isAuthenticated }, profile }) => {
               <Route exact path='/register' component={SignUp} />
               <Route exact path='/login' component={SignIn} />
               <Route exact path='/profile/:userId' component={Profile} />
+              <Route exact path='/home' component={Home} />
+              <Route exact path='/post/:postId' component={PostDetail} />
               <PrivateRoute
                 exact
                 path='/create-profile'
@@ -61,11 +72,13 @@ const Container = styled.div`
 App.propTypes = {
   auth: PropTypes.object.isRequired,
   loadUser: PropTypes.func.isRequired,
+  post: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = (state) => ({
   auth: state.auth,
   profile: state.profile.profile,
+  post: state.post,
 });
 
 export default connect(mapStateToProps, { loadUser })(App);

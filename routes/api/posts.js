@@ -69,7 +69,9 @@ router.post(
 
 router.get('/profiles/:userId', checkObjectId('userId'), async (req, res) => {
   try {
-    const posts = await Post.find({ user: req.params.userId });
+    const posts = await Post.find({ user: req.params.userId }).sort({
+      date: 'desc',
+    });
     if (!posts) {
       res.status(404).json({ errors: [{ msg: 'User post not found' }] });
     }
@@ -86,7 +88,9 @@ router.get('/profiles/:userId', checkObjectId('userId'), async (req, res) => {
 
 router.get('/:postId', checkObjectId('postId'), async (req, res) => {
   try {
-    const post = await Post.findById(req.params.postId);
+    const post = await Post.findById(req.params.postId)
+      .populate('user', ['name', 'avatar'])
+      .populate('comment.user', ['name', 'avatar']);
 
     if (!post) {
       return res.status(404).json({ errors: [{ msg: 'Post not found' }] });
@@ -120,20 +124,30 @@ router.get('/', async (req, res) => {
 router.patch(
   '/:postId',
   auth,
+  upload.fields([
+    {
+      name: 'header',
+      maxCount: 1,
+    },
+    {
+      name: 'thumbnail',
+      maxCount: 1,
+    },
+  ]),
   checkObjectId('postId'),
   [
     check('title', 'Please enter a title').not().isEmpty(),
-    check('thumbnail', 'Please enter a thumbnail').not().isEmpty(),
     check('text', 'Text is required').not().isEmpty(),
   ],
   async (req, res) => {
     const errors = validationResult(req);
+    const { header, thumbnail } = req.files;
 
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { title, header, thumbnail, text } = req.body;
+    const { title, text } = req.body;
 
     try {
       let post = await Post.findById(req.params.postId);
@@ -147,12 +161,36 @@ router.patch(
       }
 
       if (title) post.title = title;
-      if (header) post.header = header;
-      if (thumbnail) post.thumbnail = thumbnail;
+      if (header) {
+        if (post.header) {
+          fs.unlink(post.header, (err) => {
+            if (err) {
+              console.error(err);
+              return;
+            }
+            //file removed
+          });
+        }
+        post.header = header && header[0].path;
+      }
+      if (thumbnail) {
+        if (post.thumbnail) {
+          fs.unlink(post.thumbnail, (err) => {
+            if (err) {
+              console.error(err);
+              return;
+            }
+            //file removed
+          });
+        }
+        post.thumbnail = thumbnail[0].path;
+      }
       if (text) post.text = text;
 
       await post.save();
-      res.json(post);
+
+      const posts = await Post.find({ user: req.user.id });
+      res.json(posts);
     } catch (err) {
       console.error(err.message);
       res.status(500).send('Server Error');
@@ -221,15 +259,21 @@ router.post(
     const { text } = req.body;
 
     try {
-      const post = await Post.findById(req.params.postId);
+      let post = await Post.findById(req.params.postId)
+        .populate('user', ['name', 'avatar'])
+        .populate('comment.user', ['name', 'avatar']);
 
       if (!post) {
         return res.status(404).json({ errors: [{ msg: 'Post not found' }] });
       }
 
-      post.comment.push({ text });
+      post.comment.unshift({ user: req.user.id, text });
 
       await post.save();
+
+      post = await Post.findById(req.params.postId)
+        .populate('user', ['name', 'avatar'])
+        .populate('comment.user', ['name', 'avatar']);
       res.json(post);
     } catch (err) {
       console.error(err.message);
@@ -337,19 +381,28 @@ router.post(
   checkObjectId('postId'),
   async (req, res) => {
     try {
-      const post = await Post.findById(req.params.postId);
+      const post = await Post.findById(req.params.postId)
+        .populate('user', ['name', 'avatar'])
+        .populate('comment.user', ['name', 'avatar']);
 
       if (!post) {
         return res.status(404).json({ errors: [{ msg: 'Post not found' }] });
       }
 
-      if (post.like.length > 0) {
+      if (
+        post.like.filter((like) => like.user.toString() === req.user.id)
+          .length > 0
+      ) {
         return res
           .status(400)
           .json({ errors: [{ msg: 'Post already liked' }] });
       }
 
-      if (post.dislike.length > 0) {
+      if (
+        post.dislike.filter(
+          (dislike) => dislike.user.toString() === req.user.id
+        ).length > 0
+      ) {
         const deleteIndex = post.dislike
           .map((dislike) => dislike.user.toString())
           .indexOf(req.user.id);
@@ -377,16 +430,20 @@ router.delete(
   checkObjectId('postId'),
   async (req, res) => {
     try {
-      const post = await Post.findById(req.params.postId);
+      const post = await Post.findById(req.params.postId)
+        .populate('user', ['name', 'avatar'])
+        .populate('comment.user', ['name', 'avatar']);
 
       if (!post) {
         return res.status(404).json({ errors: [{ msg: 'Post not found' }] });
       }
 
-      if (post.like.length === 0) {
+      if (
+        post.like.filter((like) => like.user.toString() === req.user.id)
+          .length === 0
+      ) {
         return res.status(400).json({ errors: [{ msg: 'There is no like' }] });
       }
-
       const deleteIndex = post.like
         .map((like) => like.user.toString())
         .indexOf(req.user.id);
@@ -412,19 +469,28 @@ router.post(
   checkObjectId('postId'),
   async (req, res) => {
     try {
-      const post = await Post.findById(req.params.postId);
+      const post = await Post.findById(req.params.postId)
+        .populate('user', ['name', 'avatar'])
+        .populate('comment.user', ['name', 'avatar']);
 
       if (!post) {
         return res.status(404).json({ errors: [{ msg: 'Post not found' }] });
       }
 
-      if (post.dislike.length > 0) {
+      if (
+        post.dislike.filter(
+          (dislike) => dislike.user.toString() === req.user.id
+        ).length > 0
+      ) {
         return res
           .status(400)
           .json({ errors: [{ msg: 'Post already disliked' }] });
       }
 
-      if (post.like.length > 0) {
+      if (
+        post.like.filter((like) => like.user.toString() === req.user.id)
+          .length > 0
+      ) {
         const deleteIndex = post.like
           .map((like) => like.user.toString())
           .indexOf(req.user.id);
@@ -455,10 +521,18 @@ router.delete(
       const post = await Post.findById(req.params.postId);
 
       if (!post) {
-        return res.status(404).json({ errors: [{ msg: 'Post not found' }] });
+        return res
+          .status(404)
+          .json({ errors: [{ msg: 'Post not found' }] })
+          .populate('user', ['name', 'avatar'])
+          .populate('comment.user', ['name', 'avatar']);
       }
 
-      if (post.dislike.length === 0) {
+      if (
+        post.dislike.filter(
+          (dislike) => dislike.user.toString() === req.user.id
+        ).length === 0
+      ) {
         return res
           .status(400)
           .json({ errors: [{ msg: 'There is no dislike' }] });

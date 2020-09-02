@@ -6,9 +6,15 @@ import { connect } from 'react-redux';
 import { setColor } from '../../styles';
 import imgAvatar from '../../images/avatar.jpg';
 
-const Avatar = ({ className, auth: { loading, user }, src, profile }) => {
-  let userAvatar,
-    profileAvatar = '';
+const Avatar = ({
+  className,
+  auth: { loading, user },
+  src,
+  commentAvatar,
+  postAvatar,
+  profileAvatar,
+}) => {
+  let userAvatar = '';
   if (user !== null) {
     if (user.avatar) {
       const avatar = user.avatar;
@@ -18,16 +24,8 @@ const Avatar = ({ className, auth: { loading, user }, src, profile }) => {
         userAvatar = `/${user.avatar}`;
       }
     }
-  } else if (profile !== null) {
-    if (profile.user.avatar) {
-      const avatar = profile.user.avatar;
-      if (avatar.split(':')[0] === 'https') {
-        profileAvatar = profile.user.avatar;
-      } else if (avatar.split(':')[0] !== 'https') {
-        profileAvatar = `/${profile.user.avatar}`;
-      }
-    }
   }
+
   return !loading && user ? (
     <img
       className={className}
@@ -35,19 +33,20 @@ const Avatar = ({ className, auth: { loading, user }, src, profile }) => {
       alt='avatar'
     />
   ) : (
-    <img className={className} src={profileAvatar || imgAvatar} alt='avatar' />
+    <img
+      className={className}
+      src={profileAvatar || commentAvatar || postAvatar || imgAvatar}
+      alt='avatar'
+    />
   );
 };
 
 Avatar.propTypes = {
   auth: PropTypes.object.isRequired,
-  src: PropTypes.string,
-  profile: PropTypes.object,
 };
 
 const mapStateToProps = (state) => ({
   auth: state.auth,
-  profile: state.profile.profile,
 });
 
 export default connect(mapStateToProps)(styled(Avatar)`

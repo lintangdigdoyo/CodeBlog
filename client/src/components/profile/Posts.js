@@ -1,30 +1,19 @@
-import React, { useEffect, Fragment } from 'react';
-import PropTypes from 'prop-types';
+import React from 'react';
 import styled from 'styled-components';
-import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 import { ReactComponent as Cardboard } from './cardboard.svg';
-import { getUserPosts } from '../actions/post';
 import { setColor, setRem } from '../../styles';
 import Post from '../post/Post';
 import { SmallButton } from '../globals/Button';
 
-const Posts = ({
-  className,
-  match,
-  getUserPosts,
-  post: { loading, posts },
-}) => {
-  useEffect(() => {
-    getUserPosts(match.params.userId);
-  }, [getUserPosts]);
-
+const Posts = ({ className, post: { loading, posts } }) => {
   return (
     <div className={className}>
       {!loading && (posts !== null) & (posts.length > 0)
         ? posts.map((post) => <Post key={post._id} post={post} />)
-        : posts !== null && (
+        : posts !== null &&
+          typeof posts !== 'object' && (
             <div className='no-post'>
               <Cardboard />
               <p>You haven't posted anything yet. </p>
@@ -37,16 +26,7 @@ const Posts = ({
   );
 };
 
-Posts.propTypes = {
-  getUserPosts: PropTypes.func.isRequired,
-  post: PropTypes.object.isRequired,
-};
-
-const mapStateToProps = (state) => ({
-  post: state.post,
-});
-
-export default connect(mapStateToProps, { getUserPosts })(styled(Posts)`
+export default styled(Posts)`
   .no-post {
     color: ${setColor.darkGray};
     text-align: center;
@@ -65,4 +45,4 @@ export default connect(mapStateToProps, { getUserPosts })(styled(Posts)`
       }
     }
   }
-`);
+`;

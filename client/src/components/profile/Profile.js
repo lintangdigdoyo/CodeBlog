@@ -17,6 +17,7 @@ import Alert from '../globals/Alert';
 import { removeAlert } from '../actions/alert';
 import UpdateProfile from './UpdateProfile';
 import { updateProfile } from '../actions/profile';
+import { getUserPosts } from '../actions/post';
 
 const Profile = ({
   className,
@@ -27,8 +28,11 @@ const Profile = ({
   clearProfile,
   removeAlert,
   updateProfile,
+  getUserPosts,
+  post,
 }) => {
   useEffect(() => {
+    getUserPosts(match.params.userId);
     getProfile(match.params.userId);
     return () => {
       removeAlert();
@@ -40,6 +44,7 @@ const Profile = ({
     isAuthenticated,
     removeAlert,
     match.params.userId,
+    getUserPosts,
   ]);
 
   const [formData, setFormData] = useState({
@@ -90,14 +95,14 @@ const Profile = ({
     reader.readAsDataURL(file);
   };
 
-  return loading || profile.hasProfile === null ? (
+  return loading || profile.hasProfile === null || post.posts === null ? (
     <Spinner />
   ) : (
     profile.profile && (
       <div className={className}>
         <Alert />
         <div className='user-profile'>
-          <Avatar src={profileAvatar} />
+          <Avatar src={profileAvatar} profileAvatar={profileAvatar} />
           <h2>
             {profile.profile.user.name}
             {user && user._id === match.params.userId && (
@@ -153,7 +158,7 @@ const Profile = ({
             <Skill />
           </aside>
           <section>
-            <Posts match={match} />
+            <Posts post={post} />
           </section>
         </div>
       </div>
@@ -168,11 +173,14 @@ Profile.propTypes = {
   profile: PropTypes.object.isRequired,
   removeAlert: PropTypes.func.isRequired,
   updateProfile: PropTypes.func.isRequired,
+  post: PropTypes.object.isRequired,
+  getUserPosts: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
   auth: state.auth,
   profile: state.profile,
+  post: state.post,
 });
 
 export default connect(mapStateToProps, {
@@ -180,6 +188,7 @@ export default connect(mapStateToProps, {
   clearProfile,
   removeAlert,
   updateProfile,
+  getUserPosts,
 })(
   styled(Profile)`
     margin: 5% 0;

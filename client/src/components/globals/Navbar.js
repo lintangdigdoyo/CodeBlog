@@ -68,7 +68,7 @@ const Navbar = ({
   const privateLinks = (
     <ul>
       <li>
-        <Link to='/'>home</Link>
+        <Link to='/home'>home</Link>
       </li>
 
       {user && (
@@ -89,7 +89,7 @@ const Navbar = ({
   const guestLinks = (
     <ul>
       <li>
-        <Link to='/'>home</Link>
+        <Link to='/home'>home</Link>
       </li>
       <li>
         <Link to='/login'>sign in</Link>
@@ -104,7 +104,7 @@ const Navbar = ({
 
   return (
     <nav className={className}>
-      <Link to='/'>
+      <Link to={!loading && isAuthenticated ? '/home' : '/'}>
         <h4>CodeBlog</h4>
       </Link>
       {!loading && (
@@ -145,6 +145,9 @@ export default connect(mapStateToProps, { setVisible, signOut })(styled(Navbar)`
   .item {
     i {
       color: ${setColor.darkBlue};
+    }
+    span {
+      font-weight: 400;
     }
   }
   img {

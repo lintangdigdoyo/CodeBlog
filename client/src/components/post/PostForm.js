@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 
 import { setColor } from '../../styles';
 import { SmallButton } from '../globals/Button';
-import { createPost } from '../actions/post';
+import { createPost, editPost } from '../actions/post';
 import { removeAlert } from '../actions/alert';
 import Alert from '../globals/Alert';
 
@@ -17,6 +17,7 @@ const PostForm = ({
   removeAlert,
   history,
   post,
+  editPost,
 }) => {
   useEffect(() => {
     document.title = 'Post';
@@ -57,7 +58,7 @@ const PostForm = ({
     removeAlert();
 
     if (!post) createPost(formData, fileData, history, user._id);
-    else if (post) createPost(formData, fileData, history, user._id);
+    else if (post) editPost(formData, fileData, post._id, history, user._id);
   };
 
   return (
@@ -121,13 +122,14 @@ PostForm.propTypes = {
   auth: PropTypes.object.isRequired,
   createPost: PropTypes.func.isRequired,
   removeAlert: PropTypes.func.isRequired,
+  editPost: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
   auth: state.auth,
 });
 
-export default connect(mapStateToProps, { createPost, removeAlert })(
+export default connect(mapStateToProps, { createPost, removeAlert, editPost })(
   styled(PostForm)`
     .item {
       background-color: ${setColor.mainWhite};

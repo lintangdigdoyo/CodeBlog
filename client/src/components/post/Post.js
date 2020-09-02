@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -8,47 +8,50 @@ import { setColor, setFlex } from '../../styles';
 import Modal from '../globals/Modal';
 import { deletePost } from '../actions/post';
 
-const Post = ({ className, post, deletePost }) => {
+const Post = ({ className, post, deletePost, auth }) => {
   return (
     <div className={className}>
-      <div className='content'>
-        <img src={`/${post.thumbnail}`} alt='thumbnail' />
-        <h4>{post.title}</h4>
-        <p>
-          {post.text.length > 300 ? post.text.substring(0, 300) : post.text}
-          .....
-        </p>
-      </div>
+      <Link to={`/post/${post._id}`}>
+        <div className='content'>
+          <img src={`/${post.thumbnail}`} alt='thumbnail' />
+          <h4>{post.title}</h4>
+          <p>
+            {post.text.length > 300 ? post.text.substring(0, 300) : post.text}
+            .....
+          </p>
+        </div>
+      </Link>
       <div className='statistic'>
         <div className='item'>
-          <i className='far fa-eye'></i>
-          <span>{post.viewer.length}</span>
+          <i className='far fa-eye'></i> <span>{post.viewer.length}</span>
         </div>
         <div className='item'>
-          <i className='far fa-thumbs-up'></i>
-          <span>{post.like.length}</span>
+          <i className='far fa-thumbs-up'></i> <span>{post.like.length}</span>
         </div>
         <div className='item'>
-          <i className='far fa-thumbs-down'></i>
+          <i className='far fa-thumbs-down'></i>{' '}
           <span>{post.dislike.length}</span>
         </div>
         <div className='item'>
-          <i className='far fa-comment'></i>
-          <span>{post.comment.length}</span>
+          <i className='far fa-comment'></i> <span>{post.comment.length}</span>
         </div>
         <div className='item'>
-          <Link to={{ pathname: '/edit-post', post }}>
-            <i className='far fa-edit fa-lg'></i>
-          </Link>
-          <Modal
-            title={`Detele ${post.title}`}
-            content={`Are you sure want to delete ${post.title}?`}
-            danger
-            submit='Delete'
-            submitData={() => deletePost(post._id)}
-          >
-            <i className='far fa-trash-alt fa-lg'></i>
-          </Modal>
+          {auth && auth.user && auth.user._id === post.user && (
+            <Fragment>
+              <Link to={{ pathname: '/edit-post', post }}>
+                <i className='far fa-edit fa-lg'></i>
+              </Link>
+              <Modal
+                title={`Detele ${post.title}`}
+                content={`Are you sure want to delete ${post.title}?`}
+                danger
+                submit='Delete'
+                submitData={() => deletePost(post._id)}
+              >
+                <i className='far fa-trash-alt fa-lg'></i>
+              </Modal>
+            </Fragment>
+          )}
         </div>
       </div>
     </div>
@@ -57,9 +60,14 @@ const Post = ({ className, post, deletePost }) => {
 
 Post.propTypes = {
   deletePost: PropTypes.func.isRequired,
+  auth: PropTypes.object.isRequired,
 };
 
-export default connect(null, { deletePost })(styled(Post)`
+const mapStateToProps = (state) => ({
+  auth: state.auth,
+});
+
+export default connect(mapStateToProps, { deletePost })(styled(Post)`
   position: relative;
   background-color: ${setColor.mainWhite};
   box-shadow: 4px 5px 10px rgba(0, 0, 0, 0.2);
@@ -67,6 +75,7 @@ export default connect(null, { deletePost })(styled(Post)`
   margin-bottom: 2%;
   .content {
     display: grid;
+    color: ${setColor.mainBlack};
     grid-template-areas:
       'img title'
       'img text';
@@ -82,6 +91,9 @@ export default connect(null, { deletePost })(styled(Post)`
     }
     h4 {
       grid-area: title;
+      &:hover {
+        text-decoration: underline;
+      }
     }
     p {
       grid-area: text;
