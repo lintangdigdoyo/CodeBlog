@@ -302,25 +302,27 @@ router.patch(
     const { text } = req.body;
 
     try {
-      const post = await Post.findById(req.params.postId);
+      const post = await Post.findById(req.params.postId)
+        .populate('user', ['name', 'avatar'])
+        .populate('comment.user', ['name', 'avatar']);
 
       if (!post) {
         return res.status(401).json({ errors: [{ msg: 'Post not found' }] });
       }
 
-      if (post.user.toString() !== req.user.id) {
-        return res.status(401).json({ errors: [{ msg: 'Unauthorized user' }] });
-      }
-
-      let updatePost = post.comment.filter(
+      let updateComment = post.comment.filter(
         (comment) => comment.id === req.params.commentId
       );
 
-      if (updatePost.length === 0) {
-        return res.status(404).json({ errors: [{ msg: 'Post not found' }] });
+      if (updateComment.length === 0) {
+        return res.status(404).json({ errors: [{ msg: 'Comment not found' }] });
       }
 
-      updatePost[0].text = text;
+      if (updateComment[0].user.id !== req.user.id) {
+        return res.status(401).json({ errors: [{ msg: 'Unauthorized user' }] });
+      }
+
+      updateComment[0].text = text;
 
       await post.save();
       res.json(post);
@@ -342,19 +344,21 @@ router.delete(
   checkObjectId('commentId'),
   async (req, res) => {
     try {
-      const post = await Post.findById(req.params.postId);
+      const post = await Post.findById(req.params.postId)
+        .populate('user', ['name', 'avatar'])
+        .populate('comment.user', ['name', 'avatar']);
 
       if (!post) {
         return res.status(404).json({ errors: [{ msg: 'Post not found' }] });
       }
 
-      if (post.user.toString() !== req.user.id) {
-        return res.status(401).json({ errors: [{ msg: 'Unauthorized user' }] });
-      }
-
       const deleteIndex = post.comment
         .map((comment) => comment.id)
         .indexOf(req.params.commentId);
+
+      if (post.comment[deleteIndex].user.id.toString() !== req.user.id) {
+        return res.status(401).json({ errors: [{ msg: 'Unauthorized user' }] });
+      }
 
       if (deleteIndex < 0) {
         return res.status(404).json({ errors: [{ msg: 'Comment not found' }] });

@@ -137,6 +137,39 @@ export const addComment = (formData, postId) => async (dispatch) => {
   }
 };
 
+//Edit comment
+export const editComment = (formData, postId, commentId) => async (
+  dispatch
+) => {
+  try {
+    const res = await api.patch(
+      `/posts/${postId}/comments/${commentId}`,
+      formData
+    );
+    dispatch({ type: UPDATE_POST, payload: res.data });
+    dispatch(setAlert('Comment Updated', 'success'));
+  } catch (err) {
+    dispatch({
+      type: POST_ERROR,
+      payload: { msg: err.response.statusText, msg: err.response.status },
+    });
+  }
+};
+
+//Delete comment
+export const deleteComment = (postId, commentId) => async (dispatch) => {
+  try {
+    const res = await api.delete(`/posts/${postId}/comments/${commentId}`);
+    dispatch({ type: UPDATE_POST, payload: res.data });
+    dispatch(setAlert('Comment Deleted', 'success'));
+  } catch (err) {
+    dispatch({
+      type: POST_ERROR,
+      payload: { msg: err.response.statusText, status: err.response.status },
+    });
+  }
+};
+
 //Like a post
 export const addLike = (postId) => async (dispatch) => {
   try {
