@@ -100,7 +100,7 @@ export default connect(mapStateToProps, { deletePost })(styled(Post)`
     }
   }
   .statistic {
-    ${setFlex({ x: 'space-between', y: 'end' })};
+    ${setFlex({ x: 'space-between', y: 'flex-end' })};
     height: 30px;
     width: 40%;
     color: ${setColor.darkBlue};

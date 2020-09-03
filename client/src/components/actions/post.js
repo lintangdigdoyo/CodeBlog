@@ -221,3 +221,16 @@ export const removeDislike = (postId) => async (dispatch) => {
     });
   }
 };
+
+//Add viewer
+export const addViewer = (postId) => async (dispatch) => {
+  try {
+    const res = await api.post(`/posts/${postId}/view`);
+    dispatch({ type: UPDATE_POST, payload: res.data });
+  } catch (err) {
+    dispatch({
+      type: POST_ERROR,
+      payload: { msg: err.response.statusText, status: err.response.status },
+    });
+  }
+};

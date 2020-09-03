@@ -14,6 +14,7 @@ import {
   removeLike,
   addDislike,
   removeDislike,
+  addViewer,
 } from '../actions/post';
 import Avatar from '../globals/Avatar';
 import Modal from '../globals/Modal';
@@ -30,16 +31,18 @@ const PostDetail = ({
   removeLike,
   addDislike,
   removeDislike,
+  addViewer,
   history,
 }) => {
   useEffect(() => {
     getPost(match.params.postId);
-  }, [getPost]);
+    addViewer(match.params.postId);
+  }, [getPost, addViewer, match.params.postId]);
 
   //Check if the avatar from the googleApi or not
   let postAvatar = '';
   if (posts !== null) {
-    document.title = posts.title;
+    document.title = `${posts.title ? posts.title : 'Post'} | CodeBlog`;
     if (posts.user && posts.user.avatar) {
       const avatar = posts.user.avatar;
       if (avatar.split(':')[0] === 'https') {
@@ -171,6 +174,7 @@ PostDetail.propTypes = {
   removeLike: PropTypes.func.isRequired,
   addDislike: PropTypes.func.isRequired,
   removeDislike: PropTypes.func.isRequired,
+  addViewer: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
@@ -185,6 +189,7 @@ export default connect(mapStateToProps, {
   removeLike,
   addDislike,
   removeDislike,
+  addViewer,
 })(
   styled(PostDetail)`
     padding: 3%;

@@ -19,6 +19,7 @@ import CreatePost from './components/post/CreatePost';
 import EditPost from './components/post/EditPost';
 import Home from './components/home/Home';
 import PostDetail from './components/post/PostDetail';
+import Follower from './components/profile/Follower';
 
 const App = ({
   loadUser,
@@ -48,6 +49,11 @@ const App = ({
               <Route exact path='/register' component={SignUp} />
               <Route exact path='/login' component={SignIn} />
               <Route exact path='/profile/:userId' component={Profile} />
+              <Route
+                exact
+                path='/profile/:userId/follower'
+                component={Follower}
+              />
               <Route exact path='/home' component={Home} />
               <Route exact path='/post/:postId' component={PostDetail} />
               <PrivateRoute

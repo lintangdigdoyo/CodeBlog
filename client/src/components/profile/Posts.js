@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 
@@ -7,19 +7,29 @@ import { setColor, setRem } from '../../styles';
 import Post from '../post/Post';
 import { SmallButton } from '../globals/Button';
 
-const Posts = ({ className, post: { loading, posts } }) => {
+const Posts = ({
+  className,
+  post: { loading, posts },
+  user,
+  profile: { profile },
+}) => {
   return (
     <div className={className}>
-      {!loading && (posts !== null) & (posts.length > 0)
+      {!loading && posts !== null && posts.length > 0
         ? posts.map((post) => <Post key={post._id} post={post} />)
-        : posts !== null &&
-          typeof posts !== 'object' && (
+        : posts !== null && (
             <div className='no-post'>
               <Cardboard />
-              <p>You haven't posted anything yet. </p>
-              <SmallButton as={Link} to='/create-post'>
-                Create Post
-              </SmallButton>
+              {user && profile && user._id === profile.user._id ? (
+                <Fragment>
+                  <p>You haven't posted anything yet. </p>
+                  <SmallButton as={Link} to='/create-post'>
+                    Create Post
+                  </SmallButton>
+                </Fragment>
+              ) : (
+                <p>{`${profile.user.name} hasn't posted anything yet.`} </p>
+              )}
             </div>
           )}
     </div>

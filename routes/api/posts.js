@@ -522,14 +522,12 @@ router.delete(
   checkObjectId('postId'),
   async (req, res) => {
     try {
-      const post = await Post.findById(req.params.postId);
+      const post = await Post.findById(req.params.postId)
+        .populate('user', ['name', 'avatar'])
+        .populate('comment.user', ['name', 'avatar']);
 
       if (!post) {
-        return res
-          .status(404)
-          .json({ errors: [{ msg: 'Post not found' }] })
-          .populate('user', ['name', 'avatar'])
-          .populate('comment.user', ['name', 'avatar']);
+        return res.status(404).json({ errors: [{ msg: 'Post not found' }] });
       }
 
       if (
@@ -558,7 +556,7 @@ router.delete(
 );
 
 //@route ADD api/posts/:postId/view
-//@desc  add viewer
+//@desc add viewer
 //@access Private
 
 router.post(
@@ -567,16 +565,22 @@ router.post(
   checkObjectId('postId'),
   async (req, res) => {
     try {
-      const post = await Post.findById(req.params.postId);
+      const post = await Post.findById(req.params.postId)
+        .populate('user', ['name', 'avatar'])
+        .populate('comment.user', ['name', 'avatar']);
 
       if (!post) {
         return res.status(404).json({ errors: [{ msg: 'Post not found' }] });
       }
 
-      if (post.viewer.length === 0) {
+      if (
+        post.viewer.filter((viewer) => viewer.user.toString() === req.user.id)
+          .length === 0
+      ) {
         post.viewer.push({ user: req.user.id });
-
         await post.save();
+      } else {
+        return res.status(400).json('Post already viewed');
       }
 
       res.json(post);

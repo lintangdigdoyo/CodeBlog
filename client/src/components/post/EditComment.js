@@ -32,4 +32,5 @@ const EditComment = ({
 
 export default styled(EditComment)`
   width: 100%;
+  padding: 10px;
 `;

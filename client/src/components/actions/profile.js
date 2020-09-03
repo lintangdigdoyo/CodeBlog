@@ -221,6 +221,32 @@ export const deleteExperience = (userId, experienceId) => async (dispatch) => {
   }
 };
 
+//follow a user
+export const followUser = (userId) => async (dispatch) => {
+  try {
+    const res = await api.post(`/profiles/${userId}/follow`);
+    dispatch({ type: UPDATE_PROFILE, payload: res.data });
+  } catch (err) {
+    dispatch({
+      type: PROFILE_ERROR,
+      payload: { msg: err.response.statusText, status: err.response.status },
+    });
+  }
+};
+
+//unfollow a user
+export const unfollowUser = (userId) => async (dispatch) => {
+  try {
+    const res = await api.delete(`/profiles/${userId}/follow`);
+    dispatch({ type: UPDATE_PROFILE, payload: res.data });
+  } catch (err) {
+    dispatch({
+      type: PROFILE_ERROR,
+      payload: { msg: err.response.statusText, status: err.response.status },
+    });
+  }
+};
+
 //Clear profile data
 export const clearProfile = () => {
   return { type: CLEAR_PROFILE };

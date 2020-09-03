@@ -85,7 +85,10 @@ router.get('/:userId', checkObjectId('userId'), async (req, res) => {
   try {
     const profile = await Profile.findOne({
       user: req.params.userId,
-    }).populate('user', ['name', 'avatar']);
+    })
+      .populate('user', ['name', 'avatar'])
+      .populate('follower.user', ['name', 'avatar'])
+      .populate('following.user', ['name', 'avatar']);
 
     if (!profile) {
       return res.status(404).json({ msg: 'Profile not found' });
@@ -516,6 +519,128 @@ router.delete(
       profile.experience.splice(deleteIndex, 1);
 
       await profile.save();
+      res.json(profile);
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server Error');
+    }
+  }
+);
+
+//@route POST api/profiles/:userId/follow
+//@desc follow a user
+//@access Private
+
+router.post(
+  '/:userId/follow',
+  auth,
+  checkObjectId('userId'),
+  async (req, res) => {
+    try {
+      let profile = await Profile.findOne({
+        user: req.params.userId,
+      });
+
+      const userProfile = await Profile.findOne({ user: req.user.id });
+
+      if (!profile) {
+        return res
+          .status(400)
+          .json({ errors: [{ msg: 'There is no profile for this user' }] });
+      }
+
+      if (req.user.id === req.params.userId) {
+        return res.status(400).json({ errors: [{ msg: 'Bad request' }] });
+      }
+
+      if (
+        profile.follower.filter(
+          (follower) => follower.user.toString() === req.user.id
+        ).length > 0
+      ) {
+        return res
+          .status(400)
+          .json({ errors: [{ msg: 'User already followed' }] });
+      }
+
+      profile.follower.push({ user: req.user.id });
+      userProfile.following.push({ user: req.params.userId });
+
+      await profile.save();
+      await userProfile.save();
+
+      profile = await Profile.findOne({
+        user: req.params.userId,
+      })
+        .populate('user', ['name', 'avatar'])
+        .populate('follower.user', ['name', 'avatar'])
+        .populate('following.user', ['name', 'avatar']);
+
+      res.json(profile);
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server Error');
+    }
+  }
+);
+
+//@route DELETE api/profiles/:userId/follow
+//@desc unfollow a user
+//@access Private
+
+router.delete(
+  '/:userId/follow',
+  auth,
+  checkObjectId('userId'),
+  async (req, res) => {
+    try {
+      let profile = await Profile.findOne({
+        user: req.params.userId,
+      });
+
+      const userProfile = await Profile.findOne({ user: req.user.id });
+
+      if (!profile) {
+        return res
+          .status(400)
+          .json({ errors: [{ msg: 'There is no profile for this user' }] });
+      }
+
+      if (req.user.id === req.params.userId) {
+        return res.status(400).json({ errors: [{ msg: 'Bad request' }] });
+      }
+
+      if (
+        profile.follower.filter(
+          (follower) => follower.user.toString() === req.user.id
+        ).length === 0
+      ) {
+        return res
+          .status(400)
+          .json({ errors: [{ msg: 'User already unfollowed' }] });
+      }
+
+      const deleteIndex = profile.follower
+        .map((follower) => follower.user.toString())
+        .indexOf(req.params.userId);
+
+      const deleteIndexUser = userProfile.following
+        .map((following) => following.user.toString())
+        .indexOf(req.user.id);
+
+      profile.follower.splice(deleteIndex, 1);
+      userProfile.following.splice(deleteIndexUser, 1);
+
+      await profile.save();
+      await userProfile.save();
+
+      profile = await Profile.findOne({
+        user: req.params.userId,
+      })
+        .populate('user', ['name', 'avatar'])
+        .populate('follower.user', ['name', 'avatar'])
+        .populate('following.user', ['name', 'avatar']);
+
       res.json(profile);
     } catch (err) {
       console.error(err.message);

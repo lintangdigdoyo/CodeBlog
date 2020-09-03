@@ -16,8 +16,9 @@ import Modal from '../globals/Modal';
 import Alert from '../globals/Alert';
 import { removeAlert } from '../actions/alert';
 import UpdateProfile from './UpdateProfile';
-import { updateProfile } from '../actions/profile';
+import { updateProfile, followUser, unfollowUser } from '../actions/profile';
 import { getUserPosts } from '../actions/post';
+import { SmallButton } from '../globals/Button';
 
 const Profile = ({
   className,
@@ -28,6 +29,8 @@ const Profile = ({
   clearProfile,
   removeAlert,
   updateProfile,
+  followUser,
+  unfollowUser,
   getUserPosts,
   post,
 }) => {
@@ -69,7 +72,7 @@ const Profile = ({
   //Check if the avatar from the googleApi or not
   let profileAvatar = '';
   if (profile.profile !== null) {
-    document.title = `${profile.profile.user.name} Profile`;
+    document.title = `${profile.profile.user.name} | CodeBlog`;
     if (profile.profile.user.avatar) {
       const avatar = profile.profile.user.avatar;
       if (avatar.split(':')[0] === 'https') {
@@ -103,54 +106,77 @@ const Profile = ({
         <Alert />
         <div className='user-profile'>
           <Avatar src={profileAvatar} profileAvatar={profileAvatar} />
-          <h2>
-            {profile.profile.user.name}
-            {user && user._id === match.params.userId && (
-              <Modal
-                title='Edit Profile'
-                submitData={() => updateProfile(formData, file, user._id)}
-                submit='Save'
-                content={
-                  <UpdateProfile
-                    formData={formData}
-                    setFormData={setFormData}
-                    profile={profile.profile}
-                    onFormChange={onFormChange}
-                    onUploadChange={onUploadChange}
-                    imagePreviewUrl={imagePreviewUrl}
-                  />
-                }
-              >
-                <i className='far fa-edit'></i>
-              </Modal>
+          <div className='bio'>
+            <h2>
+              {profile.profile.user.name}
+              {user && user._id === match.params.userId && (
+                <Modal
+                  title='Edit Profile'
+                  submitData={() => updateProfile(formData, file, user._id)}
+                  submit='Save'
+                  content={
+                    <UpdateProfile
+                      formData={formData}
+                      setFormData={setFormData}
+                      profile={profile.profile}
+                      onFormChange={onFormChange}
+                      onUploadChange={onUploadChange}
+                      imagePreviewUrl={imagePreviewUrl}
+                    />
+                  }
+                >
+                  <i className='far fa-edit'></i>
+                </Modal>
+              )}
+            </h2>
+            <h3>{profile.profile.status}</h3>
+            <h4>
+              {profile.profile.location && profile.profile.location}
+              {profile.profile.location && ', '}
+              {profile.profile.country}
+            </h4>
+            <p>{profile.profile.bio && profile.profile.bio}</p>
+            <a
+              href={profile.profile.website && profile.profile.website}
+              target='_blank'
+              rel='noopener noreferrer'
+            >
+              {profile.profile.website && profile.profile.website}
+            </a>
+            <div className='totalof'>
+              <h5>
+                {post.posts.length} <span>Posts</span>
+              </h5>
+              <h5>
+                {profile.profile.follower.length} <span>Followers</span>
+              </h5>
+              <h5>
+                {profile.profile.following.length} <span>Following</span>
+              </h5>
+            </div>
+            {user && profile.profile.user._id !== user._id && (
+              <div className='button'>
+                {profile.profile.follower.filter(
+                  (follower) => follower.user._id === user._id
+                ).length === 0 ? (
+                  <SmallButton onClick={() => followUser(match.params.userId)}>
+                    Follow
+                  </SmallButton>
+                ) : (
+                  <SmallButton
+                    onClick={() => unfollowUser(match.params.userId)}
+                  >
+                    Unfollow
+                  </SmallButton>
+                )}
+                <SmallButton>
+                  <i className='far fa-envelope'></i> Send Message
+                </SmallButton>
+              </div>
             )}
-          </h2>
-          <h3>{profile.profile.status}</h3>
-          <h4>
-            {profile.profile.location && profile.profile.location}
-            {profile.profile.location && ', '}
-            {profile.profile.country}
-          </h4>
-          <p>{profile.profile.bio && profile.profile.bio}</p>
-          <a
-            href={profile.profile.website && profile.profile.website}
-            target='_blank'
-            rel='noopener noreferrer'
-          >
-            {profile.profile.website && profile.profile.website}
-          </a>
-          <div className='totalof'>
-            <h5>
-              10 <span>Posts</span>
-            </h5>
-            <h5>
-              85 <span>Followers</span>
-            </h5>
-            <h5>
-              20 <span>Following</span>
-            </h5>
           </div>
         </div>
+
         <div className='container'>
           <aside>
             <Education />
@@ -158,7 +184,7 @@ const Profile = ({
             <Skill />
           </aside>
           <section>
-            <Posts post={post} />
+            <Posts post={post} user={user} profile={profile} />
           </section>
         </div>
       </div>
@@ -175,6 +201,8 @@ Profile.propTypes = {
   updateProfile: PropTypes.func.isRequired,
   post: PropTypes.object.isRequired,
   getUserPosts: PropTypes.func.isRequired,
+  followUser: PropTypes.func.isRequired,
+  unfollowUser: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
@@ -189,6 +217,8 @@ export default connect(mapStateToProps, {
   removeAlert,
   updateProfile,
   getUserPosts,
+  followUser,
+  unfollowUser,
 })(
   styled(Profile)`
     margin: 5% 0;
@@ -198,62 +228,63 @@ export default connect(mapStateToProps, {
     grid-template-columns: 100%;
     text-transform: capitalize;
     .user-profile {
-      display: grid;
-      gap: 5%;
-      grid-template-columns: 210px 310px;
-      grid-template-areas:
-        'avatar name'
-        'avatar status'
-        'avatar location'
-        'avatar bio'
-        'avatar website'
-        'avatar totalof';
+      display: flex;
+      align-items: center;
+      width: 45%;
       img {
-        grid-area: avatar;
         height: 200px;
         width: 200px;
         margin: 0 5%;
       }
-      h2 {
-        grid-area: name;
-        margin: 0;
-      }
-      h3 {
-        grid-area: status;
-        margin: 0;
-        font-weight: 400;
-      }
-      h4 {
-        grid-area: location;
-        margin: 0;
-        font-weight: 400;
-      }
-      p {
-        grid-area: bio;
-        margin: 0;
-      }
-      a {
-        grid-area: website;
-        margin: 0;
-      }
-      i {
-        font-size: 20px;
-        color: ${setColor.darkBlue};
-        cursor: pointer;
-        &:hover {
-          color: ${setColor.mainBlue};
-          transition: 0.3s ease-in-out;
-        }
-      }
-      span {
-        font-weight: 400;
-      }
-      .totalof {
-        grid-area: totalof;
-        display: flex;
-        h5 {
+      .bio {
+        display: grid;
+        row-gap: 5px;
+        h2,
+        p,
+        a {
           margin: 0;
-          margin-right: 10px;
+          display: flex;
+        }
+        h3,
+        h4 {
+          margin: 0;
+          font-weight: 400;
+        }
+        i {
+          font-size: 20px;
+          color: ${setColor.darkBlue};
+          cursor: pointer;
+          &:hover {
+            color: ${setColor.mainBlue};
+            transition: 0.3s ease-in-out;
+          }
+        }
+        span {
+          font-weight: 400;
+        }
+        .totalof {
+          display: flex;
+          h5 {
+            margin: 0;
+            margin-right: 10px;
+          }
+        }
+        .button {
+          display: flex;
+          button {
+            border-radius: 5px;
+            margin-right: 10px;
+          }
+          button:last-child {
+            background-color: ${setColor.mainBlue};
+            &:hover {
+              background-color: ${setColor.darkBlue};
+            }
+          }
+          i {
+            color: ${setColor.mainWhite};
+            font-size: 13px;
+          }
         }
       }
     }

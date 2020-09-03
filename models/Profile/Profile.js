@@ -28,6 +28,22 @@ const profileSchema = new mongoose.Schema({
   website: {
     type: String,
   },
+  follower: [
+    {
+      user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+      },
+    },
+  ],
+  following: [
+    {
+      user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+      },
+    },
+  ],
   education: [Education],
   experience: [Experience],
   date: {
