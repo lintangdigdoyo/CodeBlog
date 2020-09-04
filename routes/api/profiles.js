@@ -539,7 +539,7 @@ router.post(
     try {
       let profile = await Profile.findOne({
         user: req.params.userId,
-      });
+      }).populate('user', ['name', 'avatar']);
 
       const userProfile = await Profile.findOne({ user: req.user.id });
 

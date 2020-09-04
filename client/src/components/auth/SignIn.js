@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Redirect } from 'react-router-dom';
 
+import { setNav } from '../actions/navbar';
 import { removeAlert } from '../actions/alert';
 import { signIn } from '../actions/auth';
 import { setColor, setRem, setFlex, media } from '../../styles';
@@ -13,6 +14,7 @@ import { getProfile } from '../actions/profile';
 
 const SignIn = ({
   className,
+  setNav,
   alerts,
   removeAlert,
   signIn,
@@ -20,10 +22,12 @@ const SignIn = ({
   getProfile,
 }) => {
   useEffect(() => {
+    setNav(true);
     return () => {
       removeAlert();
+      setNav(false);
     };
-  }, [removeAlert, isAuthenticated]);
+  }, [removeAlert, isAuthenticated, setNav]);
 
   const [formData, setFormData] = useState({
     email: '',
@@ -102,6 +106,7 @@ const SignIn = ({
 };
 
 SignIn.propTypes = {
+  setNav: PropTypes.func.isRequired,
   signIn: PropTypes.func.isRequired,
   removeAlert: PropTypes.func.isRequired,
   getProfile: PropTypes.func.isRequired,
@@ -118,6 +123,7 @@ export default connect(mapStateToProps, {
   signIn,
   removeAlert,
   getProfile,
+  setNav,
 })(styled(SignIn)`
   display: grid;
   height: 800px;

@@ -20,29 +20,19 @@ import EditPost from './components/post/EditPost';
 import Home from './components/home/Home';
 import PostDetail from './components/post/PostDetail';
 import Follower from './components/profile/Follower';
+import Following from './components/profile/Following';
 
-const App = ({
-  loadUser,
-  auth: { isAuthenticated },
-  profile,
-  post: { posts },
-}) => {
+const App = ({ navbar, loadUser }) => {
   useEffect(() => {
     loadUser();
   }, [loadUser]);
 
   return (
     <Fragment>
-      <GlobalStyle
-        lightBlue={isAuthenticated || profile !== null || posts ? false : true}
-      />
+      <GlobalStyle lightBlue={navbar} />
       <Router>
         <SidebarNav>
-          <Navbar
-            transparent={
-              isAuthenticated || profile !== null || posts ? false : true
-            }
-          />
+          <Navbar transparent={navbar} />
           <Container>
             <Switch>
               <Route exact path='/' component={Landing} />
@@ -53,6 +43,11 @@ const App = ({
                 exact
                 path='/profile/:userId/follower'
                 component={Follower}
+              />
+              <Route
+                exact
+                path='/profile/:userId/following'
+                component={Following}
               />
               <Route exact path='/home' component={Home} />
               <Route exact path='/post/:postId' component={PostDetail} />
@@ -76,15 +71,12 @@ const Container = styled.div`
 `;
 
 App.propTypes = {
-  auth: PropTypes.object.isRequired,
   loadUser: PropTypes.func.isRequired,
-  post: PropTypes.object.isRequired,
+  navbar: PropTypes.bool.isRequired,
 };
 
 const mapStateToProps = (state) => ({
-  auth: state.auth,
-  profile: state.profile.profile,
-  post: state.post,
+  navbar: state.navbar,
 });
 
 export default connect(mapStateToProps, { loadUser })(App);

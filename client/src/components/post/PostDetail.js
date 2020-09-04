@@ -15,10 +15,12 @@ import {
   addDislike,
   removeDislike,
   addViewer,
+  clearPost,
 } from '../actions/post';
 import Avatar from '../globals/Avatar';
 import Modal from '../globals/Modal';
 import Comment from './Comment';
+import { removeAlert } from '../actions/alert';
 
 const PostDetail = ({
   className,
@@ -32,12 +34,18 @@ const PostDetail = ({
   addDislike,
   removeDislike,
   addViewer,
+  clearPost,
+  removeAlert,
   history,
 }) => {
   useEffect(() => {
     getPost(match.params.postId);
     addViewer(match.params.postId);
-  }, [getPost, addViewer, match.params.postId]);
+    return () => {
+      clearPost();
+      removeAlert();
+    };
+  }, [getPost, addViewer, match.params.postId, clearPost, removeAlert]);
 
   //Check if the avatar from the googleApi or not
   let postAvatar = '';
@@ -175,6 +183,8 @@ PostDetail.propTypes = {
   addDislike: PropTypes.func.isRequired,
   removeDislike: PropTypes.func.isRequired,
   addViewer: PropTypes.func.isRequired,
+  clearPost: PropTypes.func.isRequired,
+  removeAlert: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
@@ -190,6 +200,8 @@ export default connect(mapStateToProps, {
   addDislike,
   removeDislike,
   addViewer,
+  clearPost,
+  removeAlert,
 })(
   styled(PostDetail)`
     padding: 3%;

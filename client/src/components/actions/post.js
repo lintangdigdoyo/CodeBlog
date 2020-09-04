@@ -1,8 +1,34 @@
-import { GET_POST, UPDATE_POST, POST_ERROR } from './types';
+import { GET_POST, UPDATE_POST, POST_ERROR, CLEAR_POST } from './types';
 import axios from 'axios';
 
 import { setAlert } from './alert';
 import api from '../apis/api';
+
+//Get all posts
+export const getPosts = () => async (dispatch) => {
+  try {
+    const res = await api.get('/posts');
+    dispatch({ type: GET_POST, payload: res.data });
+  } catch (err) {
+    dispatch({
+      type: POST_ERROR,
+      payload: { msg: err.response.statusText, status: err.response.status },
+    });
+  }
+};
+
+//Get followed user post
+export const getFollowedPosts = (userId) => async (dispatch) => {
+  try {
+    const res = await api.get(`/posts/profiles/${userId}/following`);
+    dispatch({ type: GET_POST, payload: res.data });
+  } catch (err) {
+    dispatch({
+      type: POST_ERROR,
+      payload: { msg: err.response.statusText, status: err.response.status },
+    });
+  }
+};
 
 //Get all the user post
 export const getUserPosts = (userId) => async (dispatch) => {
@@ -233,4 +259,9 @@ export const addViewer = (postId) => async (dispatch) => {
       payload: { msg: err.response.statusText, status: err.response.status },
     });
   }
+};
+
+//Clear post
+export const clearPost = () => {
+  return { type: CLEAR_POST };
 };

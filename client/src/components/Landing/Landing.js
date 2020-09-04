@@ -1,17 +1,23 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
+import PropTypes from 'prop-types';
 import { Link, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import { ReactComponent as Coder } from './coder.svg';
+import { setNav } from '../actions/navbar';
 import { PrimaryButton } from '../globals/Button';
 import { setRem, setColor, media } from '../../styles';
 import Spinner from '../globals/Spinner';
 
-const Landing = ({ className, auth: { isAuthenticated, loading } }) => {
+const Landing = ({ className, setNav, auth: { isAuthenticated, loading } }) => {
   useEffect(() => {
     document.title = 'Welcome to CodeBlog';
-  }, []);
+    setNav(true);
+    return () => {
+      setNav(false);
+    };
+  }, [setNav]);
 
   if (isAuthenticated) {
     return <Redirect to='/create-profile' />;
@@ -39,11 +45,16 @@ const Landing = ({ className, auth: { isAuthenticated, loading } }) => {
   );
 };
 
+Landing.propTypes = {
+  auth: PropTypes.object.isRequired,
+  setNav: PropTypes.func.isRequired,
+};
+
 const mapStateToProps = (state) => ({
   auth: state.auth,
 });
 
-export default connect(mapStateToProps)(styled(Landing)`
+export default connect(mapStateToProps, { setNav })(styled(Landing)`
   display: grid;
   grid-template-areas:
     '. . img'

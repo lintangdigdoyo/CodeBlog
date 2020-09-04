@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import { Redirect } from 'react-router-dom';
 
 import { setAlert, removeAlert } from '../actions/alert';
+import { setNav } from '../actions/navbar';
 import { signUp } from '../actions/auth';
 import { setColor, setRem, setFlex, media } from '../../styles';
 import { PrimaryButton } from '../globals/Button';
@@ -12,6 +13,7 @@ import Alert from '../globals/Alert';
 
 const SignUp = ({
   className,
+  setNav,
   setAlert,
   alerts,
   removeAlert,
@@ -19,8 +21,10 @@ const SignUp = ({
   auth: { loading, isAuthenticated },
 }) => {
   useEffect(() => {
+    setNav(true);
     return () => {
       removeAlert();
+      setNav(false);
     };
   }, [removeAlert]);
 
@@ -135,6 +139,7 @@ const SignUp = ({
 
 SignUp.propTypes = {
   setAlert: PropTypes.func.isRequired,
+  setNav: PropTypes.func.isRequired,
   removeAlert: PropTypes.func.isRequired,
   signUp: PropTypes.func.isRequired,
   alerts: PropTypes.array.isRequired,
@@ -148,6 +153,7 @@ const mapStateToProps = (state) => ({
 
 export default connect(mapStateToProps, {
   setAlert,
+  setNav,
   removeAlert,
   signUp,
 })(styled(SignUp)`

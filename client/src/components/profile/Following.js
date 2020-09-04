@@ -9,7 +9,7 @@ import Spinner from '../globals/Spinner';
 import { getProfile } from '../actions/profile';
 import Avatar from '../globals/Avatar';
 
-const Follower = ({
+const Following = ({
   className,
   match,
   auth: { loading },
@@ -24,32 +24,32 @@ const Follower = ({
     <Spinner />
   ) : (
     <div className={className}>
-      <span>Total followers: {profile.follower.length}</span>
-      <div className='follower'>
-        {profile.follower.map((follower, index) => {
+      <span>Total following: {profile.following.length}</span>
+      <div className='following'>
+        {profile.following.map((following, index) => {
           //Check if the avatar from the googleApi or not
           let profileAvatar = '';
-          const avatar = follower.user.avatar;
+          const avatar = following.user.avatar;
           if (avatar.split(':')[0] === 'https') {
-            profileAvatar = follower.user.avatar;
+            profileAvatar = following.user.avatar;
           } else if (avatar.split(':')[0] !== 'https') {
-            profileAvatar = `/${follower.user.avatar}`;
+            profileAvatar = `/${following.user.avatar}`;
           }
 
           return (
-            <Fragment key={follower.user._id}>
+            <Fragment key={following.user._id}>
               <div className='profile'>
-                <Link to={`/profile/${follower.user._id}`}>
+                <Link to={`/profile/${following.user._id}`}>
                   <Avatar src={profileAvatar} profileAvatar={profileAvatar} />
                 </Link>
                 <div className='item'>
-                  <Link to={`/profile/${follower.user._id}`}>
-                    <h4>{follower.user.name}</h4>
+                  <Link to={`/profile/${following.user._id}`}>
+                    <h4>{following.user.name}</h4>
                   </Link>
                 </div>
               </div>
-              {profile.follower.length > 1 &&
-                index + 1 === profile.follower.length && (
+              {profile.following.length > 1 &&
+                index + 1 !== profile.following.length && (
                   <div className='line' />
                 )}
             </Fragment>
@@ -60,7 +60,7 @@ const Follower = ({
   );
 };
 
-Follower.propTypes = {
+Following.propTypes = {
   auth: PropTypes.object.isRequired,
   getProfile: PropTypes.func.isRequired,
   profile: PropTypes.object,
@@ -73,13 +73,13 @@ const mapStateToProps = (state) => ({
 
 export default connect(mapStateToProps, {
   getProfile,
-})(styled(Follower)`
+})(styled(Following)`
   margin: 5% 10%;
   span {
     margin-bottom: 5px;
     color: ${setColor.darkGray};
   }
-  .follower {
+  .following {
     background-color: ${setColor.mainWhite};
     box-shadow: 4px 5px 10px rgba(0, 0, 0, 0.2);
     padding: 2%;

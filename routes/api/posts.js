@@ -7,6 +7,7 @@ const upload = require('../../middleware/upload');
 const fs = require('fs');
 
 const Post = require('../../models/Post/Post');
+const Profile = require('../../models/Profile/Profile');
 
 //@route POST api/posts
 //@desc Create a new post
@@ -81,6 +82,36 @@ router.get('/profiles/:userId', checkObjectId('userId'), async (req, res) => {
     res.status(500).send('Server Error');
   }
 });
+
+//@route GET api/posts/profiles/:userId/following
+//@desc Get posts from followed user
+//@access private
+
+router.get(
+  '/profiles/:userId/following',
+  auth,
+  checkObjectId('userId'),
+  async (req, res) => {
+    try {
+      const profile = await Profile.findOne({ user: req.params.userId });
+
+      const posts = await Post.find({
+        user: {
+          $in: profile.following.map((following) => following.user),
+        },
+      });
+
+      if (!posts) {
+        return res.status(404).json({ errors: [{ msg: 'Post not found' }] });
+      }
+
+      res.json(posts);
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server Error');
+    }
+  }
+);
 
 //@route GET api/posts/:postId
 //@desc Get a post

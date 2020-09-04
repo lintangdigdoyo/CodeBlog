@@ -102,7 +102,7 @@ export default connect(mapStateToProps, { deletePost })(styled(Post)`
   .statistic {
     ${setFlex({ x: 'space-between', y: 'flex-end' })};
     height: 30px;
-    width: 40%;
+    width: 280px;
     color: ${setColor.darkBlue};
     .item:last-child {
       cursor: pointer;

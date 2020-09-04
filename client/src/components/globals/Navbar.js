@@ -67,12 +67,11 @@ const Navbar = ({
 
   const privateLinks = (
     <ul>
-      <li>
-        <Link to='/home'>home</Link>
-      </li>
-
       {user && (
         <Fragment>
+          <li>
+            <Link to='/home'>home</Link>
+          </li>
           <li>
             <DropdownAvatar />
           </li>
@@ -89,7 +88,7 @@ const Navbar = ({
   const guestLinks = (
     <ul>
       <li>
-        <Link to='/home'>home</Link>
+        <Link to='/home'>explore</Link>
       </li>
       <li>
         <Link to='/login'>sign in</Link>

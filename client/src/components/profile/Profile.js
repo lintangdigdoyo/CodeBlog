@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-import { Redirect } from 'react-router-dom';
+import { Redirect, Link } from 'react-router-dom';
 
 import Spinner from '../globals/Spinner';
 import { getProfile, clearProfile } from '../actions/profile';
@@ -17,7 +17,7 @@ import Alert from '../globals/Alert';
 import { removeAlert } from '../actions/alert';
 import UpdateProfile from './UpdateProfile';
 import { updateProfile, followUser, unfollowUser } from '../actions/profile';
-import { getUserPosts } from '../actions/post';
+import { getUserPosts, clearPost } from '../actions/post';
 import { SmallButton } from '../globals/Button';
 
 const Profile = ({
@@ -32,6 +32,7 @@ const Profile = ({
   followUser,
   unfollowUser,
   getUserPosts,
+  clearPost,
   post,
 }) => {
   useEffect(() => {
@@ -40,14 +41,16 @@ const Profile = ({
     return () => {
       removeAlert();
       clearProfile();
+      clearPost();
     };
   }, [
+    getUserPosts,
     getProfile,
     clearProfile,
     isAuthenticated,
     removeAlert,
+    clearPost,
     match.params.userId,
-    getUserPosts,
   ]);
 
   const [formData, setFormData] = useState({
@@ -98,7 +101,10 @@ const Profile = ({
     reader.readAsDataURL(file);
   };
 
-  return loading || profile.hasProfile === null || post.posts === null ? (
+  return loading ||
+    profile.hasProfile === null ||
+    post.posts === null ||
+    (profile.profile && profile.profile.user._id !== match.params.userId) ? (
     <Spinner />
   ) : (
     profile.profile && (
@@ -145,14 +151,18 @@ const Profile = ({
             </a>
             <div className='totalof'>
               <h5>
-                {post.posts.length} <span>Posts</span>
+                {post.posts && post.posts.length} <span>Posts</span>
               </h5>
-              <h5>
-                {profile.profile.follower.length} <span>Followers</span>
-              </h5>
-              <h5>
-                {profile.profile.following.length} <span>Following</span>
-              </h5>
+              <Link to={`${profile.profile.user._id}/follower`}>
+                <h5>
+                  {profile.profile.follower.length} <span>Followers</span>
+                </h5>
+              </Link>
+              <Link to={`${profile.profile.user._id}/following`}>
+                <h5>
+                  {profile.profile.following.length} <span>Following</span>
+                </h5>
+              </Link>
             </div>
             {user && profile.profile.user._id !== user._id && (
               <div className='button'>
@@ -203,6 +213,7 @@ Profile.propTypes = {
   getUserPosts: PropTypes.func.isRequired,
   followUser: PropTypes.func.isRequired,
   unfollowUser: PropTypes.func.isRequired,
+  clearPost: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
@@ -219,6 +230,7 @@ export default connect(mapStateToProps, {
   getUserPosts,
   followUser,
   unfollowUser,
+  clearPost,
 })(
   styled(Profile)`
     margin: 5% 0;
@@ -245,6 +257,11 @@ export default connect(mapStateToProps, {
           margin: 0;
           display: flex;
         }
+        a {
+          &:hover {
+            text-decoration: underline;
+          }
+        }
         h3,
         h4 {
           margin: 0;
@@ -264,6 +281,12 @@ export default connect(mapStateToProps, {
         }
         .totalof {
           display: flex;
+          a {
+            color: ${setColor.mainBlack};
+            &:hover {
+              text-decoration: underline;
+            }
+          }
           h5 {
             margin: 0;
             margin-right: 10px;
@@ -281,7 +304,7 @@ export default connect(mapStateToProps, {
               background-color: ${setColor.darkBlue};
             }
           }
-          i {
+          i.fa-envelope {
             color: ${setColor.mainWhite};
             font-size: 13px;
           }
