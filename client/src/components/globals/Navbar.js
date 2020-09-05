@@ -47,7 +47,13 @@ const Navbar = ({
       as: Link,
       to: user && `/profile/${user._id}`,
     },
-    { key: 'settings', text: 'Settings', icon: 'settings' },
+    {
+      key: 'settings',
+      text: 'Settings',
+      icon: 'settings',
+      as: Link,
+      to: user && '/setting',
+    },
     {
       key: 'sign-out',
       text: 'Sign Out',
@@ -133,9 +139,9 @@ const mapStateToProps = (state) => ({
 export default connect(mapStateToProps, { setVisible, signOut })(styled(Navbar)`
   background-color: ${(props) =>
     props.transparent ? 'rgba(0,0,0,0)' : setColor.primaryColor};
-  padding: 35px 10%;
+  padding: 20px 10%;
   width: 100vw;
-  height: ${setRem(41)};
+  height: ${setRem(70)};
   display: flex;
   justify-content: space-between;
   align-items: center;

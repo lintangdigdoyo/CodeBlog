@@ -126,7 +126,7 @@ export default connect(mapStateToProps, {
   setNav,
 })(styled(SignIn)`
   display: grid;
-  height: 800px;
+  min-height: 100vh;
   justify-content: center;
   align-items: center;
   align-content: center;

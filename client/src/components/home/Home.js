@@ -4,10 +4,12 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 
+import headerExplore from '../../images/headerExplore.jpg';
 import Spinner from '../globals/Spinner';
-import { setColor } from '../../styles';
+import { setColor, setRem, setFlex } from '../../styles';
 import Post from '../post/Post';
 import { getPosts, getFollowedPosts, clearPost } from '../actions/post';
+import { SmallButton } from '../globals/Button';
 
 const Home = ({
   className,
@@ -74,9 +76,27 @@ const Home = ({
       )}
 
       <section style={{ margin: !isAuthenticated && '5%' }}>
-        {post.posts.map((post) => (
-          <Post key={post._id} post={post} />
-        ))}
+        {post.posts.length > 0 ? (
+          <Fragment>
+            {!isAuthenticated && (
+              <header>
+                <h1>Explore & Gain Your Knowledge</h1>
+                <p>
+                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Quos,
+                  quasi Laborum vero.
+                </p>
+                <SmallButton as={Link} to='/register'>
+                  Sign up
+                </SmallButton>
+              </header>
+            )}
+            {post.posts.map((post) => (
+              <Post key={post._id} post={post} />
+            ))}
+          </Fragment>
+        ) : (
+          <h4>No posts found</h4>
+        )}
       </section>
     </div>
   );
@@ -100,11 +120,41 @@ export default connect(mapStateToProps, {
   getFollowedPosts,
   clearPost,
 })(styled(Home)`
-  margin: 5% 0;
+  margin: 2% 0 5% 0;
+  header {
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(
+        to top right,
+        rgba(0, 0, 0, 1),
+        rgba(0, 0, 0, 0)
+      ),
+      url(${headerExplore}) center;
+    justify-content: center;
+    background-size: cover;
+    height: 400px;
+    width: 100%;
+    margin-bottom: 20px;
+    padding: 0 50% 0 5%;
+    color: ${setColor.mainWhite};
+    h1 {
+      font-size: ${setRem(60)};
+    }
+    p {
+      font-size: ${setRem(20)};
+    }
+    a {
+      width: 150px;
+      ${setFlex};
+      &:hover {
+        color: ${setColor.mainWhite};
+      }
+    }
+  }
   .navigation {
     background-color: ${setColor.mainWhite};
-    box-shadow: 4px 5px 10px rgba(0, 0, 0, 0.2);
-    padding: 2%;
+    box-shadow: 2px 3px 3px rgba(0, 0, 0, 0.2);
+    padding: 1% 2%;
     margin-bottom: 2%;
     a {
       margin-right: 15px;

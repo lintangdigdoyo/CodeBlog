@@ -158,7 +158,7 @@ export default connect(mapStateToProps, {
   signUp,
 })(styled(SignUp)`
   display: grid;
-  height: 800px;
+  min-height: 100vh;
   justify-content: center;
   align-items: center;
   align-content: center;

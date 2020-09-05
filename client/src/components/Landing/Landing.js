@@ -66,7 +66,7 @@ export default connect(mapStateToProps, { setNav })(styled(Landing)`
   align-items: center;
   justify-content: center;
   width: 100%;
-  margin: 10% 0;
+  min-height: 100vh;
   grid-template-rows: auto 160px 130px;
   grid-template-columns: 220px 250px;
   h1 {

@@ -69,7 +69,7 @@ export default connect(mapStateToProps, { updateSkill })(styled(Skill)`
   position: relative;
   background-color: ${setColor.mainWhite};
   text-align: center;
-  box-shadow: 4px 5px 10px rgba(0, 0, 0, 0.2);
+  box-shadow: 2px 3px 3px rgba(0, 0, 0, 0.2);
   padding: 5%;
   padding-bottom: 10%;
   width: 360px;

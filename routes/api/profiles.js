@@ -622,11 +622,11 @@ router.delete(
 
       const deleteIndex = profile.follower
         .map((follower) => follower.user.toString())
-        .indexOf(req.params.userId);
+        .indexOf(req.user.id);
 
       const deleteIndexUser = userProfile.following
         .map((following) => following.user.toString())
-        .indexOf(req.user.id);
+        .indexOf(req.params.userId);
 
       profile.follower.splice(deleteIndex, 1);
       userProfile.following.splice(deleteIndexUser, 1);

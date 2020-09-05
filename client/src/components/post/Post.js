@@ -70,9 +70,13 @@ const mapStateToProps = (state) => ({
 export default connect(mapStateToProps, { deletePost })(styled(Post)`
   position: relative;
   background-color: ${setColor.mainWhite};
-  box-shadow: 4px 5px 10px rgba(0, 0, 0, 0.2);
+  box-shadow: 2px 3px 3px rgba(0, 0, 0, 0.2);
   padding: 2%;
   margin-bottom: 2%;
+  transition: 0.2s ease-in-out;
+  &:hover {
+    box-shadow: 4px 5px 10px rgba(0, 0, 0, 0.2);
+  }
   .content {
     display: grid;
     color: ${setColor.mainBlack};

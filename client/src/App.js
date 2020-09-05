@@ -21,6 +21,7 @@ import Home from './components/home/Home';
 import PostDetail from './components/post/PostDetail';
 import Follower from './components/profile/Follower';
 import Following from './components/profile/Following';
+import Setting from './components/setting/Setting';
 
 const App = ({ navbar, loadUser }) => {
   useEffect(() => {
@@ -58,6 +59,7 @@ const App = ({ navbar, loadUser }) => {
               />
               <PrivateRoute exact path='/create-post' component={CreatePost} />
               <PrivateRoute exact path='/edit-post' component={EditPost} />
+              <PrivateRoute exact path='/setting' component={Setting} />
             </Switch>
           </Container>
         </SidebarNav>
