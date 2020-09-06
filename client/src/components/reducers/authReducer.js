@@ -5,6 +5,7 @@ import {
   LOGIN_SUCCESS,
   LOGIN_FAIL,
   AUTH_ERROR,
+  CLEAR_PASSWORD,
   LOGOUT,
 } from '../actions/types';
 
@@ -55,6 +56,12 @@ export default (state = initialState, action) => {
         isAuthenticated: false,
         loading: false,
         user: null,
+      };
+    case CLEAR_PASSWORD:
+      return {
+        ...state,
+        user: { ...state.user, password: undefined },
+        loading: false,
       };
     case AUTH_ERROR:
       return {

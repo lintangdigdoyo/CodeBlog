@@ -539,7 +539,7 @@ router.post(
     try {
       let profile = await Profile.findOne({
         user: req.params.userId,
-      }).populate('user', ['name', 'avatar']);
+      });
 
       const userProfile = await Profile.findOne({ user: req.user.id });
 
@@ -563,8 +563,8 @@ router.post(
           .json({ errors: [{ msg: 'User already followed' }] });
       }
 
-      profile.follower.push({ user: req.user.id });
-      userProfile.following.push({ user: req.params.userId });
+      profile.follower.unshift({ user: req.user.id });
+      userProfile.following.unshift({ user: req.params.userId });
 
       await profile.save();
       await userProfile.save();

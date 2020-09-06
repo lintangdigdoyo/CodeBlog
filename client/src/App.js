@@ -22,6 +22,7 @@ import PostDetail from './components/post/PostDetail';
 import Follower from './components/profile/Follower';
 import Following from './components/profile/Following';
 import Setting from './components/setting/Setting';
+import Alert from './components/globals/Alert';
 
 const App = ({ navbar, loadUser }) => {
   useEffect(() => {

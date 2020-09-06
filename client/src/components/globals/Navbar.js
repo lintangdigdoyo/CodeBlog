@@ -48,6 +48,11 @@ const Navbar = ({
       to: user && `/profile/${user._id}`,
     },
     {
+      key: 'chat',
+      text: 'Chat',
+      icon: 'chat',
+    },
+    {
       key: 'settings',
       text: 'Settings',
       icon: 'settings',
@@ -155,6 +160,12 @@ export default connect(mapStateToProps, { setVisible, signOut })(styled(Navbar)`
       font-weight: 400;
     }
   }
+  .ui.dropdown .menu .selected.item {
+    background: ${setColor.mainWhite};
+    &:hover {
+      background: ${setColor.mainGray};
+    }
+  }
   img {
     &:hover {
       border: 3px solid ${setColor.mainGray};
@@ -164,7 +175,6 @@ export default connect(mapStateToProps, { setVisible, signOut })(styled(Navbar)`
     width: 25px;
     height: 17px;
   }
-
   a {
     color: ${(props) =>
       props.transparent ? setColor.darkBlue : setColor.mainGray};

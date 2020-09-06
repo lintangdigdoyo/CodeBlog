@@ -7,6 +7,7 @@ import {
   REGISTER_FAIL,
   LOGOUT,
   CLEAR_PROFILE,
+  CLEAR_PASSWORD,
 } from './types';
 
 import { setAlert } from './alert';
@@ -20,6 +21,21 @@ export const loadUser = () => async (dispatch) => {
   } catch (err) {
     dispatch({ type: AUTH_ERROR });
   }
+};
+
+// Load User with password
+export const loadUserPassword = () => async (dispatch) => {
+  try {
+    const res = await api.get('/user/password');
+    dispatch({ type: USER_LOADED, payload: res.data });
+  } catch (err) {
+    dispatch({ type: AUTH_ERROR });
+  }
+};
+
+//Clear password
+export const clearPassword = () => {
+  return { type: CLEAR_PASSWORD };
 };
 
 //Register User

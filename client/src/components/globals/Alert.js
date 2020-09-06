@@ -42,8 +42,9 @@ export default connect(mapStateToProps)(styled(Alert)`
     padding: 5px;
     position: absolute;
     width: 100vw;
-    top: 70px;
+    top: 0;
     left: 0;
     text-align: center;
+    opacity: 0.8;
   }
 `);

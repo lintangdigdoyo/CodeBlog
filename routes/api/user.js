@@ -27,6 +27,23 @@ router.get('/', auth, async (req, res) => {
   }
 });
 
+//@route GET api/user/password
+//@desc Get password
+//@access Private
+
+router.get('/password', auth, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id)
+      .select('-date')
+      .select('-__v');
+
+    res.json(user);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+});
+
 //@route patch api/user
 //@desc edit signed in user
 //@access Private
@@ -35,10 +52,12 @@ router.patch(
   '/',
   auth,
   [
-    check('name', 'Please enter the name').not().isEmpty(),
     check('email', 'Please enter a valid email').isEmail(),
+    check('currentPassword', 'Please enter the current password')
+      .not()
+      .isEmpty(),
     check(
-      'password',
+      'newPassword',
       'Please enter password with 6 or more characters'
     ).isLength({ min: 6 }),
   ],
@@ -49,29 +68,35 @@ router.patch(
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { name, email, password } = req.body;
+    const { email, currentPassword, newPassword } = req.body;
 
     try {
       let user = await User.findById(req.user.id);
 
+      const isMatch = await bcrypt.compare(currentPassword, user.password);
+
+      if (!isMatch) {
+        return res
+          .status(400)
+          .json({ errors: [{ msg: 'Current password invalid' }] });
+      }
+
       if (user.googleId) {
-        if (name) user.name = name;
-        if (password) {
+        if (newPassword) {
           const salt = await bcrypt.genSalt(10);
-          const newPassword = await bcrypt.hash(password, salt);
-          user.password = newPassword;
+          const newPasswordCreated = await bcrypt.hash(newPassword, salt);
+          user.password = newPasswordCreated;
         }
 
         await user.save();
         return res.json({ msg: 'User updated' });
       }
 
-      if (name) user.name = name;
       if (email) user.email = email;
-      if (password) {
+      if (newPassword) {
         const salt = await bcrypt.genSalt(10);
-        const newPassword = await bcrypt.hash(password, salt);
-        user.password = newPassword;
+        const newPasswordCreated = await bcrypt.hash(newPassword, salt);
+        user.password = newPasswordCreated;
       }
 
       await user.save();
@@ -87,17 +112,40 @@ router.patch(
 //@desc Delete user account
 //@access Private
 
-router.delete('/', auth, async (req, res) => {
-  try {
-    await Post.deleteMany({ user: req.user.id });
-    await Profile.findOneAndRemove({ user: req.user.id });
-    await User.findByIdAndRemove(req.user.id);
+router.delete(
+  '/',
+  auth,
+  check('password', 'Please enter the password').not().isEmpty(),
+  async (req, res) => {
+    const errors = validationResult(req);
 
-    res.json({ msg: 'User removed' });
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server Error');
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { password } = req.body;
+
+    try {
+      const user = await User.findById(req.user.id);
+
+      const isMatch = await bcrypt.compare(password, user.password);
+
+      if (!isMatch) {
+        return res
+          .status(400)
+          .json({ errors: [{ msg: 'Current password invalid' }] });
+      }
+
+      await Post.deleteMany({ user: req.user.id });
+      await Profile.findOneAndRemove({ user: req.user.id });
+      await User.findByIdAndRemove(req.user.id);
+
+      res.json({ msg: 'User removed' });
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server Error');
+    }
   }
-});
+);
 
 module.exports = router;

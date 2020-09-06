@@ -3,7 +3,9 @@ import {
   PROFILE_ERROR,
   CLEAR_PROFILE,
   UPDATE_PROFILE,
+  UPDATE_FOLLOWER,
   GET_PROFILE_FAIL,
+  LOGOUT,
 } from './types';
 import axios from 'axios';
 
@@ -247,7 +249,46 @@ export const unfollowUser = (userId) => async (dispatch) => {
   }
 };
 
+//Update user setting
+export const updateUser = (formData) => async (dispatch) => {
+  try {
+    await api.patch('/user', formData);
+    dispatch(setAlert('User Account Updated', 'success'));
+  } catch (err) {
+    const errors = err.response.data.errors;
+    if (errors) {
+      errors.forEach((error) =>
+        dispatch(setAlert(error.msg, 'danger', error.param))
+      );
+    }
+    dispatch({
+      type: PROFILE_ERROR,
+      payload: { msg: err.response.statusText, status: err.response.status },
+    });
+  }
+};
+
 //Clear profile data
 export const clearProfile = () => {
   return { type: CLEAR_PROFILE };
+};
+
+//Delete Account
+export const deleteAccount = () => async (dispatch) => {
+  try {
+    await api.delete('/user');
+    dispatch({ type: CLEAR_PROFILE });
+    dispatch({ type: LOGOUT });
+  } catch (err) {
+    const errors = err.response.data.errors;
+    if (errors) {
+      errors.forEach((error) =>
+        dispatch(setAlert(error.msg, 'danger', error.param))
+      );
+    }
+    dispatch({
+      type: PROFILE_ERROR,
+      payload: { msg: err.response.statusText, status: err.response.status },
+    });
+  }
 };
