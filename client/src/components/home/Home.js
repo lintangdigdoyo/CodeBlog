@@ -9,6 +9,7 @@ import Spinner from '../globals/Spinner';
 import { setColor, setRem, setFlex } from '../../styles';
 import Post from '../post/Post';
 import { getPosts, getFollowedPosts, clearPost } from '../actions/post';
+import { getProfile } from '../actions/profile';
 import { SmallButton } from '../globals/Button';
 
 const Home = ({
@@ -18,21 +19,30 @@ const Home = ({
   clearPost,
   auth: { isAuthenticated, loading, user },
   post,
+  profile,
+  getProfile,
 }) => {
   useEffect(() => {
     document.title = `${
       !isAuthenticated ? 'Explore | CodeBlog' : ' Home | CodeBlog'
     }`;
-    if (!loading && isAuthenticated) {
+    if (user) {
+      getProfile(user._id);
+    }
+
+    if (!loading && isAuthenticated && profile.hasProfile === true) {
       getFollowedPosts(user._id);
-    } else if (!loading && !isAuthenticated) {
+    } else if (
+      (!loading && !isAuthenticated) ||
+      (isAuthenticated && profile.hasProfile === false)
+    ) {
       getPosts();
     }
 
     return () => {
       clearPost();
     };
-  }, [getPosts, clearPost, isAuthenticated]);
+  }, [getPosts, clearPost, isAuthenticated, profile.hasProfile]);
 
   const [underline, setUnderline] = useState({
     timeline: true,
@@ -48,7 +58,7 @@ const Home = ({
     <Spinner />
   ) : (
     <div className={className}>
-      {isAuthenticated && (
+      {isAuthenticated && profile.hasProfile === true && (
         <div className='navigation'>
           <Fragment>
             <Link
@@ -107,18 +117,22 @@ Home.propTypes = {
   getPosts: PropTypes.func.isRequired,
   post: PropTypes.object.isRequired,
   getFollowedPosts: PropTypes.func.isRequired,
+  profile: PropTypes.object.isRequired,
   clearPost: PropTypes.func.isRequired,
+  getProfile: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
   auth: state.auth,
   post: state.post,
+  profile: state.profile,
 });
 
 export default connect(mapStateToProps, {
   getPosts,
   getFollowedPosts,
   clearPost,
+  getProfile,
 })(styled(Home)`
   margin: 2% 0 5% 0;
   header {

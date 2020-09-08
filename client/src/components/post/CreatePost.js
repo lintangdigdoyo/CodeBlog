@@ -1,10 +1,25 @@
 import React from 'react';
 import styled from 'styled-components';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { Redirect } from 'react-router-dom';
 
 import { setColor } from '../../styles';
 import PostForm from './PostForm';
 
-const CreatePost = ({ className, history }) => {
+const CreatePost = ({
+  className,
+  history,
+  auth: { loading, user },
+  profile,
+}) => {
+  //Check user has profile or not
+  if (!loading && user) {
+    if (profile.profile === null && profile.hasProfile === false) {
+      return <Redirect to='/create-profile' />;
+    }
+  }
+
   return (
     <div className={className}>
       <h1>Create a new post</h1>
@@ -13,7 +28,12 @@ const CreatePost = ({ className, history }) => {
   );
 };
 
-export default styled(CreatePost)`
+const mapStateToProps = (state) => ({
+  profile: state.profile,
+  auth: state.auth,
+});
+
+export default connect(mapStateToProps)(styled(CreatePost)`
   margin: 5% 0;
   color: ${setColor.darkBlue};
   h1 {
@@ -22,4 +42,4 @@ export default styled(CreatePost)`
     padding: 2%;
     font-weight: 600;
   }
-`;
+`);

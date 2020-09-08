@@ -37,7 +37,7 @@ const Comment = ({
     posts.comment.map((comment) => {
       //Check if the avatar from the googleApi or not
       let commentAvatar = '';
-      if (posts.user && comment.user.avatar) {
+      if (posts.user && comment.user && comment.user.avatar) {
         const avatar = comment.user.avatar;
         if (avatar.split(':')[0] === 'https') {
           commentAvatar = comment.user.avatar;
@@ -45,45 +45,50 @@ const Comment = ({
           commentAvatar = `/${comment.user.avatar}`;
         }
       }
+
       return (
-        <div className='comments' key={comment._id}>
-          <Link className='avatar' to={`/profile/${comment.user._id}`}>
-            <Avatar src={commentAvatar} commentAvatar={commentAvatar} />
-          </Link>
-          <div className='name'>
-            <Link to={`/profile/${comment.user._id}`}>{comment.user.name}</Link>
-            <Moment fromNow>{comment.date}</Moment>
+        comment.user && (
+          <div className='comments' key={comment._id}>
+            <Link className='avatar' to={`/profile/${comment.user._id}`}>
+              <Avatar src={commentAvatar} commentAvatar={commentAvatar} />
+            </Link>
+            <div className='name'>
+              <Link to={`/profile/${comment.user._id}`}>
+                {comment.user.name}
+              </Link>
+              <Moment fromNow>{comment.date}</Moment>
+            </div>
+            <p>{comment.text}</p>
+            {isAuthenticated && comment.user._id === user._id && (
+              <Fragment>
+                <Modal
+                  title='Edit Comment'
+                  submit='Save'
+                  submitData={() =>
+                    editComment(editFormComment, posts._id, comment._id)
+                  }
+                  content={
+                    <EditComment
+                      setEditFormComment={setEditFormComment}
+                      editFormComment={editFormComment}
+                      comment={comment.text}
+                    />
+                  }
+                >
+                  <i className='far fa-edit fa-lg'></i>
+                </Modal>
+                <Modal
+                  title='Delete Comment'
+                  content='Are you sure want to delete this comment?'
+                  submitData={() => deleteComment(posts._id, comment._id)}
+                  danger
+                >
+                  <i className='far fa-trash-alt fa-lg'></i>
+                </Modal>
+              </Fragment>
+            )}
           </div>
-          <p>{comment.text}</p>
-          {isAuthenticated && comment.user._id === user._id && (
-            <Fragment>
-              <Modal
-                title='Edit Comment'
-                submit='Save'
-                submitData={() =>
-                  editComment(editFormComment, posts._id, comment._id)
-                }
-                content={
-                  <EditComment
-                    setEditFormComment={setEditFormComment}
-                    editFormComment={editFormComment}
-                    comment={comment.text}
-                  />
-                }
-              >
-                <i className='far fa-edit fa-lg'></i>
-              </Modal>
-              <Modal
-                title='Delete Comment'
-                content='Are you sure want to delete this comment?'
-                submitData={() => deleteComment(posts._id, comment._id)}
-                danger
-              >
-                <i className='far fa-trash-alt fa-lg'></i>
-              </Modal>
-            </Fragment>
-          )}
-        </div>
+        )
       );
     });
 

@@ -1,40 +1,51 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 
 import { setColor, setRem } from '../../styles';
+import Alert from '../globals/Alert';
+import { removeAlert } from '../actions/alert';
 
-const removeAccountForm = ({
+const RemoveAccountForm = ({
   className,
   name,
   removeFormData,
   onRemoveChange,
-}) => (
-  <form autoComplete='off' className={className}>
-    <p>
-      <i className='fas fa-exclamation-triangle'></i>{' '}
-      {`This action cannot be undone. This will permanently delete the
+  removeAlert,
+  setRemoveFormData,
+}) => {
+  useEffect(() => {
+    removeAlert();
+    return () => {
+      removeAlert();
+      setRemoveFormData({
+        password: '',
+      });
+    };
+  }, [removeAlert]);
+
+  return (
+    <div className={className}>
+      <p>
+        <i className='fas fa-exclamation-triangle'></i>{' '}
+        {`This action cannot be undone. This will permanently delete the
         ${name} account, and all the posts. Please type your password to
         confirm.`}
-    </p>
-    <input
-      type='password'
-      name='password'
-      id='password'
-      placeholder='Enter your password'
-      value={removeFormData.password}
-      onChange={onRemoveChange}
-    />
-    <input
-      type='password'
-      name='confirmPassword'
-      placeholder='Confirm password'
-      value={removeFormData.confirmPassword}
-      onChange={onRemoveChange}
-    />
-  </form>
-);
+      </p>
+      <input
+        type='password'
+        name='password'
+        placeholder='Enter your password'
+        value={removeFormData.password}
+        onChange={onRemoveChange}
+      />
+      <Alert />
+    </div>
+  );
+};
 
-export default styled(removeAccountForm)`
+export default connect(null, { removeAlert })(styled(RemoveAccountForm)`
   p {
     background-color: ${setColor.lightDanger};
     padding: 15px;
@@ -49,4 +60,4 @@ export default styled(removeAccountForm)`
     margin: 15px 0;
     border: 1px solid ${setColor.darkBlue};
   }
-`;
+`);

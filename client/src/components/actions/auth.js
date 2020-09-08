@@ -1,5 +1,6 @@
 import {
   USER_LOADED,
+  CHECK_PASSWORD,
   AUTH_ERROR,
   LOGIN_SUCCESS,
   LOGIN_FAIL,
@@ -7,7 +8,7 @@ import {
   REGISTER_FAIL,
   LOGOUT,
   CLEAR_PROFILE,
-  CLEAR_PASSWORD,
+  CLEAR_PASSWORD_CHECK,
 } from './types';
 
 import { setAlert } from './alert';
@@ -23,19 +24,21 @@ export const loadUser = () => async (dispatch) => {
   }
 };
 
-// Load User with password
-export const loadUserPassword = () => async (dispatch) => {
+// Check if user has password or not
+export const checkUserPassword = () => async (dispatch) => {
   try {
     const res = await api.get('/user/password');
-    dispatch({ type: USER_LOADED, payload: res.data });
+    dispatch({ type: CHECK_PASSWORD, payload: res.data });
   } catch (err) {
     dispatch({ type: AUTH_ERROR });
   }
 };
 
-//Clear password
-export const clearPassword = () => {
-  return { type: CLEAR_PASSWORD };
+// Clear the password check
+export const clearPasswordCheck = () => {
+  return {
+    type: CLEAR_PASSWORD_CHECK,
+  };
 };
 
 //Register User

@@ -1,36 +1,38 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import Avatar from '../globals/Avatar';
+import Spinner from '../globals/Spinner';
 import { setColor, setRem } from '../../styles';
 import { SmallButton } from '../globals/Button';
 import Modal from '../globals/Modal';
-import { updateUser, deleteAccount } from '../actions/profile';
-import { loadUserPassword, clearPassword } from '../actions/auth';
+import { updateUser, deleteAccount, createPassword } from '../actions/profile';
+import { checkUserPassword, clearPasswordCheck } from '../actions/auth';
 import Alert from '../globals/Alert';
 import { removeAlert, setAlert } from '../actions/alert';
 import RemoveAccountForm from './RemoveAccountForm';
 
 const Setting = ({
   className,
-  auth: { user },
+  auth: { user, hasPassword },
   updateUser,
   removeAlert,
   setAlert,
   alerts,
   deleteAccount,
-  loadUserPassword,
-  clearPassword,
+  createPassword,
+  checkUserPassword,
+  clearPasswordCheck,
 }) => {
   useEffect(() => {
-    loadUserPassword();
+    checkUserPassword();
     return () => {
-      clearPassword();
       removeAlert();
+      clearPasswordCheck();
     };
-  }, [removeAlert, loadUserPassword]);
+  }, [removeAlert, checkUserPassword, clearPasswordCheck]);
 
   const [formData, setFormData] = useState({
     email: user.email,
@@ -40,7 +42,6 @@ const Setting = ({
   });
   const [removeFormData, setRemoveFormData] = useState({
     password: '',
-    confirmPassword: '',
   });
 
   const { email, currentPassword, newPassword, confirmPassword } = formData;
@@ -55,16 +56,39 @@ const Setting = ({
 
   const onSubmit = (e) => {
     e.preventDefault();
-    if (newPassword !== confirmPassword) {
-      removeAlert();
-      setAlert('Password not match', 'danger', 'password');
-    } else {
-      removeAlert();
-      updateUser(formData);
+    if (hasPassword) {
+      if (newPassword !== confirmPassword) {
+        removeAlert();
+        setAlert('Password not match', 'danger', 'password');
+      } else {
+        removeAlert();
+        updateUser(formData);
+        setFormData({
+          ...formData,
+          currentPassword: '',
+          newPassword: '',
+          confirmPassword: '',
+        });
+      }
+    } else if (!hasPassword) {
+      if (newPassword !== confirmPassword) {
+        removeAlert();
+        setAlert('Password not match', 'danger', 'password');
+      } else {
+        removeAlert();
+        createPassword(newPassword);
+        setFormData({
+          ...formData,
+          newPassword: '',
+          confirmPassword: '',
+        });
+      }
     }
   };
 
-  return (
+  return typeof hasPassword === 'undefined' ? (
+    <Spinner />
+  ) : (
     <div className={className}>
       <h2>Account Settings</h2>
       <div className='line' />
@@ -95,49 +119,94 @@ const Setting = ({
                 authentication
               </p>
             )}
-            <label htmlFor='password'>Change Password</label>
-            <input
-              type='password'
-              id='password'
-              placeholder='Current password'
-              className={
-                alertName
-                  .filter((alert) => alert === 'currentPassword')
-                  .toString() && 'danger'
-              }
-              name='currentPassword'
-              onChange={onChange}
-              value={currentPassword}
-            />
-            <input
-              type='password'
-              placeholder='New password'
-              className={
-                alertName
-                  .filter(
-                    (alert) => alert === 'newPassword' || alert === 'password'
-                  )
-                  .toString() && 'danger'
-              }
-              name='newPassword'
-              onChange={onChange}
-              value={newPassword}
-            />
-            <input
-              type='password'
-              placeholder='Re-type new password'
-              className={
-                alertName
-                  .filter(
-                    (alert) =>
-                      alert === 'confirmPassword' || alert === 'password'
-                  )
-                  .toString() && 'danger'
-              }
-              name='confirmPassword'
-              onChange={onChange}
-              value={confirmPassword}
-            />
+            {hasPassword ? (
+              <Fragment>
+                <label htmlFor='password' className='password'>
+                  Change Password
+                </label>
+                <input
+                  type='password'
+                  id='password'
+                  placeholder='Current password'
+                  className={
+                    alertName
+                      .filter((alert) => alert === 'currentPassword')
+                      .toString() && 'danger'
+                  }
+                  name='currentPassword'
+                  onChange={onChange}
+                  value={currentPassword}
+                />
+                <input
+                  type='password'
+                  placeholder='New password'
+                  className={
+                    alertName
+                      .filter(
+                        (alert) =>
+                          alert === 'newPassword' || alert === 'password'
+                      )
+                      .toString() && 'danger'
+                  }
+                  name='newPassword'
+                  onChange={onChange}
+                  value={newPassword}
+                />
+                <input
+                  type='password'
+                  placeholder='Re-type new password'
+                  className={
+                    alertName
+                      .filter(
+                        (alert) =>
+                          alert === 'confirmPassword' || alert === 'password'
+                      )
+                      .toString() && 'danger'
+                  }
+                  name='confirmPassword'
+                  onChange={onChange}
+                  value={confirmPassword}
+                />
+              </Fragment>
+            ) : (
+              <Fragment>
+                <label htmlFor='newPassword' className='password'>
+                  Create New Password
+                </label>
+                <input
+                  type='password'
+                  placeholder='Enter the new password'
+                  id='newPassword'
+                  className={
+                    alertName
+                      .filter(
+                        (alert) =>
+                          alert === 'newPassword' || alert === 'password'
+                      )
+                      .toString() && 'danger'
+                  }
+                  name='newPassword'
+                  onChange={onChange}
+                  value={newPassword}
+                />
+                <input
+                  type='password'
+                  placeholder='Re-type new password'
+                  className={
+                    alertName
+                      .filter(
+                        (alert) =>
+                          alert === 'confirmPassword' || alert === 'password'
+                      )
+                      .toString() && 'danger'
+                  }
+                  name='confirmPassword'
+                  onChange={onChange}
+                  value={confirmPassword}
+                />
+              </Fragment>
+            )}
+
             <Alert />
             <SmallButton>Save</SmallButton>
           </form>
@@ -145,12 +214,13 @@ const Setting = ({
             title={`Are you absolutely sure want to delete ${user.name} account?`}
             submit='Delete Account'
             danger
-            submitData={() => deleteAccount()}
+            submitData={() => deleteAccount(removeFormData)}
             content={
               <RemoveAccountForm
                 name={user.name}
                 removeFormData={removeFormData}
                 onRemoveChange={onRemoveChange}
+                setRemoveFormData={setRemoveFormData}
               />
             }
           >
@@ -169,8 +239,9 @@ Setting.propTypes = {
   setAlert: PropTypes.func.isRequired,
   alerts: PropTypes.array.isRequired,
   deleteAccount: PropTypes.func.isRequired,
-  loadUserPassword: PropTypes.func.isRequired,
-  clearPassword: PropTypes.func.isRequired,
+  createPassword: PropTypes.func.isRequired,
+  checkUserPassword: PropTypes.func.isRequired,
+  clearPasswordCheck: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
@@ -183,8 +254,9 @@ export default connect(mapStateToProps, {
   deleteAccount,
   removeAlert,
   setAlert,
-  loadUserPassword,
-  clearPassword,
+  checkUserPassword,
+  createPassword,
+  clearPasswordCheck,
 })(
   styled(Setting)`
     margin: 5% 0;
@@ -228,6 +300,10 @@ export default connect(mapStateToProps, {
             color: ${setColor.darkBlue};
             font-weight: 600;
             font-size: ${setRem(18)};
+            display: block;
+          }
+          label.password {
+            margin-top: 15px;
           }
           input {
             display: block;
@@ -241,6 +317,7 @@ export default connect(mapStateToProps, {
           }
           p {
             color: ${setColor.darkGray};
+            margin: 0;
           }
           button {
             width: 115px;

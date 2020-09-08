@@ -155,12 +155,22 @@ const Profile = ({
               </h5>
               <Link to={`${profile.profile.user._id}/follower`}>
                 <h5>
-                  {profile.profile.follower.length} <span>Followers</span>
+                  {
+                    profile.profile.follower.filter(
+                      (follower) => follower.user !== null
+                    ).length
+                  }{' '}
+                  <span>Followers</span>
                 </h5>
               </Link>
               <Link to={`${profile.profile.user._id}/following`}>
                 <h5>
-                  {profile.profile.following.length} <span>Following</span>
+                  {
+                    profile.profile.following.filter(
+                      (following) => following.user !== null
+                    ).length
+                  }{' '}
+                  <span>Following</span>
                 </h5>
               </Link>
             </div>

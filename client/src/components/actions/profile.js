@@ -3,9 +3,9 @@ import {
   PROFILE_ERROR,
   CLEAR_PROFILE,
   UPDATE_PROFILE,
-  UPDATE_FOLLOWER,
   GET_PROFILE_FAIL,
   LOGOUT,
+  CHECK_PASSWORD,
 } from './types';
 import axios from 'axios';
 
@@ -249,6 +249,27 @@ export const unfollowUser = (userId) => async (dispatch) => {
   }
 };
 
+//Create user password
+export const createPassword = (newPassword) => async (dispatch) => {
+  const formData = { newPassword };
+  try {
+    const res = await api.post('/user/password', formData);
+    dispatch({ type: CHECK_PASSWORD, payload: res.data });
+    dispatch(setAlert('User Account Updated', 'success'));
+  } catch (err) {
+    const errors = err.response.data.errors;
+    if (errors) {
+      errors.forEach((error) =>
+        dispatch(setAlert(error.msg, 'danger', error.param))
+      );
+    }
+    dispatch({
+      type: PROFILE_ERROR,
+      payload: { msg: err.response.statusText, status: err.response.status },
+    });
+  }
+};
+
 //Update user setting
 export const updateUser = (formData) => async (dispatch) => {
   try {
@@ -274,11 +295,11 @@ export const clearProfile = () => {
 };
 
 //Delete Account
-export const deleteAccount = () => async (dispatch) => {
+export const deleteAccount = (formData) => async (dispatch) => {
   try {
-    await api.delete('/user');
-    dispatch({ type: CLEAR_PROFILE });
+    await api.delete('/user', { data: formData });
     dispatch({ type: LOGOUT });
+    dispatch({ type: CLEAR_PROFILE });
   } catch (err) {
     const errors = err.response.data.errors;
     if (errors) {

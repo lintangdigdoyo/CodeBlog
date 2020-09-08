@@ -24,35 +24,45 @@ const Following = ({
     <Spinner />
   ) : (
     <div className={className}>
-      <span>Total following: {profile.following.length}</span>
+      <span>
+        Total following:{' '}
+        {
+          profile.following.filter((following) => following.user !== null)
+            .length
+        }
+      </span>
       <div className='following'>
         {profile.following.map((following, index) => {
           //Check if the avatar from the googleApi or not
           let profileAvatar = '';
-          const avatar = following.user.avatar;
-          if (avatar.split(':')[0] === 'https') {
-            profileAvatar = following.user.avatar;
-          } else if (avatar.split(':')[0] !== 'https') {
-            profileAvatar = `/${following.user.avatar}`;
+          if (following.user) {
+            const avatar = following.user.avatar;
+            if (avatar.split(':')[0] === 'https') {
+              profileAvatar = following.user.avatar;
+            } else if (avatar.split(':')[0] !== 'https') {
+              profileAvatar = `/${following.user.avatar}`;
+            }
           }
 
           return (
-            <Fragment key={following.user._id}>
-              <div className='profile'>
-                <Link to={`/profile/${following.user._id}`}>
-                  <Avatar src={profileAvatar} profileAvatar={profileAvatar} />
-                </Link>
-                <div className='item'>
+            following.user && (
+              <Fragment key={following.user._id}>
+                <div className='profile'>
                   <Link to={`/profile/${following.user._id}`}>
-                    <h4>{following.user.name}</h4>
+                    <Avatar src={profileAvatar} profileAvatar={profileAvatar} />
                   </Link>
+                  <div className='item'>
+                    <Link to={`/profile/${following.user._id}`}>
+                      <h4>{following.user.name}</h4>
+                    </Link>
+                  </div>
                 </div>
-              </div>
-              {profile.following.length > 1 &&
-                index + 1 !== profile.following.length && (
-                  <div className='line' />
-                )}
-            </Fragment>
+                {profile.following.length > 1 &&
+                  index + 1 !== profile.following.length && (
+                    <div className='line' />
+                  )}
+              </Fragment>
+            )
           );
         })}
       </div>

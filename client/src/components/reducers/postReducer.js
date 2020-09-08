@@ -3,6 +3,8 @@ import {
   POST_ERROR,
   UPDATE_POST,
   CLEAR_POST,
+  UPDATE_VIEWER,
+  UPDATE_COMMENT,
 } from '../actions/types';
 
 const initialState = {
@@ -18,6 +20,18 @@ export default (state = initialState, action) => {
       return { ...state, posts: payload, loading: false };
     case UPDATE_POST:
       return { ...state, posts: payload, loading: false };
+    case UPDATE_COMMENT:
+      return {
+        ...state,
+        posts: { ...state.posts, comment: payload },
+        loading: false,
+      };
+    case UPDATE_VIEWER:
+      return {
+        ...state,
+        posts: { ...state.posts, viewer: payload },
+        loading: false,
+      };
     case POST_ERROR:
       return { ...state, error: payload, loading: false };
     case CLEAR_POST:

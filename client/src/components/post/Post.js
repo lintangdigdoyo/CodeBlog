@@ -33,7 +33,10 @@ const Post = ({ className, post, deletePost, auth }) => {
           <span>{post.dislike.length}</span>
         </div>
         <div className='item'>
-          <i className='far fa-comment'></i> <span>{post.comment.length}</span>
+          <i className='far fa-comment'></i>{' '}
+          <span>
+            {post.comment.filter((comment) => comment.user !== null).length}
+          </span>
         </div>
         <div className='item'>
           {auth && auth.user && auth.user._id === post.user && (

@@ -1,4 +1,11 @@
-import { GET_POST, UPDATE_POST, POST_ERROR, CLEAR_POST } from './types';
+import {
+  GET_POST,
+  UPDATE_POST,
+  POST_ERROR,
+  CLEAR_POST,
+  UPDATE_VIEWER,
+  UPDATE_COMMENT,
+} from './types';
 import axios from 'axios';
 
 import { setAlert } from './alert';
@@ -147,7 +154,7 @@ export const deletePost = (postId, history) => async (dispatch) => {
 export const addComment = (formData, postId) => async (dispatch) => {
   try {
     const res = await api.post(`/posts/${postId}/comments`, formData);
-    dispatch({ type: UPDATE_POST, payload: res.data });
+    dispatch({ type: UPDATE_COMMENT, payload: res.data });
     dispatch(setAlert('Comment Added', 'success'));
   } catch (err) {
     const errors = err.response.data.errors;
@@ -172,7 +179,7 @@ export const editComment = (formData, postId, commentId) => async (
       `/posts/${postId}/comments/${commentId}`,
       formData
     );
-    dispatch({ type: UPDATE_POST, payload: res.data });
+    dispatch({ type: UPDATE_COMMENT, payload: res.data });
     dispatch(setAlert('Comment Updated', 'success'));
   } catch (err) {
     dispatch({
@@ -186,7 +193,7 @@ export const editComment = (formData, postId, commentId) => async (
 export const deleteComment = (postId, commentId) => async (dispatch) => {
   try {
     const res = await api.delete(`/posts/${postId}/comments/${commentId}`);
-    dispatch({ type: UPDATE_POST, payload: res.data });
+    dispatch({ type: UPDATE_COMMENT, payload: res.data });
     dispatch(setAlert('Comment Deleted', 'success'));
   } catch (err) {
     dispatch({
@@ -230,7 +237,7 @@ export const addDislike = (postId) => async (dispatch) => {
   } catch (err) {
     dispatch({
       type: POST_ERROR,
-      payload: { msg: err.response.statusText, status: err.reponse.status },
+      payload: { msg: err.response.statusText, status: err.response.status },
     });
   }
 };
@@ -252,7 +259,7 @@ export const removeDislike = (postId) => async (dispatch) => {
 export const addViewer = (postId) => async (dispatch) => {
   try {
     const res = await api.post(`/posts/${postId}/view`);
-    dispatch({ type: UPDATE_POST, payload: res.data });
+    dispatch({ type: UPDATE_VIEWER, payload: res.data });
   } catch (err) {
     dispatch({
       type: POST_ERROR,

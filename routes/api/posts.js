@@ -70,9 +70,11 @@ router.post(
 
 router.get('/profiles/:userId', checkObjectId('userId'), async (req, res) => {
   try {
-    const posts = await Post.find({ user: req.params.userId }).sort({
-      date: 'desc',
-    });
+    const posts = await Post.find({ user: req.params.userId })
+      .sort({
+        date: 'desc',
+      })
+      .populate('comment.user', 'id');
     if (!posts) {
       res.status(404).json({ errors: [{ msg: 'User post not found' }] });
     }
@@ -290,9 +292,7 @@ router.post(
     const { text } = req.body;
 
     try {
-      let post = await Post.findById(req.params.postId)
-        .populate('user', ['name', 'avatar'])
-        .populate('comment.user', ['name', 'avatar']);
+      let post = await Post.findById(req.params.postId);
 
       if (!post) {
         return res.status(404).json({ errors: [{ msg: 'Post not found' }] });
@@ -302,10 +302,12 @@ router.post(
 
       await post.save();
 
-      post = await Post.findById(req.params.postId)
-        .populate('user', ['name', 'avatar'])
-        .populate('comment.user', ['name', 'avatar']);
-      res.json(post);
+      post = await Post.findById(req.params.postId).populate('comment.user', [
+        'name',
+        'avatar',
+      ]);
+
+      res.json(post.comment);
     } catch (err) {
       console.error(err.message);
       res.status(500).send('Server Error');
@@ -333,9 +335,9 @@ router.patch(
     const { text } = req.body;
 
     try {
-      const post = await Post.findById(req.params.postId)
-        .populate('user', ['name', 'avatar'])
-        .populate('comment.user', ['name', 'avatar']);
+      const post = await Post.findById(
+        req.params.postId
+      ).populate('comment.user', ['name', 'avatar']);
 
       if (!post) {
         return res.status(401).json({ errors: [{ msg: 'Post not found' }] });
@@ -356,7 +358,7 @@ router.patch(
       updateComment[0].text = text;
 
       await post.save();
-      res.json(post);
+      res.json(post.comment);
     } catch (err) {
       console.error(err.message);
       res.status(500).send('Server Error');
@@ -375,9 +377,9 @@ router.delete(
   checkObjectId('commentId'),
   async (req, res) => {
     try {
-      const post = await Post.findById(req.params.postId)
-        .populate('user', ['name', 'avatar'])
-        .populate('comment.user', ['name', 'avatar']);
+      const post = await Post.findById(
+        req.params.postId
+      ).populate('comment.user', ['name', 'avatar']);
 
       if (!post) {
         return res.status(404).json({ errors: [{ msg: 'Post not found' }] });
@@ -398,7 +400,7 @@ router.delete(
       post.comment.splice(deleteIndex, 1);
 
       await post.save();
-      res.send(post);
+      res.send(post.comment);
     } catch (err) {
       console.error(err.message);
       res.status(500).send('Server Error');
@@ -468,7 +470,6 @@ router.delete(
       const post = await Post.findById(req.params.postId)
         .populate('user', ['name', 'avatar'])
         .populate('comment.user', ['name', 'avatar']);
-
       if (!post) {
         return res.status(404).json({ errors: [{ msg: 'Post not found' }] });
       }
@@ -596,9 +597,7 @@ router.post(
   checkObjectId('postId'),
   async (req, res) => {
     try {
-      const post = await Post.findById(req.params.postId)
-        .populate('user', ['name', 'avatar'])
-        .populate('comment.user', ['name', 'avatar']);
+      const post = await Post.findById(req.params.postId);
 
       if (!post) {
         return res.status(404).json({ errors: [{ msg: 'Post not found' }] });
@@ -614,7 +613,7 @@ router.post(
         return res.status(400).json('Post already viewed');
       }
 
-      res.json(post);
+      res.json(post.viewer);
     } catch (err) {
       console.error(err.message);
       res.status(500).send('Server Error');

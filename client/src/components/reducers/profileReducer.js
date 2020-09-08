@@ -4,7 +4,6 @@ import {
   CLEAR_PROFILE,
   UPDATE_PROFILE,
   GET_PROFILE_FAIL,
-  UPDATE_FOLLOWER,
 } from '../actions/types';
 
 const initialState = {
@@ -26,12 +25,6 @@ export default (state = initialState, action) => {
         profile: payload,
         loading: false,
         hasProfile: true,
-      };
-    case UPDATE_FOLLOWER:
-      return {
-        ...state,
-        profile: { ...state.profile, follower: payload },
-        loading: false,
       };
     case PROFILE_ERROR:
       return {

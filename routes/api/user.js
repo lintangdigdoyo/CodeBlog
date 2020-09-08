@@ -33,16 +33,56 @@ router.get('/', auth, async (req, res) => {
 
 router.get('/password', auth, async (req, res) => {
   try {
-    const user = await User.findById(req.user.id)
-      .select('-date')
-      .select('-__v');
+    const user = await User.findById(req.user.id);
 
-    res.json(user);
+    if (!user.password) {
+      return res.json({ hasPassword: false });
+    }
+
+    res.json({ hasPassword: true });
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server Error');
   }
 });
+
+//@route POST api/user/password
+//@desc create password for signed in user
+//@access Private
+
+router.post(
+  '/password',
+  auth,
+  check(
+    'newPassword',
+    'Please enter password with 6 or more characters'
+  ).isLength({ min: 6 }),
+  async (req, res) => {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { newPassword } = req.body;
+
+    try {
+      const user = await User.findById(req.user.id);
+
+      if (newPassword) {
+        const salt = await bcrypt.genSalt(10);
+        const newPasswordCreated = await bcrypt.hash(newPassword, salt);
+        user.password = newPasswordCreated;
+      }
+
+      await user.save();
+      res.json({ hasPassword: true });
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server Error');
+    }
+  }
+);
 
 //@route patch api/user
 //@desc edit signed in user
@@ -71,7 +111,7 @@ router.patch(
     const { email, currentPassword, newPassword } = req.body;
 
     try {
-      let user = await User.findById(req.user.id);
+      const user = await User.findById(req.user.id);
 
       const isMatch = await bcrypt.compare(currentPassword, user.password);
 
@@ -122,14 +162,22 @@ router.delete(
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
-
     const { password } = req.body;
 
     try {
       const user = await User.findById(req.user.id);
 
-      const isMatch = await bcrypt.compare(password, user.password);
+      if (!user.password) {
+        return res
+          .status(400)
+          .json({
+            errors: [
+              { msg: 'No password found, you need to create a password first' },
+            ],
+          });
+      }
 
+      const isMatch = await bcrypt.compare(password, user.password);
       if (!isMatch) {
         return res
           .status(400)

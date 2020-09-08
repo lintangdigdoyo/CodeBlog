@@ -163,7 +163,12 @@ const PostDetail = ({
 
             <div className='item'>
               <i className='far fa-comment fa-lg'></i>{' '}
-              <span>{posts.comment.length}</span>
+              <span>
+                {
+                  posts.comment.filter((comment) => comment.user !== null)
+                    .length
+                }
+              </span>
             </div>
           </div>
         </section>

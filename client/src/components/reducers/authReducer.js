@@ -3,9 +3,10 @@ import {
   REGISTER_SUCCESS,
   REGISTER_FAIL,
   LOGIN_SUCCESS,
+  CHECK_PASSWORD,
+  CLEAR_PASSWORD_CHECK,
   LOGIN_FAIL,
   AUTH_ERROR,
-  CLEAR_PASSWORD,
   LOGOUT,
 } from '../actions/types';
 
@@ -20,9 +21,22 @@ export default (state = initialState, action) => {
   switch (type) {
     case USER_LOADED:
       return {
+        ...state,
         loading: false,
         isAuthenticated: true,
         user: payload,
+      };
+    case CHECK_PASSWORD:
+      return {
+        ...state,
+        ...payload,
+        loading: false,
+      };
+    case CLEAR_PASSWORD_CHECK:
+      return {
+        ...state,
+        hasPassword: undefined,
+        loading: false,
       };
     case REGISTER_SUCCESS:
       return {
@@ -56,12 +70,6 @@ export default (state = initialState, action) => {
         isAuthenticated: false,
         loading: false,
         user: null,
-      };
-    case CLEAR_PASSWORD:
-      return {
-        ...state,
-        user: { ...state.user, password: undefined },
-        loading: false,
       };
     case AUTH_ERROR:
       return {
