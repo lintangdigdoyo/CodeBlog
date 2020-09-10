@@ -5,7 +5,7 @@ import { Link, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import { ReactComponent as Coder } from './coder.svg';
-import { setNav } from '../actions/navbar';
+import { setNav } from '../../actions/navbar';
 import { PrimaryButton } from '../globals/Button';
 import { setRem, setColor, media } from '../../styles';
 import Spinner from '../globals/Spinner';

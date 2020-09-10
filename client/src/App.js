@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import 'semantic-ui-css/semantic.min.css';
 
-import { loadUser } from './components/actions/auth';
+import { loadUser } from './actions/auth';
 import GlobalStyle from './components/globals/GlobalStyle';
 import Navbar from './components/globals/Navbar';
 import SidebarNav from './components/globals/SidebarNav';
@@ -22,6 +22,7 @@ import PostDetail from './components/post/PostDetail';
 import Follower from './components/profile/Follower';
 import Following from './components/profile/Following';
 import Setting from './components/setting/Setting';
+import Chat from './components/chat/Chat';
 import NotFound from './components/globals/NotFound';
 
 const App = ({ navbar, loadUser }) => {
@@ -61,6 +62,7 @@ const App = ({ navbar, loadUser }) => {
               <PrivateRoute exact path='/create-post' component={CreatePost} />
               <PrivateRoute exact path='/edit-post' component={EditPost} />
               <PrivateRoute exact path='/setting' component={Setting} />
+              <PrivateRoute exact path='/messages' component={Chat} />
               <Route exact path='*' component={NotFound} />
             </Switch>
           </Container>

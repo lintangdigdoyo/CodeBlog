@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import { setColor } from '../../styles';
 import Modal from '../globals/Modal';
 import UpdateSkill from './UpdateSkill';
-import { updateSkill } from '../actions/profile';
+import { updateSkill } from '../../actions/profile';
 
 const Skill = ({ className, skills, auth: { user }, profile, updateSkill }) => {
   const [formData, setFormData] = useState({

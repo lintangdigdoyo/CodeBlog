@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 
 import { setColor, setFlex } from '../../styles';
 import Modal from '../globals/Modal';
-import { deletePost } from '../actions/post';
+import { deletePost } from '../../actions/post';
 
 const Post = ({ className, post, deletePost, auth }) => {
   return (

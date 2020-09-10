@@ -8,10 +8,14 @@ import Spinner from '../globals/Spinner';
 import { setColor, setRem } from '../../styles';
 import { SmallButton } from '../globals/Button';
 import Modal from '../globals/Modal';
-import { updateUser, deleteAccount, createPassword } from '../actions/profile';
-import { checkUserPassword, clearPasswordCheck } from '../actions/auth';
+import {
+  updateUser,
+  deleteAccount,
+  createPassword,
+} from '../../actions/profile';
+import { checkUserPassword, clearPasswordCheck } from '../../actions/auth';
 import Alert from '../globals/Alert';
-import { removeAlert, setAlert } from '../actions/alert';
+import { removeAlert, setAlert } from '../../actions/alert';
 import RemoveAccountForm from './RemoveAccountForm';
 
 const Setting = ({

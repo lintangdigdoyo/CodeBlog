@@ -16,11 +16,11 @@ import {
   removeDislike,
   addViewer,
   clearPost,
-} from '../actions/post';
+} from '../../actions/post';
 import Avatar from '../globals/Avatar';
 import Modal from '../globals/Modal';
 import Comment from './Comment';
-import { removeAlert } from '../actions/alert';
+import { removeAlert } from '../../actions/alert';
 
 const PostDetail = ({
   className,

@@ -11,7 +11,7 @@ import {
   addExperience,
   deleteExperience,
   updateExperience,
-} from '../actions/profile';
+} from '../../actions/profile';
 import UpdateExperience from './UpdateExperience';
 
 const Experience = ({

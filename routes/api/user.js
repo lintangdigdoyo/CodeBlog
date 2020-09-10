@@ -28,7 +28,7 @@ router.get('/', auth, async (req, res) => {
 });
 
 //@route GET api/user/password
-//@desc Get password
+//@desc Check if user has password or not
 //@access Private
 
 router.get('/password', auth, async (req, res) => {
@@ -168,13 +168,11 @@ router.delete(
       const user = await User.findById(req.user.id);
 
       if (!user.password) {
-        return res
-          .status(400)
-          .json({
-            errors: [
-              { msg: 'No password found, you need to create a password first' },
-            ],
-          });
+        return res.status(400).json({
+          errors: [
+            { msg: 'No password found, you need to create a password first' },
+          ],
+        });
       }
 
       const isMatch = await bcrypt.compare(password, user.password);

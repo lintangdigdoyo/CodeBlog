@@ -4,7 +4,7 @@ import { Menu, Sidebar } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
-import { setVisible } from '../actions/sidebar';
+import { setVisible } from '../../actions/sidebar';
 
 const SidebarNav = ({ sidebar, setVisible, children }) => {
   const renderSidebar = () => {

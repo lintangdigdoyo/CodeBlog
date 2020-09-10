@@ -8,8 +8,8 @@ import headerExplore from '../../images/headerExplore.jpg';
 import Spinner from '../globals/Spinner';
 import { setColor, setRem, setFlex } from '../../styles';
 import Post from '../post/Post';
-import { getPosts, getFollowedPosts, clearPost } from '../actions/post';
-import { getProfile } from '../actions/profile';
+import { getPosts, getFollowedPosts, clearPost } from '../../actions/post';
+import { getProfile } from '../../actions/profile';
 import { SmallButton } from '../globals/Button';
 
 const Home = ({

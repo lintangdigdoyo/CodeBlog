@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import { removeAlert } from '../actions/alert';
+import { removeAlert } from '../../actions/alert';
 import Avatar from '../globals/Avatar';
 import Alert from '../globals/Alert';
 import { setColor } from '../../styles';

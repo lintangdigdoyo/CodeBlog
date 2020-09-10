@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import ExperienceForm from './ExperienceForm';
-import { removeAlert } from '../actions/alert';
+import { removeAlert } from '../../actions/alert';
 
 const AddExperience = ({
   formData,

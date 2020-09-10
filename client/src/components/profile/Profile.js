@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { Redirect, Link } from 'react-router-dom';
 
 import Spinner from '../globals/Spinner';
-import { getProfile, clearProfile } from '../actions/profile';
+import { getProfile, clearProfile } from '../../actions/profile';
 import Avatar from '../globals/Avatar';
 import { setColor } from '../../styles';
 import Education from './Education';
@@ -14,10 +14,10 @@ import Skill from './Skill';
 import Posts from './Posts';
 import Modal from '../globals/Modal';
 import Alert from '../globals/Alert';
-import { removeAlert } from '../actions/alert';
+import { removeAlert } from '../../actions/alert';
 import UpdateProfile from './UpdateProfile';
-import { updateProfile, followUser, unfollowUser } from '../actions/profile';
-import { getUserPosts, clearPost } from '../actions/post';
+import { updateProfile, followUser, unfollowUser } from '../../actions/profile';
+import { getUserPosts, clearPost } from '../../actions/post';
 import { SmallButton } from '../globals/Button';
 
 const Profile = ({

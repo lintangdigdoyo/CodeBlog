@@ -8,7 +8,7 @@ import Moment from 'react-moment';
 import Modal from '../globals/Modal';
 import { setColor, setRem } from '../../styles';
 import { SmallButton } from '../globals/Button';
-import { addComment, deleteComment, editComment } from '../actions/post';
+import { addComment, deleteComment, editComment } from '../../actions/post';
 import Avatar from '../globals/Avatar';
 import EditComment from './EditComment';
 

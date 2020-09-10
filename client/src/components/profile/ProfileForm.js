@@ -6,8 +6,8 @@ import PropTypes from 'prop-types';
 import { SmallButton } from '../globals/Button';
 import { setColor } from '../../styles';
 import Avatar from '../globals/Avatar';
-import { createProfile } from '../actions/profile';
-import { removeAlert } from '../actions/alert';
+import { createProfile } from '../../actions/profile';
+import { removeAlert } from '../../actions/alert';
 import Alert from '../globals/Alert';
 
 const ProfileForm = ({ className, createProfile, removeAlert, alerts }) => {

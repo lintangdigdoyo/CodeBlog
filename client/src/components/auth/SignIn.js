@@ -4,13 +4,13 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Redirect } from 'react-router-dom';
 
-import { setNav } from '../actions/navbar';
-import { removeAlert } from '../actions/alert';
-import { signIn } from '../actions/auth';
+import { setNav } from '../../actions/navbar';
+import { removeAlert } from '../../actions/alert';
+import { signIn } from '../../actions/auth';
 import { setColor, setRem, setFlex, media } from '../../styles';
 import { PrimaryButton } from '../globals/Button';
 import Alert from '../globals/Alert';
-import { getProfile } from '../actions/profile';
+import { getProfile } from '../../actions/profile';
 
 const SignIn = ({
   className,

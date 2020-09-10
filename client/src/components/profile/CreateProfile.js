@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Redirect } from 'react-router-dom';
 
-import { getProfile } from '../actions/profile';
+import { getProfile } from '../../actions/profile';
 import ProfileForm from './ProfileForm';
 import { setColor } from '../../styles';
 import Spinner from '../globals/Spinner';

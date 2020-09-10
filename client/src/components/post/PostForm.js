@@ -6,8 +6,8 @@ import { connect } from 'react-redux';
 
 import { setColor } from '../../styles';
 import { SmallButton } from '../globals/Button';
-import { createPost, editPost } from '../actions/post';
-import { removeAlert } from '../actions/alert';
+import { createPost, editPost } from '../../actions/post';
+import { removeAlert } from '../../actions/alert';
 import Alert from '../globals/Alert';
 
 const PostForm = ({

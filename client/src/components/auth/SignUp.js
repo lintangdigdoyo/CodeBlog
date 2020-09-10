@@ -4,9 +4,9 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Redirect } from 'react-router-dom';
 
-import { setAlert, removeAlert } from '../actions/alert';
-import { setNav } from '../actions/navbar';
-import { signUp } from '../actions/auth';
+import { setAlert, removeAlert } from '../../actions/alert';
+import { setNav } from '../../actions/navbar';
+import { signUp } from '../../actions/auth';
 import { setColor, setRem, setFlex, media } from '../../styles';
 import { PrimaryButton } from '../globals/Button';
 import Alert from '../globals/Alert';

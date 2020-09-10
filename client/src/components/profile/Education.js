@@ -9,7 +9,7 @@ import {
   addEducation,
   deleteEducation,
   updateEducation,
-} from '../actions/profile';
+} from '../../actions/profile';
 import AddEducation from './AddEducation';
 import UpdateEducation from './UpdateEducation';
 

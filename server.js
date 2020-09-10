@@ -1,12 +1,16 @@
+const http = require('http');
 const express = require('express');
 const connectDB = require('./config/db');
 const cookieParser = require('cookie-parser');
+const socketio = require('socket.io');
 
 if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config({ path: './config/.env' });
 }
 
 const app = express();
+const server = http.createServer(app);
+const io = socketio(server);
 
 //Connect Databases
 connectDB();
@@ -14,6 +18,11 @@ connectDB();
 //Init Middleware
 app.use(express.json());
 app.use(cookieParser());
+
+//Socket
+io.on('connect', (socket) => {
+  console.log('connect');
+});
 
 //Public static folder
 app.use('/uploads', express.static('uploads'));

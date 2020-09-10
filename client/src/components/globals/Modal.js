@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import { setColor } from '../../styles';
-import { removeAlert } from '../actions/alert';
+import { removeAlert } from '../../actions/alert';
 
 function reducer(state, action) {
   switch (action.type) {

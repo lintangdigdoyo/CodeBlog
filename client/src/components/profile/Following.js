@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 
 import { setColor } from '../../styles';
 import Spinner from '../globals/Spinner';
-import { getProfile } from '../actions/profile';
+import { getProfile } from '../../actions/profile';
 import Avatar from '../globals/Avatar';
 
 const Following = ({

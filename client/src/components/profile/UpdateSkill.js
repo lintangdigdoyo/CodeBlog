@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 
 import { setColor } from '../../styles';
 import Alert from '../globals/Alert';
-import { removeAlert } from '../actions/alert';
+import { removeAlert } from '../../actions/alert';
 
 const UpdateSkill = ({
   className,

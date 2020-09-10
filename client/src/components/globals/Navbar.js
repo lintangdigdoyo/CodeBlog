@@ -7,9 +7,9 @@ import { Dropdown } from 'semantic-ui-react';
 
 import { setColor, setRem, setFont, media } from '../../styles';
 import { ReactComponent as HamburgerMenu } from './hamburgerMenu.svg';
-import { setVisible } from '../actions/sidebar';
+import { setVisible } from '../../actions/sidebar';
 import { SmallButton } from './Button';
-import { signOut } from '../actions/auth';
+import { signOut } from '../../actions/auth';
 import Avatar from './Avatar';
 
 const Navbar = ({
@@ -51,6 +51,8 @@ const Navbar = ({
       key: 'chat',
       text: 'Chat',
       icon: 'chat',
+      as: Link,
+      to: '/messages',
     },
     {
       key: 'settings',
