@@ -19,23 +19,19 @@ const Navbar = ({
   auth: { isAuthenticated, loading, user },
   signOut,
 }) => {
-  const useWindowSize = () => {
-    const [size, setSize] = useState(0);
+  const [size, setSize] = useState(0);
 
-    useLayoutEffect(() => {
-      const updateSize = () => {
-        setSize(window.innerWidth);
-      };
-      window.addEventListener('resize', updateSize);
-      updateSize();
-      return () => window.removeEventListener('resize', updateSize);
-    }, []);
+  useLayoutEffect(() => {
+    const updateSize = () => {
+      setSize(window.innerWidth);
+    };
+    window.addEventListener('resize', updateSize);
+    return () => window.removeEventListener('resize', updateSize);
+  }, []);
 
-    return size;
-  };
-
-  if (useWindowSize() > 576) {
+  if (size > 576) {
     setVisible(false);
+    setSize(0);
   }
 
   //dropdown menu
