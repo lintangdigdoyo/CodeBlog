@@ -22,3 +22,6 @@ export const UPDATE_VIEWER = 'UPDATE_VIEWER';
 export const UPDATE_COMMENT = 'UPDATE_COMMENT';
 export const POST_ERROR = 'POST_ERROR';
 export const CLEAR_POST = 'CLEAR_POST';
+export const GET_CHAT = 'GET_CHAT';
+export const UPDATE_CHAT = 'UPDATE_CHAT';
+export const CLEAR_CHAT = 'CLEAR_CHAT';

@@ -65,9 +65,22 @@ const Navbar = ({
     },
   ];
 
+  //Check if the avatar from the googleApi or not
+  let userAvatar = '';
+  if (user !== null) {
+    if (user.avatar) {
+      const avatar = user.avatar;
+      if (avatar.split(':')[0] === 'https') {
+        userAvatar = user.avatar;
+      } else if (avatar.split(':')[0] !== 'https') {
+        userAvatar = `/${user.avatar}`;
+      }
+    }
+  }
+
   const DropdownAvatar = () => (
     <Dropdown
-      trigger={<Avatar />}
+      trigger={<Avatar src={userAvatar} />}
       options={options}
       pointing='top left'
       icon={null}

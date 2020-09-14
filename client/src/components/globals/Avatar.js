@@ -14,24 +14,8 @@ const Avatar = ({
   postAvatar,
   profileAvatar,
 }) => {
-  let userAvatar = '';
-  if (user !== null) {
-    if (user.avatar) {
-      const avatar = user.avatar;
-      if (avatar.split(':')[0] === 'https') {
-        userAvatar = user.avatar;
-      } else if (avatar.split(':')[0] !== 'https') {
-        userAvatar = `/${user.avatar}`;
-      }
-    }
-  }
-
   return !loading && user ? (
-    <img
-      className={className}
-      src={src ? src : user.avatar ? userAvatar : imgAvatar}
-      alt='avatar'
-    />
+    <img className={className} src={src ? src : imgAvatar} alt='avatar' />
   ) : (
     <img
       className={className}

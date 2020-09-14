@@ -17,10 +17,16 @@ module.exports = (io, socket) => {
       chat.message.push({ user: msg.senderId, text: msg.message });
       await chat.save();
 
-      return res.json(chat);
+      return io.to(chat[0]._id).emit('chat message output', chat.message);
     }
 
     chat[0].message.push({ user: msg.senderId, text: msg.message });
     await chat[0].save();
+
+    chat = await ChatRoom.find({
+      userIds: { $elemMatch: { user: msg.senderId } },
+    }).populate('userIds.user', ['name', 'avatar']);
+
+    io.to(chat[0]._id).emit('chat message output', chat);
   });
 };

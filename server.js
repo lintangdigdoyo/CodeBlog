@@ -28,11 +28,11 @@ app.use(
 
 //Socket
 io.on('connection', (socket) => {
-  require('./sockets/chat/chatMessage')(io, socket);
-
-  socket.on('disconnect', () => {
-    console.log('Client disconnected');
-  });
+  require('./sockets/chat/sendMessage')(io, socket);
+  require('./sockets/chat/getMessages')(io, socket);
+  require('./sockets/chat/joinChat')(io, socket);
+  require('./sockets/chat/leaveChat')(io, socket);
+  require('./sockets/chat/typing')(io, socket);
 });
 
 //Public static folder
