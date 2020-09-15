@@ -7,7 +7,12 @@ module.exports = (io, socket) => {
       ],
     });
 
+    // const time = () =>
+    //   setTimeout(() => {
+    //     socket.to(chat[0]._id).emit('typing', false);
+    //   }, 1000);
+    //   time();
+    // clearTimeout(time());
     socket.to(chat[0]._id).emit('typing', true);
-    // socket.to(chat[0]._id).emit('typing up', false);
   });
 };

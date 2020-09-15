@@ -11,6 +11,7 @@ const Receiver = ({
   user,
   setDisplayedReceiver,
   displayedReceiver,
+  setMessage,
 }) => {
   useEffect(() => {
     if (displayedReceiver) {
@@ -41,12 +42,13 @@ const Receiver = ({
           ? 'selected'
           : ''
       }`}
-      onClick={() =>
+      onClick={() => {
         setDisplayedReceiver({
           ...receiver,
           receiver: { user: { avatar: receiverAvatar } },
-        })
-      }
+        });
+        setMessage('');
+      }}
     >
       <Avatar src={receiverAvatar} />
       {receiver.user && <h5>{receiver.user.name}</h5>}

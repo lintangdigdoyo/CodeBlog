@@ -48,11 +48,14 @@ const Chat = ({
     updateChat(msg);
   });
 
+  let time;
   socket.on('typing', (data) => {
+    clearTimeout(time);
     setTyping(data);
+    time = setTimeout(() => {
+      setTyping(false);
+    }, 1000);
   });
-
-  console.log(typing);
 
   return (
     <div className={className}>
@@ -66,6 +69,7 @@ const Chat = ({
                   key={chat._id}
                   chat={chat}
                   user={user}
+                  setMessage={setMessage}
                   setDisplayedReceiver={setDisplayedReceiver}
                   displayedReceiver={displayedReceiver}
                 />
@@ -82,8 +86,10 @@ const Chat = ({
           <Fragment>
             <div className='receiver'>
               <Avatar src={displayedReceiver.user.avatar} />
-              <h3>{displayedReceiver.user.name}</h3>
-              {typing && <span>typing...</span>}
+              <div className='item'>
+                <h3>{displayedReceiver.user.name}</h3>
+                {typing && <span>typing...</span>}
+              </div>
             </div>
             <div className='inbox'>{``}</div>
             <form onSubmit={onSubmit}>
@@ -142,7 +148,7 @@ export default connect(mapStateToProps, {
     color: ${setColor.darkBlue};
   }
   aside {
-    padding: 5%;
+    padding: 7%;
     border-right: 1px solid ${setColor.mainGray};
     background-color: ${setColor.lightBlue};
     overflow: auto;
@@ -156,7 +162,7 @@ export default connect(mapStateToProps, {
     }
   }
   .inbox-wrapper {
-    padding: 2%;
+    padding: 3%;
     .receiver {
       display: flex;
       align-items: center;
@@ -164,11 +170,17 @@ export default connect(mapStateToProps, {
         height: 60px;
         width: 60px;
       }
-      h3 {
-        margin: 0;
+      .item {
         margin-left: 10px;
+        h3 {
+          margin: 0;
+        }
+        span {
+          color: ${setColor.darkGray};
+        }
       }
     }
+
     .inbox {
       height: 400px;
       overflow: auto;
@@ -181,6 +193,7 @@ export default connect(mapStateToProps, {
         padding: 10px;
         border-radius: 10px;
         border: 1px solid ${setColor.darkGray};
+        outline: none;
       }
       button {
         padding: 15px;
