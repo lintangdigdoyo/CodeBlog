@@ -7,7 +7,7 @@ import { Redirect, Link } from 'react-router-dom';
 import Spinner from '../globals/Spinner';
 import { getProfile, clearProfile } from '../../actions/profile';
 import Avatar from '../globals/Avatar';
-import { setColor } from '../../styles';
+import { setColor, setFlex } from '../../styles';
 import Education from './Education';
 import Experience from './Experience';
 import Skill from './Skill';
@@ -19,6 +19,7 @@ import UpdateProfile from './UpdateProfile';
 import { updateProfile, followUser, unfollowUser } from '../../actions/profile';
 import { getUserPosts, clearPost } from '../../actions/post';
 import { SmallButton } from '../globals/Button';
+import socket from '../../utils/socket';
 
 const Profile = ({
   className,
@@ -101,6 +102,13 @@ const Profile = ({
     reader.readAsDataURL(file);
   };
 
+  const onCreateRoomClick = () => {
+    socket.emit('create room', {
+      senderId: user && user._id,
+      receiverId: profile.profile && profile.profile.user._id,
+    });
+  };
+
   return loading ||
     profile.hasProfile === null ||
     post.posts === null ||
@@ -177,7 +185,7 @@ const Profile = ({
             {user && profile.profile.user._id !== user._id && (
               <div className='button'>
                 {profile.profile.follower.filter(
-                  (follower) => follower.user._id === user._id
+                  (follower) => follower.user && follower.user._id === user._id
                 ).length === 0 ? (
                   <SmallButton onClick={() => followUser(match.params.userId)}>
                     Follow
@@ -189,7 +197,14 @@ const Profile = ({
                     Unfollow
                   </SmallButton>
                 )}
-                <SmallButton>
+                <SmallButton
+                  as={Link}
+                  onClick={onCreateRoomClick}
+                  to={{
+                    pathname: '/messages',
+                    receiver: { user: profile.profile.user },
+                  }}
+                >
                   <i className='far fa-envelope'></i> Send Message
                 </SmallButton>
               </div>
@@ -308,15 +323,20 @@ export default connect(mapStateToProps, {
             border-radius: 5px;
             margin-right: 10px;
           }
-          button:last-child {
+          a {
             background-color: ${setColor.mainBlue};
+            border-radius: 5px;
+            text-decoration: none;
+            ${setFlex};
             &:hover {
               background-color: ${setColor.darkBlue};
+              color: ${setColor.mainWhite};
             }
           }
           i.fa-envelope {
             color: ${setColor.mainWhite};
             font-size: 13px;
+            margin-right: 5px;
           }
         }
       }

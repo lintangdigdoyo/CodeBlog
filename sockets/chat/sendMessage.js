@@ -14,19 +14,20 @@ module.exports = (io, socket) => {
         userIds: [{ user: msg.senderId }, { user: msg.receiverId }],
         message: [],
       });
-      chat.message.push({ user: msg.senderId, text: msg.message });
-      await chat.save();
-
-      return io.to(chat[0]._id).emit('chat message output', chat.message);
     }
 
     chat[0].message.push({ user: msg.senderId, text: msg.message });
     await chat[0].save();
 
-    chat = await ChatRoom.find({
+    const sender = await ChatRoom.find({
       userIds: { $elemMatch: { user: msg.senderId } },
     }).populate('userIds.user', ['name', 'avatar']);
 
-    io.to(chat[0]._id).emit('chat message output', chat);
+    const receiver = await ChatRoom.find({
+      userIds: { $elemMatch: { user: msg.receiverId } },
+    }).populate('userIds.user', ['name', 'avatar']);
+
+    io.to(chat[0].id).emit(`chat ${msg.senderId} output`, sender);
+    io.to(chat[0].id).emit(`chat ${msg.receiverId} output`, receiver);
   });
 };

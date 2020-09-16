@@ -28,6 +28,7 @@ app.use(
 
 //Socket
 io.on('connection', (socket) => {
+  require('./sockets/chat/createRoom')(io, socket);
   require('./sockets/chat/sendMessage')(io, socket);
   require('./sockets/chat/getMessages')(io, socket);
   require('./sockets/chat/joinChat')(io, socket);

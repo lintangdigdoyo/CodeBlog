@@ -12,15 +12,22 @@ const Receiver = ({
   setDisplayedReceiver,
   displayedReceiver,
   setMessage,
+  setMessagesSent,
+  messages,
 }) => {
   useEffect(() => {
     if (displayedReceiver) {
-      socket.emit('subscribe', {
+      socket.emit('join', {
+        senderId: user._id,
+        receiverId: displayedReceiver.user._id,
+      });
+      socket.emit('leave', {
         senderId: user._id,
         receiverId: displayedReceiver.user._id,
       });
     }
-  }, [displayedReceiver]);
+    setMessagesSent(messages);
+  }, [displayedReceiver, messages]);
 
   const receiver = userIds.filter((userId) => userId.user._id !== user._id)[0];
 
@@ -45,7 +52,10 @@ const Receiver = ({
       onClick={() => {
         setDisplayedReceiver({
           ...receiver,
-          receiver: { user: { avatar: receiverAvatar } },
+          user: {
+            ...receiver.user,
+            avatar: receiverAvatar,
+          },
         });
         setMessage('');
       }}

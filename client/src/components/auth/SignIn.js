@@ -167,6 +167,7 @@ export default connect(mapStateToProps, {
     width: 100%;
     height: 100%;
     border: none;
+    outline: none;
   }
   i {
     margin: 0 10px;

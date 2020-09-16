@@ -94,7 +94,7 @@ const Setting = ({
     <Spinner />
   ) : (
     <div className={className}>
-      <h2>Account Settings</h2>
+      <h1>Account Settings</h1>
       <div className='line' />
       <div className='container'>
         <div className='side'>
@@ -266,8 +266,9 @@ export default connect(mapStateToProps, {
     margin: 5% 0;
     background-color: ${setColor.mainWhite};
     box-shadow: 2px 3px 3px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
     padding: 2%;
-    h2 {
+    h1 {
       text-align: center;
       padding: 10px 0;
       color: ${setColor.darkBlue};

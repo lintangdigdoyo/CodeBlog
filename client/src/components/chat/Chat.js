@@ -1,7 +1,8 @@
-import React, { useState, useEffect, Fragment } from 'react';
+import React, { useState, useEffect, Fragment, useRef } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 
 import socket from '../../utils/socket';
 import { setColor, setFlex } from '../../styles';
@@ -9,6 +10,7 @@ import Avatar from '../globals/Avatar';
 import { updateChat, getChat, clearChat } from '../../actions/chat';
 import Receiver from './Receiver';
 import { ReactComponent as Icon } from './conversation.svg';
+import Message from './Message';
 
 const Chat = ({
   className,
@@ -16,8 +18,15 @@ const Chat = ({
   updateChat,
   getChat,
   clearChat,
+  location: { receiver },
   chat: { chats, loading },
 }) => {
+  const [message, setMessage] = useState('');
+  const [messageLength, setMessageLength] = useState(0);
+  const [displayedReceiver, setDisplayedReceiver] = useState();
+  const [messagesSent, setMessagesSent] = useState();
+  const [typing, setTyping] = useState(false);
+
   useEffect(() => {
     socket.emit('get message', {
       senderId: user._id,
@@ -28,11 +37,55 @@ const Chat = ({
     return () => {
       clearChat();
     };
-  }, []);
+  }, [getChat, clearChat]);
 
-  const [message, setMessage] = useState('');
-  const [displayedReceiver, setDisplayedReceiver] = useState();
-  const [typing, setTyping] = useState(false);
+  useEffect(() => {
+    setDisplayedReceiver(receiver);
+  }, [receiver]);
+
+  let time;
+  socket.on('typing', (data) => {
+    clearTimeout(time);
+    setTyping(data);
+    time = setTimeout(() => {
+      setTyping(false);
+    }, 1000);
+  });
+
+  //get messages from the chosen receiver
+  let allReceiver = chats.map((chat) =>
+    chat.userIds.map((users) => users.user._id)
+  );
+  allReceiver = allReceiver.map((id) => id.filter((id) => id !== user._id));
+  const indexReceiver = allReceiver
+    .toString()
+    .split(',')
+    .indexOf(displayedReceiver && displayedReceiver.user._id);
+
+  socket.on(`chat ${user._id} output`, (msg) => {
+    updateChat(msg);
+  });
+
+  const messagesEndRef = useRef(null);
+  const scrollToBottom = () => {
+    messagesEndRef.current &&
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  useEffect(() => scrollToBottom, [displayedReceiver, messagesEndRef]);
+
+  useEffect(() => {
+    setMessageLength(
+      chats[indexReceiver] && chats[indexReceiver].message.length
+    );
+  }, [indexReceiver, scrollToBottom]);
+
+  if (
+    chats[indexReceiver] &&
+    chats[indexReceiver].message.length > messageLength
+  ) {
+    scrollToBottom();
+  }
 
   const onSubmit = (e) => {
     e.preventDefault();
@@ -44,23 +97,10 @@ const Chat = ({
     setMessage('');
   };
 
-  socket.on('chat message output', (msg) => {
-    updateChat(msg);
-  });
-
-  let time;
-  socket.on('typing', (data) => {
-    clearTimeout(time);
-    setTyping(data);
-    time = setTimeout(() => {
-      setTyping(false);
-    }, 1000);
-  });
-
   return (
     <div className={className}>
       <aside>
-        <h2>Chat</h2>
+        <h1>Chat</h1>
         {!loading && (
           <Fragment>
             {chats.length > 0 ? (
@@ -72,6 +112,10 @@ const Chat = ({
                   setMessage={setMessage}
                   setDisplayedReceiver={setDisplayedReceiver}
                   displayedReceiver={displayedReceiver}
+                  setMessagesSent={setMessagesSent}
+                  messages={
+                    chats[indexReceiver] && chats[indexReceiver].message
+                  }
                 />
               ))
             ) : (
@@ -85,13 +129,23 @@ const Chat = ({
         {displayedReceiver ? (
           <Fragment>
             <div className='receiver'>
-              <Avatar src={displayedReceiver.user.avatar} />
+              <Link to={`/profile/${displayedReceiver.user._id}`}>
+                <Avatar src={displayedReceiver.user.avatar} />
+              </Link>
               <div className='item'>
-                <h3>{displayedReceiver.user.name}</h3>
+                <Link to={`/profile/${displayedReceiver.user._id}`}>
+                  <h3>{displayedReceiver.user.name}</h3>
+                </Link>
                 {typing && <span>typing...</span>}
               </div>
             </div>
-            <div className='inbox'>{``}</div>
+            <div className='inbox'>
+              {messagesSent &&
+                messagesSent.map((message) => (
+                  <Message key={message._id} message={message} user={user} />
+                ))}
+              <div ref={messagesEndRef} />
+            </div>
             <form onSubmit={onSubmit}>
               <input
                 type='text'
@@ -140,11 +194,12 @@ export default connect(mapStateToProps, {
 })(styled(Chat)`
   margin: 5% 0;
   box-shadow: 2px 3px 3px rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
   display: grid;
   background-color: ${setColor.mainWhite};
   grid-template-columns: 30% 1fr;
   min-height: 75vh;
-  h2 {
+  h1 {
     color: ${setColor.darkBlue};
   }
   aside {
@@ -166,14 +221,18 @@ export default connect(mapStateToProps, {
     .receiver {
       display: flex;
       align-items: center;
+      margin-bottom: 20px;
       img {
         height: 60px;
         width: 60px;
       }
       .item {
         margin-left: 10px;
-        h3 {
-          margin: 0;
+        a {
+          h3 {
+            margin: 0;
+            color: ${setColor.mainBlack};
+          }
         }
         span {
           color: ${setColor.darkGray};
@@ -183,11 +242,11 @@ export default connect(mapStateToProps, {
 
     .inbox {
       height: 400px;
-      overflow: auto;
+      overflow-y: auto;
     }
     form {
       display: flex;
-      margin-top: 10px;
+      margin-top: 3%;
       input {
         width: 100%;
         padding: 10px;
