@@ -42,7 +42,7 @@ export default (state = initialState, action) => {
       return {
         ...state,
         profile: null,
-        loading: false,
+        loading: true,
         error: {},
         hasProfile: null,
       };

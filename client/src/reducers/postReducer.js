@@ -35,7 +35,7 @@ export default (state = initialState, action) => {
     case POST_ERROR:
       return { ...state, error: payload, loading: false };
     case CLEAR_POST:
-      return { ...state, posts: null, loading: false, error: null };
+      return { ...state, posts: null, loading: true, error: null };
     default:
       return state;
   }

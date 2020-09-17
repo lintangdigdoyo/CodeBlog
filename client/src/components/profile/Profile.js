@@ -73,6 +73,11 @@ const Profile = ({
     }
   }
 
+  //Check profile exist or not
+  if (!profile.loading && profile.profile === null) {
+    return <Redirect to='/404' />;
+  }
+
   //Check if the avatar from the googleApi or not
   let profileAvatar = '';
   if (profile.profile !== null) {

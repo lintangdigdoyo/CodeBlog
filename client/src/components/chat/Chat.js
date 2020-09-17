@@ -67,12 +67,18 @@ const Chat = ({
   });
 
   const messagesEndRef = useRef(null);
+
   const scrollToBottom = () => {
-    messagesEndRef.current &&
-      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollTop = messagesEndRef.current.scrollHeight;
+    }
   };
 
-  useEffect(() => scrollToBottom, [displayedReceiver, messagesEndRef]);
+  useEffect(() => scrollToBottom, [
+    scrollToBottom,
+    displayedReceiver,
+    messagesEndRef.current,
+  ]);
 
   useEffect(() => {
     setMessageLength(
@@ -139,12 +145,11 @@ const Chat = ({
                 {typing && <span>typing...</span>}
               </div>
             </div>
-            <div className='inbox'>
+            <div className='inbox' ref={messagesEndRef}>
               {messagesSent &&
                 messagesSent.map((message) => (
                   <Message key={message._id} message={message} user={user} />
                 ))}
-              <div ref={messagesEndRef} />
             </div>
             <form onSubmit={onSubmit}>
               <input

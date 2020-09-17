@@ -21,7 +21,7 @@ const CreateProfile = ({
     if (user !== null) {
       getProfile(user._id);
     }
-  }, [getProfile]);
+  }, [getProfile, user]);
 
   if (user && profile !== null) {
     return <Redirect to={`/profile/${user._id}`} />;

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import Moment from 'react-moment';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 
 import { setColor } from '../../styles';
 import Spinner from '../globals/Spinner';
@@ -27,7 +27,7 @@ const PostDetail = ({
   auth: { loading, user, isAuthenticated },
   match,
   getPost,
-  post: { posts },
+  post: { posts, loading: postLoading },
   deletePost,
   addLike,
   removeLike,
@@ -61,7 +61,12 @@ const PostDetail = ({
     }
   }
 
-  return loading || posts === null || Array.isArray(posts) ? (
+  //Check if the post exist or not
+  if (!postLoading && posts === null) {
+    return <Redirect to='/404' />;
+  }
+
+  return loading || Array.isArray(posts) ? (
     <Spinner />
   ) : (
     posts && (

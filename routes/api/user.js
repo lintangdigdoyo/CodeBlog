@@ -2,12 +2,12 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const { auth } = require('../../middleware/auth');
-const checkObjectId = require('../../middleware/checkObjectId');
 const { check, validationResult } = require('express-validator');
 
 const User = require('../../models/User');
 const Profile = require('../../models/Profile/Profile');
 const Post = require('../../models/Post/Post');
+const ChatRoom = require('../../models/Chat/ChatRoom');
 
 //@route GET api/user
 //@desc Get signed in user
@@ -185,6 +185,9 @@ router.delete(
       await Post.deleteMany({ user: req.user.id });
       await Profile.findOneAndRemove({ user: req.user.id });
       await User.findByIdAndRemove(req.user.id);
+      await ChatRoom.deleteMany({
+        userIds: { $elemMatch: { user: req.user.id } },
+      });
 
       res.json({ msg: 'User removed' });
     } catch (err) {
