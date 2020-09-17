@@ -29,6 +29,7 @@ const ModalComponent = ({
   submitData,
   alerts,
   removeAlert,
+  scroll,
 }) => {
   const [state, dispatch] = React.useReducer(reducer, {
     open: false,
@@ -68,7 +69,7 @@ const ModalComponent = ({
         >
           {title}
         </Modal.Header>
-        <Modal.Content scrolling>{content}</Modal.Content>
+        <Modal.Content scrolling={false || scroll}>{content}</Modal.Content>
         <Modal.Actions>
           <Button onClick={() => dispatch({ type: 'close' })}>
             {cancel || 'Cancel'}

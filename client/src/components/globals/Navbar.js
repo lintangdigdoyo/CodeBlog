@@ -6,7 +6,6 @@ import PropTypes from 'prop-types';
 import { Dropdown } from 'semantic-ui-react';
 
 import { setColor, setRem, setFont, media } from '../../styles';
-import { ReactComponent as HamburgerMenu } from './hamburgerMenu.svg';
 import { setVisible } from '../../actions/sidebar';
 import { SmallButton } from './Button';
 import { signOut } from '../../actions/auth';
@@ -18,6 +17,7 @@ const Navbar = ({
   sidebar,
   auth: { isAuthenticated, loading, user },
   signOut,
+  navbar,
 }) => {
   const [size, setSize] = useState(0);
 
@@ -132,7 +132,10 @@ const Navbar = ({
         <Fragment>
           {isAuthenticated ? privateLinks : guestLinks}
           <button className='hamburger' onClick={() => setVisible(!sidebar)}>
-            <HamburgerMenu />
+            <i
+              className='fas fa-bars'
+              style={{ color: !navbar && setColor.mainWhite }}
+            ></i>
           </button>
         </Fragment>
       )}
@@ -145,11 +148,13 @@ Navbar.propTypes = {
   sidebar: PropTypes.bool.isRequired,
   auth: PropTypes.object.isRequired,
   signOut: PropTypes.func.isRequired,
+  navbar: PropTypes.bool.isRequired,
 };
 
 const mapStateToProps = (state) => ({
   sidebar: state.sidebar,
   auth: state.auth,
+  navbar: state.navbar,
 });
 
 export default connect(mapStateToProps, { setVisible, signOut })(styled(Navbar)`
@@ -182,10 +187,6 @@ export default connect(mapStateToProps, { setVisible, signOut })(styled(Navbar)`
       border: 3px solid ${setColor.mainGray};
     }
   }
-  svg {
-    width: 25px;
-    height: 17px;
-  }
   a {
     color: ${(props) =>
       props.transparent ? setColor.darkBlue : setColor.mainGray};
@@ -196,7 +197,6 @@ export default connect(mapStateToProps, { setVisible, signOut })(styled(Navbar)`
         props.transparent ? setColor.mainBlue : setColor.mainWhite};
     }
   }
-
   button.hamburger {
     background: rgba(0, 0, 0, 0);
     border: 0;
@@ -214,7 +214,11 @@ export default connect(mapStateToProps, { setVisible, signOut })(styled(Navbar)`
     ${setFont.title}
     letter-spacing: 1px;
   }
-
+  button {
+    i {
+      color: ${setColor.darkBlue};
+    }
+  }
   ul {
     list-style: none;
     display: flex;

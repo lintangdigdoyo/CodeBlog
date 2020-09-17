@@ -27,7 +27,7 @@ const PostDetail = ({
   auth: { loading, user, isAuthenticated },
   match,
   getPost,
-  post: { posts, loading: postLoading },
+  post: { posts, loading: postLoading, error },
   deletePost,
   addLike,
   removeLike,
@@ -62,11 +62,11 @@ const PostDetail = ({
   }
 
   //Check if the post exist or not
-  if (!postLoading && posts === null) {
+  if (!postLoading && error && error.msg === 'invalid id' && posts === null) {
     return <Redirect to='/404' />;
   }
 
-  return loading || Array.isArray(posts) ? (
+  return loading || postLoading || Array.isArray(posts) ? (
     <Spinner />
   ) : (
     posts && (

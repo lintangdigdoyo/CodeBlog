@@ -133,12 +133,44 @@ export default connect(mapStateToProps, { setNav })(styled(Landing)`
     }
   `};
   ${media.phone`
+    grid-template-areas:
+      'title title'
+      'subtitle subtitle'
+      'img img'
+      'signup signup'
+      'signin signin';
+      grid-template-rows: auto 100px 313px repeat(2, 65px);
     h1 {
       font-size: ${setRem(56)};
+      margin-top: 25px;
+    }
+    h4 {
+      font-size: ${setRem(23)};
+      margin: 0 20%;
+    }
+    .img {
+      width: 280px;
+      height: 280px;
+    }
+    a {
+      width: ${setRem(250)};
+      height: ${setRem(60)};
+    }
+  `};
+  ${media.smallPhone`
+    grid-template-rows: auto 100px 269px repeat(2, 65px);
+    h1 {
+      font-size: ${setRem(41)};
+      margin: 0 60px;
+      margin-top: 25px;
     }
     h4 {
       font-size: ${setRem(20)};
-      margin: 0 10%;
+      margin: 0 16%;
+    }
+    .img {
+      width: 230px;
+      height: 230px;
     }
   `}
 `);

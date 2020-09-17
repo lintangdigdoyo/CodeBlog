@@ -133,6 +133,7 @@ const Profile = ({
                   title='Edit Profile'
                   submitData={() => updateProfile(formData, file, user._id)}
                   submit='Save'
+                  scroll
                   content={
                     <UpdateProfile
                       formData={formData}
