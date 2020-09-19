@@ -45,6 +45,10 @@ const RemoveAccountForm = ({
   );
 };
 
+RemoveAccountForm.propTypes = {
+  removeAlert: PropTypes.func.isRequired,
+};
+
 export default connect(null, { removeAlert })(styled(RemoveAccountForm)`
   p {
     background-color: ${setColor.lightDanger};

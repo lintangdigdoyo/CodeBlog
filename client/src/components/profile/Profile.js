@@ -7,7 +7,7 @@ import { Redirect, Link } from 'react-router-dom';
 import Spinner from '../globals/Spinner';
 import { getProfile, clearProfile } from '../../actions/profile';
 import Avatar from '../globals/Avatar';
-import { setColor, setFlex, media, setRem } from '../../styles';
+import { setColor, setFlex, media } from '../../styles';
 import Education from './Education';
 import Experience from './Experience';
 import Skill from './Skill';

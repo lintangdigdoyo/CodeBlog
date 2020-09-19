@@ -3,13 +3,21 @@ const express = require('express');
 const connectDB = require('./config/db');
 const cookieParser = require('cookie-parser');
 const socketio = require('socket.io');
-const cors = require('cors');
-
-if (process.env.NODE_ENV !== 'production') {
-  require('dotenv').config({ path: './config/.env' });
-}
+const path = require('path');
 
 const app = express();
+
+if (process.env.NODE_ENV !== 'production') {
+  const cors = require('cors');
+  require('dotenv').config({ path: './config/.env' });
+  app.use(
+    cors({
+      origin: 'http://localhost:3000',
+      credentials: true,
+    })
+  );
+}
+
 const server = http.createServer(app);
 const io = socketio(server);
 
@@ -19,12 +27,6 @@ connectDB();
 //Init Middleware
 app.use(express.json());
 app.use(cookieParser());
-app.use(
-  cors({
-    origin: 'http://localhost:3000',
-    credentials: true,
-  })
-);
 
 //Socket
 io.on('connection', (socket) => {
@@ -45,6 +47,16 @@ app.use('/api/user', require('./routes/api/user'));
 app.use('/api/profiles', require('./routes/api/profiles'));
 app.use('/api/posts', require('./routes/api/posts'));
 app.use('/api/chats', require('./routes/api/chats'));
+
+//Serve static assets in production
+if (process.env.NODE_ENV === 'Production') {
+  //set static folder
+  app.use(express.static('client/build'));
+
+  app.get('*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
+  });
+}
 
 const PORT = process.env.PORT || '5000';
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`));

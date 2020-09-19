@@ -10,7 +10,7 @@ import { updateSkill } from '../../actions/profile';
 
 const Skill = ({ className, skills, auth: { user }, profile, updateSkill }) => {
   const [formData, setFormData] = useState({
-    name: user.name,
+    name: user && user.name,
     country: profile.country,
     status: profile.status,
     skills: profile.skills,

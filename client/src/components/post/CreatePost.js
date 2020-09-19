@@ -28,6 +28,11 @@ const CreatePost = ({
   );
 };
 
+CreatePost.propTypes = {
+  profile: PropTypes.object.isRequired,
+  auth: PropTypes.object.isRequired,
+};
+
 const mapStateToProps = (state) => ({
   profile: state.profile,
   auth: state.auth,

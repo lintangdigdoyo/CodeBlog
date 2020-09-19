@@ -8,7 +8,6 @@ import { setColor } from '../../styles';
 import Spinner from '../globals/Spinner';
 import { getProfile } from '../../actions/profile';
 import Avatar from '../globals/Avatar';
-import Follower from './Follower';
 
 const Following = ({
   className,
