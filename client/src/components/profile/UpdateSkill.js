@@ -41,7 +41,7 @@ const UpdateSkill = ({
         name='skills'
         value={skills}
         onChange={onChange}
-        placeholde='Please use comma separated values (eg. HTML,CSS,JavaScript,PHP)'
+        placeholder='Please use comma separated values (eg. HTML,CSS,JavaScript,PHP)'
       />
     </div>
   );

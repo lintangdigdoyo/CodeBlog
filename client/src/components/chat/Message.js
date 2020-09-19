@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import Moment from 'react-moment';
 
-import { setColor, setRem } from '../../styles';
+import { setColor, setRem, media } from '../../styles';
 
 const Message = ({ className, message }) => {
   return (
@@ -30,7 +30,8 @@ export default styled(Message)`
       props.message.user === props.user._id
         ? `border-top-right-radius: 0;
             background-color: ${setColor.darkBlue}; 
-            color: ${setColor.mainWhite}`
+            color: ${setColor.mainWhite};
+            text-align: right;`
         : `border-top-left-radius: 0`};
     display: inline;
     font-size: ${setRem(18)};
@@ -39,8 +40,17 @@ export default styled(Message)`
   time {
     order: ${(props) => (props.message.user === props.user._id ? `1` : `2`)};
     color: ${setColor.darkGray};
-    font-size: 10px;
+    font-size: ${setRem(10)};
     margin: 0 10px;
     align-self: flex-end;
   }
+  ${media.tablet`
+  p {
+      max-width: 150px;
+      font-size: ${setRem(12)};
+    }
+    time {
+      font-size: ${setRem(8)}
+    }
+  `}
 `;

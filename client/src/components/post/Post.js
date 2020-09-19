@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
-import { setColor, setFlex } from '../../styles';
+import { setColor, setFlex, media } from '../../styles';
 import Modal from '../globals/Modal';
 import { deletePost } from '../../actions/post';
 
@@ -130,4 +130,17 @@ export default connect(mapStateToProps, { deletePost })(styled(Post)`
       }
     }
   }
+  ${media.phone`
+    padding: 5%;
+    .content {
+      grid-template-areas:
+        'img'
+        'title'
+         'text';
+      grid-template-rows: 163px 40px;
+      img {
+        justify-self: center;
+      }
+    } 
+  `}
 `);

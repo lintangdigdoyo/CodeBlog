@@ -32,7 +32,7 @@ const Follower = ({
         {profile.follower.map((follower, index) => {
           //Check if the avatar from the googleApi or not
           let profileAvatar = '';
-          if (follower.user) {
+          if (follower.user && follower.user.avatar) {
             const avatar = follower.user.avatar;
             if (avatar.split(':')[0] === 'https') {
               profileAvatar = follower.user.avatar;
@@ -54,10 +54,12 @@ const Follower = ({
                     </Link>
                   </div>
                 </div>
-                {profile.follower.length > 1 &&
-                  index + 1 !== profile.follower.length && (
-                    <div className='line' />
-                  )}
+                {profile.follower.filter((follower) => follower.user !== null)
+                  .length > 1 &&
+                  index + 1 !==
+                    profile.follower.filter(
+                      (follower) => follower.user !== null
+                    ).length && <div className='line' />}
               </Fragment>
             )
           );
@@ -82,6 +84,7 @@ export default connect(mapStateToProps, {
   getProfile,
 })(styled(Follower)`
   margin: 5% 10%;
+  min-height: 100vh;
   span {
     margin-bottom: 5px;
     color: ${setColor.darkGray};

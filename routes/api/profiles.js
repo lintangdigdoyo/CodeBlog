@@ -143,7 +143,10 @@ router.patch(
     try {
       let profile = await Profile.findOne({
         user: req.params.userId,
-      }).populate('user', ['name', 'avatar']);
+      })
+        .populate('user', ['name', 'avatar'])
+        .populate('follower.user', ['name', 'avatar'])
+        .populate('following.user', ['name', 'avatar']);
       let user = await User.findById(req.user.id);
 
       if (!profile) {

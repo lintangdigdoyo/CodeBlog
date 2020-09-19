@@ -65,7 +65,7 @@ const Education = ({
                   danger
                   submit='Delete'
                 >
-                  <i className='far fa-trash-alt'></i>
+                  <i className='far fa-trash-alt update'></i>
                 </Modal>
                 <Modal
                   title='Edit Education'
@@ -82,7 +82,7 @@ const Education = ({
                     />
                   }
                 >
-                  <i className='far fa-edit'></i>
+                  <i className='far fa-edit update'></i>
                 </Modal>
               </Fragment>
             )}
@@ -129,7 +129,6 @@ export default connect(mapStateToProps, {
   box-shadow: 2px 3px 3px rgba(0, 0, 0, 0.2);
   padding: 5%;
   padding-bottom: 10%;
-  width: 360px;
   h3 {
     color: ${setColor.darkBlue};
     margin-bottom: 20px;
@@ -145,6 +144,9 @@ export default connect(mapStateToProps, {
       color: ${setColor.mainBlue};
       transition: 0.3s ease-in-out;
     }
+  }
+  i.update {
+    top: 0;
   }
   .education {
     text-align: left;

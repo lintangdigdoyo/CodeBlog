@@ -76,6 +76,7 @@ export default styled(Receiver)`
   background-color: ${setColor.mainWhite};
   border-radius: 10px;
   padding: 10px;
+  word-break: break-word;
   &:hover {
     box-shadow: 4px 5px 10px rgba(0, 0, 0, 0.2);
   }

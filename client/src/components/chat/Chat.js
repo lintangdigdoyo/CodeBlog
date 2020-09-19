@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 import socket from '../../utils/socket';
-import { setColor, setFlex } from '../../styles';
+import { setColor, setFlex, media } from '../../styles';
 import Avatar from '../globals/Avatar';
 import { updateChat, getChat, clearChat } from '../../actions/chat';
 import Receiver from './Receiver';
@@ -34,6 +34,10 @@ const Chat = ({
     socket.on('get message', (msg) => {
       getChat(msg);
     });
+    socket.on(`chat ${user._id} output`, (msg) => {
+      console.log(msg);
+      updateChat(msg);
+    });
     return () => {
       clearChat();
     };
@@ -61,10 +65,6 @@ const Chat = ({
     .toString()
     .split(',')
     .indexOf(displayedReceiver && displayedReceiver.user._id);
-
-  socket.on(`chat ${user._id} output`, (msg) => {
-    updateChat(msg);
-  });
 
   const messagesEndRef = useRef(null);
 
@@ -203,7 +203,6 @@ export default connect(mapStateToProps, {
   display: grid;
   background-color: ${setColor.mainWhite};
   grid-template-columns: 30% 1fr;
-  min-height: 75vh;
   h1 {
     color: ${setColor.darkBlue};
   }
@@ -260,6 +259,7 @@ export default connect(mapStateToProps, {
         outline: none;
       }
       button {
+        outline: none;
         padding: 15px;
         border-radius: 100%;
         border: none;
@@ -280,4 +280,7 @@ export default connect(mapStateToProps, {
       }
     }
   }
+  ${media.phone`
+      grid-template-columns: 1fr;
+  `}
 `);

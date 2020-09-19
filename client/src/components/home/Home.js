@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 
 import headerExplore from '../../images/headerExplore.jpg';
 import Spinner from '../globals/Spinner';
-import { setColor, setRem, setFlex } from '../../styles';
+import { setColor, setRem, setFlex, media } from '../../styles';
 import Post from '../post/Post';
 import { getPosts, getFollowedPosts, clearPost } from '../../actions/post';
 import { getProfile } from '../../actions/profile';
@@ -135,9 +135,11 @@ export default connect(mapStateToProps, {
   getProfile,
 })(styled(Home)`
   margin: 2% 0 5% 0;
+  min-height: 100vh;
   header {
     display: flex;
     flex-direction: column;
+    background-position: center;
     background: linear-gradient(
         to top right,
         rgba(0, 0, 0, 1),
@@ -179,4 +181,39 @@ export default connect(mapStateToProps, {
       }
     }
   }
+  ${media.tablet`
+    header {
+      padding-right: 25%;
+    }
+  `}
+  ${media.phone`
+    header {
+      padding-right: 35%;
+      h1 {
+        font-size: ${setRem(40)};
+      }
+      p {
+        font-size: ${setRem(20)};
+      }
+      a {
+        width: 150px;
+        height: 30px
+      }
+    }
+  `}
+  ${media.smallPhone`
+    header {
+      padding-right: 10%;
+      h1 {
+        font-size: ${setRem(35)};
+      }
+      p {
+        font-size: ${setRem(15)};
+      }
+      a {
+        width: 150px;
+        height: 30px
+      }
+    }
+  `}
 `);

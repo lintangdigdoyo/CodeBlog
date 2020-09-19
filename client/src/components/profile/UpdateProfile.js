@@ -18,6 +18,7 @@ const UpdateProfile = ({
   onUploadChange,
   onFormChange,
   imagePreviewUrl,
+  profileAvatar,
 }) => {
   useEffect(() => {
     if (alerts.length !== 0 && alerts[0].alertType === 'success') {
@@ -58,7 +59,7 @@ const UpdateProfile = ({
       <Alert />
       <div className='upload-avatar'>
         <label htmlFor='avatar'>Upload Photo (max:500KB)</label>
-        <Avatar src={imagePreviewUrl} />
+        <Avatar src={imagePreviewUrl || profileAvatar} />
         <input
           type='file'
           id='avatar'

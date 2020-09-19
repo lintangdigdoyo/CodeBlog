@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import Moment from 'react-moment';
 import { Link, Redirect } from 'react-router-dom';
 
-import { setColor } from '../../styles';
+import { setColor, media, setRem } from '../../styles';
 import Spinner from '../globals/Spinner';
 import {
   getPost,
@@ -227,7 +227,6 @@ export default connect(mapStateToProps, {
       justify-content: space-between;
       align-items: center;
       .item.edit {
-        position: relative;
         height: 20px;
       }
       i {
@@ -235,15 +234,16 @@ export default connect(mapStateToProps, {
       }
       i.fa-edit {
         position: absolute;
-        right: 30px;
+        right: 75px;
+        top: 30px;
         color: ${setColor.darkBlue};
         &:hover {
           color: ${setColor.mainBlue};
         }
       }
       i.fa-trash-alt {
-        right: 0;
-        top: 0;
+        right: 40px;
+        top: 30px;
         position: absolute;
         color: ${setColor.dangerColor};
         &:hover {
@@ -296,8 +296,13 @@ export default connect(mapStateToProps, {
       width: 100%;
       height: 50px;
       color: ${setColor.darkBlue};
+      i {
+        margin-right: 5px;
+      }
       .item {
-        width: 4%;
+        width: 10%;
+        display: flex;
+        align-items: center;
       }
       .item.thumbs {
         cursor: pointer;
@@ -331,5 +336,28 @@ export default connect(mapStateToProps, {
         }
       }
     }
+    ${media.tablet`
+      padding: 5%;
+      padding-bottom: 20%;
+      .statistic {
+        justify-content: space-evenly;
+      }
+    `}
+    ${media.phone`
+      h2 {
+        padding-right: 70px;
+        font-size: ${setRem(20)};
+      }
+      .header {
+      i.fa-edit {
+        right: 55px;
+        top: 10px;
+      }
+      i.fa-trash-alt {
+        right: 20px;
+        top: 10px;
+      }
+    }
+    `}
   `
 );

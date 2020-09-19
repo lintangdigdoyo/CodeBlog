@@ -7,7 +7,7 @@ import { Redirect, Link } from 'react-router-dom';
 import Spinner from '../globals/Spinner';
 import { getProfile, clearProfile } from '../../actions/profile';
 import Avatar from '../globals/Avatar';
-import { setColor, setFlex } from '../../styles';
+import { setColor, setFlex, media, setRem } from '../../styles';
 import Education from './Education';
 import Experience from './Experience';
 import Skill from './Skill';
@@ -142,6 +142,7 @@ const Profile = ({
                       onFormChange={onFormChange}
                       onUploadChange={onUploadChange}
                       imagePreviewUrl={imagePreviewUrl}
+                      profileAvatar={profileAvatar}
                     />
                   }
                 >
@@ -282,6 +283,7 @@ export default connect(mapStateToProps, {
       .bio {
         display: grid;
         row-gap: 5px;
+        grid-template-columns: 150%;
         h2,
         p,
         a {
@@ -353,10 +355,35 @@ export default connect(mapStateToProps, {
       display: grid;
       grid-template-columns: 30% 60%;
       gap: 3%;
+      aside {
+        display: grid;
+        row-gap: 50px;
+      }
     }
-    aside {
-      display: grid;
-      row-gap: 50px;
-    }
+    ${media.tablet`
+      grid-template-columns: 1fr;
+      .user-profile {
+        flex-direction: column;
+        .bio {
+          justify-items: center;
+          text-align: center;
+          justify-content: center;
+        }
+      }
+      .container {
+        grid-template-columns: 1fr;
+        section {
+          order: 1;
+        }
+        aside {
+          order: 2;
+        }
+      }
+      ${media.phone`
+        .container {
+          margin: 15% 0;
+        }
+      `}
+    `}
   `
 );

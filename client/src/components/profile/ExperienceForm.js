@@ -82,16 +82,18 @@ const ExperienceForm = ({
         onChange={onChange}
       />
       <label htmlFor='end'>End Date</label>
-      <input
-        type='checkbox'
-        name='current'
-        value={current}
-        checked={current}
-        onChange={() => {
-          setFormData({ ...formData, current: !current, end: '' });
-        }}
-      />{' '}
-      Current
+      <div className='checkbox-current'>
+        <input
+          type='checkbox'
+          name='current'
+          value={current}
+          checked={current}
+          onChange={() => {
+            setFormData({ ...formData, current: !current, end: '' });
+          }}
+        />{' '}
+        <div className='current'>Current</div>
+      </div>
       <input
         type='date'
         name='end'
@@ -138,8 +140,16 @@ export default connect(mapStateToProps)(styled(ExperienceForm)`
     display: block;
     cursor: pointer;
   }
-  input[type='checkbox'] {
-    width: 0;
-    cursor: pointer;
+  .checkbox-current {
+    display: flex;
+    align-items: center;
+    width: 7%;
+    input[type='checkbox'] {
+      cursor: pointer;
+      margin: 5%;
+    }
+    .current {
+      color: ${setColor.mainBlack};
+    }
   }
 `);

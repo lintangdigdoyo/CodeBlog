@@ -53,6 +53,10 @@ const SidebarNav = ({
         <i className='fas fa-user-alt fa-2x'></i>
         <h5>Account</h5>
       </Menu.Item>
+      <Menu.Item as={Link} to={`/messages`}>
+        <i className='fas fa-comment-dots fa-2x'></i>
+        <h5>Chat</h5>
+      </Menu.Item>
       <Menu.Item as={Link} to='/create-post'>
         <i className='fas fa-plus-square fa-2x'></i>
         <br />

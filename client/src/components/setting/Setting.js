@@ -5,7 +5,7 @@ import styled from 'styled-components';
 
 import Avatar from '../globals/Avatar';
 import Spinner from '../globals/Spinner';
-import { setColor, setRem } from '../../styles';
+import { setColor, setRem, media } from '../../styles';
 import { SmallButton } from '../globals/Button';
 import Modal from '../globals/Modal';
 import {
@@ -90,6 +90,19 @@ const Setting = ({
     }
   };
 
+  //Check if the avatar from the googleApi or not
+  let userAvatar = '';
+  if (user !== null) {
+    if (user.avatar) {
+      const avatar = user.avatar;
+      if (avatar.split(':')[0] === 'https') {
+        userAvatar = user.avatar;
+      } else if (avatar.split(':')[0] !== 'https') {
+        userAvatar = `/${user.avatar}`;
+      }
+    }
+  }
+
   return typeof hasPassword === 'undefined' ? (
     <Spinner />
   ) : (
@@ -98,7 +111,7 @@ const Setting = ({
       <div className='line' />
       <div className='container'>
         <div className='side'>
-          <Avatar />
+          <Avatar src={userAvatar} />
           <h4>{user.name}</h4>
         </div>
         <div className='item'>
@@ -343,5 +356,13 @@ export default connect(mapStateToProps, {
         }
       }
     }
+    ${media.tablet`
+      .container {
+        grid-template-columns: 1fr;
+      }
+    `}
+    ${media.phone`
+      min-height: 100vh;
+    `}
   `
 );

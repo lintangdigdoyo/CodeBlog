@@ -8,6 +8,7 @@ import { setColor } from '../../styles';
 import Spinner from '../globals/Spinner';
 import { getProfile } from '../../actions/profile';
 import Avatar from '../globals/Avatar';
+import Follower from './Follower';
 
 const Following = ({
   className,
@@ -35,7 +36,7 @@ const Following = ({
         {profile.following.map((following, index) => {
           //Check if the avatar from the googleApi or not
           let profileAvatar = '';
-          if (following.user) {
+          if (following.user && following.user.avatar) {
             const avatar = following.user.avatar;
             if (avatar.split(':')[0] === 'https') {
               profileAvatar = following.user.avatar;
@@ -57,10 +58,13 @@ const Following = ({
                     </Link>
                   </div>
                 </div>
-                {profile.following.length > 1 &&
-                  index + 1 !== profile.following.length && (
-                    <div className='line' />
-                  )}
+                {profile.following.filter(
+                  (following) => following.user !== null
+                ).length > 1 &&
+                  index + 1 !==
+                    profile.following.filter(
+                      (following) => following.user !== null
+                    ).length && <div className='line' />}
               </Fragment>
             )
           );
@@ -85,6 +89,7 @@ export default connect(mapStateToProps, {
   getProfile,
 })(styled(Following)`
   margin: 5% 10%;
+  min-height: 100vh;
   span {
     margin-bottom: 5px;
     color: ${setColor.darkGray};

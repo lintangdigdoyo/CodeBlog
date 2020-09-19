@@ -184,7 +184,7 @@ export const editComment = (formData, postId, commentId) => async (
   } catch (err) {
     dispatch({
       type: POST_ERROR,
-      payload: { msg: err.response.statusText, msg: err.response.status },
+      payload: { msg: err.response.statusText, status: err.response.status },
     });
   }
 };

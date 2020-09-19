@@ -84,16 +84,19 @@ const EducationForm = ({
         </select>
       </div>
       <label htmlFor='end-year'>End Year</label>
-      <input
-        type='checkbox'
-        name='current'
-        value={current}
-        checked={current}
-        onChange={() =>
-          setFormData({ ...formData, current: !current, endYear: '' })
-        }
-      />{' '}
-      Current
+      <div className='checkbox-current'>
+        <input
+          type='checkbox'
+          name='current'
+          value={current}
+          checked={current}
+          onChange={() =>
+            setFormData({ ...formData, current: !current, endYear: '' })
+          }
+        />{' '}
+        <div className='current'>Current</div>
+      </div>
+
       <div className='select'>
         <select
           disabled={current}
@@ -158,11 +161,11 @@ export default connect(mapStateToProps)(styled(EducationForm)`
   .select {
     position: relative;
     height: 40px;
-    .start-year {
+    select#start-year {
       z-index: 5;
     }
-    .end-year {
-      z-index: 4;
+    select#end-year {
+      z-index: 2;
     }
   }
   select {
@@ -174,9 +177,16 @@ export default connect(mapStateToProps)(styled(EducationForm)`
     margin-bottom: 10px;
     cursor: pointer;
   }
-
-  input[type='checkbox'] {
-    width: 0;
-    cursor: pointer;
+  .checkbox-current {
+    display: flex;
+    align-items: center;
+    width: 7%;
+    input[type='checkbox'] {
+      cursor: pointer;
+      margin: 5%;
+    }
+    .current {
+      color: ${setColor.mainBlack};
+    }
   }
 `);

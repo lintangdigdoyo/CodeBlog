@@ -68,7 +68,7 @@ const Experience = ({
                   danger
                   submit='Delete'
                 >
-                  <i className='far fa-trash-alt'></i>
+                  <i className='far fa-trash-alt update'></i>
                 </Modal>
                 <Modal
                   title='Edit Experience'
@@ -85,7 +85,7 @@ const Experience = ({
                     />
                   }
                 >
-                  <i className='far fa-edit'></i>
+                  <i className='far fa-edit update'></i>
                 </Modal>
               </Fragment>
             )}
@@ -139,7 +139,6 @@ export default connect(mapStateToProps, {
   text-align: center;
   box-shadow: 2px 3px 3px rgba(0, 0, 0, 0.2);
   padding: 5%;
-  width: 360px;
   h3 {
     color: ${setColor.darkBlue};
     margin: 0;
@@ -155,6 +154,9 @@ export default connect(mapStateToProps, {
       color: ${setColor.mainBlue};
       transition: 0.3s ease-in-out;
     }
+  }
+  i.update {
+    top: 0;
   }
   .experience {
     margin: 10px 0;

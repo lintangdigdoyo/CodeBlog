@@ -167,7 +167,6 @@ export default connect(mapStateToProps, { setVisible, signOut })(styled(Navbar)`
   justify-content: space-between;
   align-items: center;
   font-size: ${setRem(16)};
-
   .item {
     i {
       color: ${setColor.darkBlue};
@@ -203,13 +202,11 @@ export default connect(mapStateToProps, { setVisible, signOut })(styled(Navbar)`
     cursor: pointer;
     display: none;
   }
-
   .button {
     a {
       color: ${setColor.mainWhite};
     }
   }
-
   h4 {
     ${setFont.title}
     letter-spacing: 1px;
@@ -229,14 +226,13 @@ export default connect(mapStateToProps, { setVisible, signOut })(styled(Navbar)`
     align-items: center;
 
     ${media.desktop`
-        width: 25%;
+        width: 30%;
     `}
 
     ${media.tablet`
         width: 50%;
     `}
   }
-
   ${media.phone`
     button.hamburger,svg{
         display:block;

@@ -15,6 +15,6 @@ module.exports = (io, socket) => {
     const newRoom = chat[0].id;
     const filterRoom = allChat.filter((chat) => chat.id !== newRoom);
 
-    socket.leave(filterRoom.map((room) => room.id));
+    filterRoom.map((room) => socket.leave(room.id));
   });
 };

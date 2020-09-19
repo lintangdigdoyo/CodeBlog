@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import Moment from 'react-moment';
 
 import Modal from '../globals/Modal';
-import { setColor, setRem } from '../../styles';
+import { setColor, setRem, media } from '../../styles';
 import { SmallButton } from '../globals/Button';
 import { addComment, deleteComment, editComment } from '../../actions/post';
 import Avatar from '../globals/Avatar';
@@ -206,5 +206,33 @@ export default connect(mapStateToProps, {
         }
       }
     }
+    ${media.tablet`
+      .comments {
+        grid-template-columns: 50px 1fr 10%;
+      }
+    `}
+    ${media.smallPhone`
+      .comments {
+        a {
+          font-size: 11px;
+        }
+        time {
+          font-size: 8px;
+        }
+      }
+    `}
+    ${media.phone`
+      .comments {
+        grid-template-areas:
+        'avatar name edit'
+        'avatar comment delete';
+        .fa-edit {
+          margin-right: 10px;
+        }
+        i {
+          font-size: 10px;
+        }
+      }
+    `}
   `
 );
