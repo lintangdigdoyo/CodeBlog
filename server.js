@@ -41,7 +41,7 @@ io.on('connection', (socket) => {
 });
 
 //Public static folder
-app.use('/uploads', express.static('uploads'));
+app.use('/uploads', express.static(path.resolve(__dirname, 'uploads')));
 
 //Define routes
 app.use('/api/auth', require('./routes/api/auth'));
