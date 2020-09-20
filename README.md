@@ -2,8 +2,7 @@
 
 > Social network to share knowledge and connect with other people with realtime messaging
 
-This is a MERN-stack personal project.
-The front-end of this app is using React.js and using Redux for state management. This app also using styled-components to style the components. The back-end of this app is using express.js and for the realtime messaging is using socket.io. The database that this app uses is MongoDB. This app also uses google OAuth and JSON Web Token.
+CodeBlog is a MERN-stack personal project. This app uses Redux for state management and uses styled-components for styling the component. Realtime messaging applied by using socket.io. This app also uses google OAuth and JSON Web Token.
 
 ## Usage
 ```
@@ -17,3 +16,6 @@ npm run dev
 
 Go to localhost:3000
 ```
+
+# Live preview:
+https://appcodeblog.herokuapp.com
