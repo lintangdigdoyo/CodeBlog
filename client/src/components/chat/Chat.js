@@ -35,7 +35,6 @@ const Chat = ({
       getChat(msg);
     });
     socket.on(`chat ${user._id} output`, (msg) => {
-      console.log(msg);
       updateChat(msg);
     });
     return () => {
