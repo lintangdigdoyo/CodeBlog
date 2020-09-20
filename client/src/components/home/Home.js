@@ -92,8 +92,8 @@ const Home = ({
               <header>
                 <h1>Explore & Gain Your Knowledge</h1>
                 <p>
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Quos,
-                  quasi Laborum vero.
+                  Connect with everyone, share your knowledge, send messages,
+                  and get updates.
                 </p>
                 <SmallButton as={Link} to='/register'>
                   Sign up
