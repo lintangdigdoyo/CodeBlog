@@ -10,7 +10,13 @@ import { createProfile } from '../../actions/profile';
 import { removeAlert } from '../../actions/alert';
 import Alert from '../globals/Alert';
 
-const ProfileForm = ({ className, createProfile, removeAlert, alerts }) => {
+const ProfileForm = ({
+  className,
+  createProfile,
+  removeAlert,
+  alerts,
+  auth: { user },
+}) => {
   const [formData, setFormData] = useState({
     country: '',
     location: '',
@@ -19,8 +25,11 @@ const ProfileForm = ({ className, createProfile, removeAlert, alerts }) => {
     skills: '',
     bio: '',
   });
+
   const [file, setFile] = useState();
-  const [imagePreviewUrl, setImagePreviewUrl] = useState();
+  const [imagePreviewUrl, setImagePreviewUrl] = useState(
+    user.avatar && user.avatar
+  );
 
   const { country, location, status, website, skills, bio } = formData;
 
@@ -156,10 +165,12 @@ ProfileForm.propTypes = {
   createProfile: PropTypes.func.isRequired,
   removeAlert: PropTypes.func.isRequired,
   alerts: PropTypes.array.isRequired,
+  auth: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = (state) => ({
   alerts: state.alerts,
+  auth: state.auth,
 });
 
 export default connect(mapStateToProps, { createProfile, removeAlert })(
