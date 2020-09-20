@@ -1,5 +1,4 @@
 const http = require('http');
-const https = require('https');
 const express = require('express');
 const connectDB = require('./config/db');
 const cookieParser = require('cookie-parser');
@@ -8,7 +7,6 @@ const path = require('path');
 
 const app = express();
 
-let server;
 if (process.env.NODE_ENV !== 'production') {
   const cors = require('cors');
   require('dotenv').config({ path: './config/.env' });
@@ -18,11 +16,9 @@ if (process.env.NODE_ENV !== 'production') {
       credentials: true,
     })
   );
-  server = http.createServer(app);
-} else if (process.env.NODE_ENV === 'production') {
-  server = https.createServer(app);
 }
 
+const server = http.createServer(app);
 const io = socketio(server);
 
 //Connect Databases
