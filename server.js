@@ -7,6 +7,8 @@ const path = require('path');
 
 const app = express();
 
+app.enable('trust proxy');
+
 if (process.env.NODE_ENV !== 'production') {
   const cors = require('cors');
   require('dotenv').config({ path: './config/.env' });
