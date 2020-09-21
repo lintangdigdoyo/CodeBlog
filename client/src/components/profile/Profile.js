@@ -258,7 +258,6 @@ export default connect(mapStateToProps, {
     justify-content: center;
     justify-items: center;
     grid-template-columns: 100%;
-    text-transform: capitalize;
     .user-profile {
       display: flex;
       align-items: center;

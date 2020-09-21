@@ -28,7 +28,7 @@ const Landing = ({ className, setNav, auth: { isAuthenticated, loading } }) => {
   ) : (
     <div className={className}>
       <h1>Welcome to CodeBlog</h1>
-      <h4>Connect and Share Your knowledge with everyone </h4>
+      <h4>Connect and Share your knowledge with everyone </h4>
       <PrimaryButton as={Link} to='/register' className='signup'>
         sign up
       </PrimaryButton>
