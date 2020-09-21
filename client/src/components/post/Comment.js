@@ -35,22 +35,11 @@ const Comment = ({
 
   const renderComment = () =>
     posts.comment.map((comment) => {
-      //Check if the avatar from the googleApi or not
-      let commentAvatar = '';
-      if (posts.user && comment.user && comment.user.avatar) {
-        const avatar = comment.user.avatar;
-        if (avatar.split(':')[0] === 'https') {
-          commentAvatar = comment.user.avatar;
-        } else if (avatar.split(':')[0] !== 'https') {
-          commentAvatar = `/${comment.user.avatar}`;
-        }
-      }
-
       return (
         comment.user && (
           <div className='comments' key={comment._id}>
             <Link className='avatar' to={`/profile/${comment.user._id}`}>
-              <Avatar src={commentAvatar} commentAvatar={commentAvatar} />
+              <Avatar src={comment.user && comment.user.avatar} />
             </Link>
             <div className='name'>
               <Link to={`/profile/${comment.user._id}`}>

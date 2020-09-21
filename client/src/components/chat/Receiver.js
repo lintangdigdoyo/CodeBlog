@@ -31,17 +31,6 @@ const Receiver = ({
 
   const receiver = userIds.filter((userId) => userId.user._id !== user._id)[0];
 
-  //Check if the avatar from the googleApi or not
-  let receiverAvatar = '';
-  if (receiver.user.avatar) {
-    const avatar = receiver.user.avatar;
-    if (avatar.split(':')[0] === 'https') {
-      receiverAvatar = receiver.user.avatar;
-    } else if (avatar.split(':')[0] !== 'https') {
-      receiverAvatar = `/${receiver.user.avatar}`;
-    }
-  }
-
   return (
     <div
       className={`${className} ${
@@ -54,13 +43,13 @@ const Receiver = ({
           ...receiver,
           user: {
             ...receiver.user,
-            avatar: receiverAvatar,
+            avatar: receiver.user && receiver.user.avatar,
           },
         });
         setMessage('');
       }}
     >
-      <Avatar src={receiverAvatar} />
+      <Avatar src={receiver.user && receiver.user.avatar} />
       {receiver.user && <h5>{receiver.user.name}</h5>}
     </div>
   );

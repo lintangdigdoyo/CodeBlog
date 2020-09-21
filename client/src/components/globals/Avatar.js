@@ -6,22 +6,11 @@ import { connect } from 'react-redux';
 import { setColor } from '../../styles';
 import imgAvatar from '../../images/avatar.jpg';
 
-const Avatar = ({
-  className,
-  auth: { loading, user },
-  src,
-  commentAvatar,
-  postAvatar,
-  profileAvatar,
-}) => {
-  return !loading && user ? (
-    <img className={className} src={src ? src : imgAvatar} alt='avatar' />
-  ) : (
-    <img
-      className={className}
-      src={profileAvatar || commentAvatar || postAvatar || imgAvatar}
-      alt='avatar'
-    />
+const Avatar = ({ className, auth: { loading }, src }) => {
+  return (
+    !loading && (
+      <img className={className} src={src ? src : imgAvatar} alt='avatar' />
+    )
   );
 };
 

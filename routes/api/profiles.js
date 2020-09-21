@@ -4,6 +4,7 @@ const { check, validationResult } = require('express-validator');
 const { auth } = require('../../middleware/auth');
 const checkObjectId = require('../../middleware/checkObjectId');
 const upload = require('../../middleware/upload');
+const cloudinary = require('../../config/cloudinaryConfig');
 const fs = require('fs');
 
 const Profile = require('../../models/Profile/Profile');
@@ -56,21 +57,28 @@ router.post('/', auth, upload.single('avatar'), async (req, res) => {
     });
 
     if (req.file) {
-      if (user.avatar) {
-        fs.unlink(user.avatar, (err) => {
+      cloudinary.uploader.upload(req.file.path, async (error, result) => {
+        user.avatar = result.secure_url;
+
+        await user.save();
+
+        fs.unlink(req.file.path, (err) => {
           if (err) {
             console.error(err);
             return;
           }
           //file removed
         });
-      }
-      user.avatar = req.file.path;
-      await user.save();
+
+        await profile.save();
+        res.json(profile);
+      });
     }
 
-    await profile.save();
-    res.json(profile);
+    if (!req.file) {
+      await profile.save();
+      res.json(profile);
+    }
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server Error');
@@ -174,22 +182,30 @@ router.patch(
       }
 
       if (req.file) {
-        if (user.avatar) {
-          fs.unlink(user.avatar, (err) => {
+        cloudinary.uploader.upload(req.file.path, async (error, result) => {
+          profile.user.avatar = result.secure_url;
+          user.avatar = result.secure_url;
+
+          await user.save();
+          await profile.save();
+
+          fs.unlink(req.file.path, (err) => {
             if (err) {
               console.error(err);
               return;
             }
             //file removed
           });
-        }
-        profile.user.avatar = req.file.path;
-        user.avatar = req.file.path;
-        await user.save();
+
+          await profile.save();
+          res.json(profile);
+        });
       }
 
-      await profile.save();
-      res.json(profile);
+      if (!req.file) {
+        await profile.save();
+        res.json(profile);
+      }
     } catch (err) {
       console.error(err.message);
       res.status(500).send('Server Error');

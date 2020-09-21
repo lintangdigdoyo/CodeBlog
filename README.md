@@ -10,7 +10,7 @@ npm install
 
 open config directory 
     -> Create .env file 
-    -> Inside .env file, add the environment variable for MONGO_URI, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, JWT_SECRET
+    -> Inside .env file, add the environment variables for MONGO_URI, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, JWT_SECRET, CLOUDINARY_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET
 
 npm run dev
 

@@ -4,6 +4,7 @@ const { check, validationResult } = require('express-validator');
 const { auth } = require('../../middleware/auth');
 const checkObjectId = require('../../middleware/checkObjectId');
 const upload = require('../../middleware/upload');
+const cloudinary = require('../../config/cloudinaryConfig');
 const fs = require('fs');
 
 const Post = require('../../models/Post/Post');
@@ -48,15 +49,43 @@ router.post(
       const post = new Post({
         user: req.user.id,
         thumbnail: thumbnail[0].path,
-        header: header && header[0].path,
+        header: '',
         title,
         text,
       });
 
-      await post.save();
-      const posts = await Post.find({ user: req.user.id });
+      if (header) {
+        cloudinary.uploader.upload(header[0].path, async (error, result) => {
+          post.header = result.secure_url;
 
-      res.json(posts);
+          await post.save();
+
+          fs.unlink(header[0].path, (err) => {
+            if (err) {
+              console.error(err);
+              return;
+            }
+            //file removed
+          });
+        });
+      }
+
+      cloudinary.uploader.upload(thumbnail[0].path, async (error, result) => {
+        post.thumbnail = result.secure_url;
+
+        await post.save();
+
+        fs.unlink(thumbnail[0].path, (err) => {
+          if (err) {
+            console.error(err);
+            return;
+          }
+          //file removed
+        });
+
+        const posts = await Post.find({ user: req.user.id });
+        res.json(posts);
+      });
     } catch (err) {
       res.status(500).send('Server Error');
     }
@@ -193,36 +222,54 @@ router.patch(
       }
 
       if (title) post.title = title;
-      if (header) {
-        if (post.header) {
-          fs.unlink(post.header, (err) => {
-            if (err) {
-              console.error(err);
-              return;
-            }
-            //file removed
-          });
-        }
-        post.header = header && header[0].path;
-      }
-      if (thumbnail) {
-        if (post.thumbnail) {
-          fs.unlink(post.thumbnail, (err) => {
-            if (err) {
-              console.error(err);
-              return;
-            }
-            //file removed
-          });
-        }
-        post.thumbnail = thumbnail[0].path;
-      }
+
       if (text) post.text = text;
 
-      await post.save();
+      if (header) {
+        cloudinary.uploader.upload(header[0].path, async (error, result) => {
+          post.header = result.secure_url;
 
-      const posts = await Post.find({ user: req.user.id });
-      res.json(posts);
+          await post.save();
+
+          fs.unlink(header[0].path, (err) => {
+            if (err) {
+              console.error(err);
+              return;
+            }
+            //file removed
+          });
+
+          if (!thumbnail) {
+            const posts = await Post.find({ user: req.user.id });
+            return res.json(posts);
+          }
+        });
+      }
+
+      if (thumbnail) {
+        cloudinary.uploader.upload(thumbnail[0].path, async (error, result) => {
+          post.thumbnail = result.secure_url;
+
+          await post.save();
+
+          fs.unlink(thumbnail[0].path, (err) => {
+            if (err) {
+              console.error(err);
+              return;
+            }
+            //file removed
+          });
+
+          const posts = await Post.find({ user: req.user.id });
+          return res.json(posts);
+        });
+      }
+
+      if (!header && !thumbnail) {
+        await post.save();
+        const posts = await Post.find({ user: req.user.id });
+        res.json(posts);
+      }
     } catch (err) {
       console.error(err.message);
       res.status(500).send('Server Error');

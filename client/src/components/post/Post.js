@@ -13,7 +13,7 @@ const Post = ({ className, post, deletePost, auth }) => {
     <div className={className}>
       <Link to={`/post/${post._id}`}>
         <div className='content'>
-          <img src={`/${post.thumbnail}`} alt='thumbnail' />
+          <img src={post.thumbnail} alt='thumbnail' />
           <h4>{post.title}</h4>
           <p>
             {post.text.length > 300 ? post.text.substring(0, 300) : post.text}

@@ -90,19 +90,6 @@ const Setting = ({
     }
   };
 
-  //Check if the avatar from the googleApi or not
-  let userAvatar = '';
-  if (user !== null) {
-    if (user.avatar) {
-      const avatar = user.avatar;
-      if (avatar.split(':')[0] === 'https') {
-        userAvatar = user.avatar;
-      } else if (avatar.split(':')[0] !== 'https') {
-        userAvatar = `/${user.avatar}`;
-      }
-    }
-  }
-
   return typeof hasPassword === 'undefined' ? (
     <Spinner />
   ) : (
@@ -111,7 +98,7 @@ const Setting = ({
       <div className='line' />
       <div className='container'>
         <div className='side'>
-          <Avatar src={userAvatar} />
+          <Avatar src={user.avatar} />
           <h4>{user.name}</h4>
         </div>
         <div className='item'>

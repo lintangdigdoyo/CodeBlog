@@ -47,20 +47,6 @@ const PostDetail = ({
     };
   }, [getPost, addViewer, match.params.postId, clearPost, removeAlert]);
 
-  //Check if the avatar from the googleApi or not
-  let postAvatar = '';
-  if (posts !== null) {
-    document.title = `${posts.title ? posts.title : 'Post'} | CodeBlog`;
-    if (posts.user && posts.user.avatar) {
-      const avatar = posts.user.avatar;
-      if (avatar.split(':')[0] === 'https') {
-        postAvatar = posts.user.avatar;
-      } else if (avatar.split(':')[0] !== 'https') {
-        postAvatar = `/${posts.user.avatar}`;
-      }
-    }
-  }
-
   //Check if the post exist or not
   if (!postLoading && error && error.msg === 'invalid id' && posts === null) {
     return <Redirect to='/404' />;
@@ -96,7 +82,7 @@ const PostDetail = ({
           </div>
           <div className='profile'>
             <Link to={`/profile/${posts.user._id}`}>
-              <Avatar src={postAvatar} postAvatar={postAvatar} />
+              <Avatar src={posts.user && posts.user.avatar} />
             </Link>
             <div className='detail'>
               <Link to={`/profile/${posts.user._id}`}>
@@ -106,7 +92,7 @@ const PostDetail = ({
             </div>
           </div>
           <div className='content'>
-            {posts.header && <img src={`/${posts.header}`} alt='header' />}
+            {posts.header && <img src={posts.header} alt='header' />}
             <p>{posts.text}</p>
           </div>
           <div className='statistic'>

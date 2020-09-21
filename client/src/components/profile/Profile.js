@@ -78,20 +78,6 @@ const Profile = ({
     return <Redirect to='/404' />;
   }
 
-  //Check if the avatar from the googleApi or not
-  let profileAvatar = '';
-  if (profile.profile !== null) {
-    document.title = `${profile.profile.user.name} | CodeBlog`;
-    if (profile.profile.user.avatar) {
-      const avatar = profile.profile.user.avatar;
-      if (avatar.split(':')[0] === 'https') {
-        profileAvatar = profile.profile.user.avatar;
-      } else if (avatar.split(':')[0] !== 'https') {
-        profileAvatar = `/${profile.profile.user.avatar}`;
-      }
-    }
-  }
-
   const onFormChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -124,7 +110,7 @@ const Profile = ({
       <div className={className}>
         <Alert />
         <div className='user-profile'>
-          <Avatar src={profileAvatar} profileAvatar={profileAvatar} />
+          <Avatar src={profile.profile && profile.profile.user.avatar} />
           <div className='bio'>
             <h2>
               {profile.profile.user.name}
@@ -142,7 +128,9 @@ const Profile = ({
                       onFormChange={onFormChange}
                       onUploadChange={onUploadChange}
                       imagePreviewUrl={imagePreviewUrl}
-                      profileAvatar={profileAvatar}
+                      profileAvatar={
+                        profile.profile && profile.profile.user.avatar
+                      }
                     />
                   }
                 >

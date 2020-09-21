@@ -33,23 +33,12 @@ const Following = ({
       </span>
       <div className='following'>
         {profile.following.map((following, index) => {
-          //Check if the avatar from the googleApi or not
-          let profileAvatar = '';
-          if (following.user && following.user.avatar) {
-            const avatar = following.user.avatar;
-            if (avatar.split(':')[0] === 'https') {
-              profileAvatar = following.user.avatar;
-            } else if (avatar.split(':')[0] !== 'https') {
-              profileAvatar = `/${following.user.avatar}`;
-            }
-          }
-
           return (
             following.user && (
               <Fragment key={following.user._id}>
                 <div className='profile'>
                   <Link to={`/profile/${following.user._id}`}>
-                    <Avatar src={profileAvatar} profileAvatar={profileAvatar} />
+                    <Avatar src={following.user && following.user.avatar} />
                   </Link>
                   <div className='item'>
                     <Link to={`/profile/${following.user._id}`}>
