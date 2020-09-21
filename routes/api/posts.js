@@ -293,23 +293,6 @@ router.delete('/:postId', auth, checkObjectId('postId'), async (req, res) => {
       return res.status(401).json({ errors: [{ msg: 'Unauthorized user' }] });
     }
 
-    fs.unlink(post.thumbnail, (err) => {
-      if (err) {
-        console.error(err);
-        return;
-      }
-      //file removed
-    });
-    if (post.header) {
-      fs.unlink(post.header, (err) => {
-        if (err) {
-          console.error(err);
-          return;
-        }
-        //file removed
-      });
-    }
-
     await post.remove();
     const posts = await Post.find({ user: req.user.id });
     res.json(posts);
